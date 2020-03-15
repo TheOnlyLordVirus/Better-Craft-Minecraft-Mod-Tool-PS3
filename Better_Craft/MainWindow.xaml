@@ -1,0 +1,831 @@
+﻿<Window x:Class="Better_Craft.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Better_Craft"
+        xmlns:gif="http://wpfanimatedgif.codeplex.com" 
+        mc:Ignorable="d"
+        Title="Better Craft Playstation 3 Hack Tool" Height="450" Width="732.5">
+
+    <Grid>
+        <Grid.Resources>
+            <ImageBrush x:Key="defaultButton" ImageSource="Images/defaultButton.png" Stretch="Fill"/>
+            <ImageBrush x:Key="highlightButton" ImageSource="Images/highlightButton.png" Stretch="Fill"/>
+            <ImageBrush x:Key="clickButton" ImageSource="Images/pressButton.png" Stretch="Fill"/>
+        </Grid.Resources>
+
+        <!-- Connect and Attach -->
+        <Grid x:Name="connectAndAttachGrid" Visibility="Visible">
+            <Image x:Name="connectBackgroundImage" Margin="0,0,0,0" Stretch="Fill" Source="Images/betterCraftDirtBackground.png"/>
+            <Image x:Name="titleImage" Margin="95,30,95,0" VerticalAlignment="Top" Source="Images/betterCraftTitle.png"/>
+
+            <Button x:Name="connectAndAttachButton" Margin="202,201,202,182" Background="{StaticResource defaultButton}" Content="Connect and Attach" Foreground="White" FontFamily="/Better_Craft;component/Fonts/#Minecraft" BorderBrush="{x:Null}" Click="ConnectAndAttachButton_Click">
+                <Button.Style>
+                    <Style TargetType="{x:Type Button}">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="{x:Type Button}">
+
+                                    <!--- Border -->
+                                    <Border x:Name="Border" Background="{TemplateBinding Background}">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+
+                                    <!-- Triggers -->
+                                    <ControlTemplate.Triggers>
+
+                                        <!-- On Mouse Hover over -->
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="Background" Value="{StaticResource highlightButton}" TargetName="Border"/>
+                                        </Trigger>
+
+                                        <!-- On Mouse Click -->
+                                        <Trigger Property="IsPressed" Value="True">
+                                            <Setter Property="Background" Value="{StaticResource clickButton}" TargetName="Border"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </Button.Style>
+            </Button>
+
+            <Button x:Name="disconnectButton" Margin="202,242,202,141" Background="{StaticResource defaultButton}" Content="Disconnect" Foreground="White" FontFamily="/Better_Craft;component/Fonts/#Minecraft" BorderBrush="{x:Null}" Click="DisconnectButton_Click">
+                <Button.Style>
+                    <Style TargetType="{x:Type Button}">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="{x:Type Button}">
+
+                                    <!--- Border -->
+                                    <Border x:Name="Border" Background="{TemplateBinding Background}">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+
+                                    <!-- Triggers -->
+                                    <ControlTemplate.Triggers>
+
+                                        <!-- On Mouse Hover over -->
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="Background" Value="{StaticResource highlightButton}" TargetName="Border"/>
+                                        </Trigger>
+
+                                        <!-- On Mouse Click -->
+                                        <Trigger Property="IsPressed" Value="True">
+                                            <Setter Property="Background" Value="{StaticResource clickButton}" TargetName="Border"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </Button.Style>
+            </Button>
+
+            <Button x:Name="ModsButton" Margin="202,283,202,100" Background="{StaticResource defaultButton}" Content="Mods" Foreground="White" FontFamily="/Better_Craft;component/Fonts/#Minecraft" BorderBrush="{x:Null}" Click="ModsButton_Click">
+                <Button.Style>
+                    <Style TargetType="{x:Type Button}">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="{x:Type Button}">
+
+                                    <!--- Border -->
+                                    <Border x:Name="Border" Background="{TemplateBinding Background}">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+
+                                    <!-- Triggers -->
+                                    <ControlTemplate.Triggers>
+
+                                        <!-- On Mouse Hover over -->
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="Background" Value="{StaticResource highlightButton}" TargetName="Border"/>
+                                        </Trigger>
+
+                                        <!-- On Mouse Click -->
+                                        <Trigger Property="IsPressed" Value="True">
+                                            <Setter Property="Background" Value="{StaticResource clickButton}" TargetName="Border"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </Button.Style>
+            </Button>
+
+            <Button x:Name="optionsButton" Margin="202,324,202,59" Background="{StaticResource defaultButton}" Content="Options" Foreground="White" FontFamily="/Better_Craft;component/Fonts/#Minecraft" BorderBrush="{x:Null}" Click="OptionsButton_Click">
+                <Button.Style>
+                    <Style TargetType="{x:Type Button}">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="{x:Type Button}">
+
+                                    <!--- Border -->
+                                    <Border x:Name="Border" Background="{TemplateBinding Background}">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+
+                                    <!-- Triggers -->
+                                    <ControlTemplate.Triggers>
+
+                                        <!-- On Mouse Hover over -->
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="Background" Value="{StaticResource highlightButton}" TargetName="Border"/>
+                                        </Trigger>
+
+                                        <!-- On Mouse Click -->
+                                        <Trigger Property="IsPressed" Value="True">
+                                            <Setter Property="Background" Value="{StaticResource clickButton}" TargetName="Border"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </Button.Style>
+            </Button>
+        </Grid>
+
+        <!-- Mods -->
+        <Grid x:Name="modsGrid" Visibility="Hidden">
+            <Image x:Name="modsBackgroundImage" Margin="0,0,0,0" Stretch="Fill" Source="Images/betterCraftStoneBackground.png"/>
+            <Label Content="Mods v0.1" Margin="244,50,245,0" VerticalAlignment="Top" FontFamily="/Better_Craft;component/Fonts/#Minecraft" FontSize="48"/>
+
+            <Button x:Name="creativeMode" Content="Creative Mode GUI" Margin="35,113,536,0" Background="{StaticResource defaultButton}" Foreground="#FFEBBE32" FontFamily="/Better_Craft;component/Fonts/#Minecraft" BorderBrush="{x:Null}" Height="36" VerticalAlignment="Top" Click="CreativeMode_Click">
+                <Button.Style>
+                    <Style TargetType="{x:Type Button}">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="{x:Type Button}">
+
+                                    <!--- Border -->
+                                    <Border x:Name="Border" Background="{TemplateBinding Background}">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+
+                                    <!-- Triggers -->
+                                    <ControlTemplate.Triggers>
+
+                                        <!-- On Mouse Hover over -->
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="Background" Value="{StaticResource highlightButton}" TargetName="Border"/>
+                                        </Trigger>
+
+                                        <!-- On Mouse Click -->
+                                        <Trigger Property="IsPressed" Value="True">
+                                            <Setter Property="Background" Value="{StaticResource clickButton}" TargetName="Border"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </Button.Style>
+            </Button>
+
+            <Button x:Name="speedMovement" Content="Movement Speed" Margin="202,113,369,0" Background="{StaticResource defaultButton}" Foreground="#FFEBBE32" FontFamily="/Better_Craft;component/Fonts/#Minecraft" BorderBrush="{x:Null}" Height="36" VerticalAlignment="Top" Click="SpeedMovement_Click">
+                <Button.Style>
+                    <Style TargetType="{x:Type Button}">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="{x:Type Button}">
+
+                                    <!--- Border -->
+                                    <Border x:Name="Border" Background="{TemplateBinding Background}">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+
+                                    <!-- Triggers -->
+                                    <ControlTemplate.Triggers>
+
+                                        <!-- On Mouse Hover over -->
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="Background" Value="{StaticResource highlightButton}" TargetName="Border"/>
+                                        </Trigger>
+
+                                        <!-- On Mouse Click -->
+                                        <Trigger Property="IsPressed" Value="True">
+                                            <Setter Property="Background" Value="{StaticResource clickButton}" TargetName="Border"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </Button.Style>
+            </Button>
+
+            <Button x:Name="infBlock" Content="Infine Blocks" Margin="35,154,536,0" Background="{StaticResource defaultButton}" Foreground="#FFEBBE32" FontFamily="/Better_Craft;component/Fonts/#Minecraft" BorderBrush="{x:Null}" Height="36" VerticalAlignment="Top" Click="InfBlock_Click">
+                <Button.Style>
+                    <Style TargetType="{x:Type Button}">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="{x:Type Button}">
+
+                                    <!--- Border -->
+                                    <Border x:Name="Border" Background="{TemplateBinding Background}">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+
+                                    <!-- Triggers -->
+                                    <ControlTemplate.Triggers>
+
+                                        <!-- On Mouse Hover over -->
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="Background" Value="{StaticResource highlightButton}" TargetName="Border"/>
+                                        </Trigger>
+
+                                        <!-- On Mouse Click -->
+                                        <Trigger Property="IsPressed" Value="True">
+                                            <Setter Property="Background" Value="{StaticResource clickButton}" TargetName="Border"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </Button.Style>
+            </Button>
+
+            <Button x:Name="multiJump" Content="Multi-Jump" Margin="202,154,369,0" Background="{StaticResource defaultButton}" Foreground="#FFEBBE32" FontFamily="/Better_Craft;component/Fonts/#Minecraft" BorderBrush="{x:Null}" Height="36" VerticalAlignment="Top" Click="MultiJump_Click">
+                <Button.Style>
+                    <Style TargetType="{x:Type Button}">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="{x:Type Button}">
+
+                                    <!--- Border -->
+                                    <Border x:Name="Border" Background="{TemplateBinding Background}">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+
+                                    <!-- Triggers -->
+                                    <ControlTemplate.Triggers>
+
+                                        <!-- On Mouse Hover over -->
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="Background" Value="{StaticResource highlightButton}" TargetName="Border"/>
+                                        </Trigger>
+
+                                        <!-- On Mouse Click -->
+                                        <Trigger Property="IsPressed" Value="True">
+                                            <Setter Property="Background" Value="{StaticResource clickButton}" TargetName="Border"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </Button.Style>
+            </Button>
+
+            <Button x:Name="godMode" Content="God Mode" Margin="35,195,536,0" Background="{StaticResource defaultButton}" Foreground="#FFEBBE32" FontFamily="/Better_Craft;component/Fonts/#Minecraft" BorderBrush="{x:Null}" Height="36" VerticalAlignment="Top" Click="GodMode_Click">
+                <Button.Style>
+                    <Style TargetType="{x:Type Button}">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="{x:Type Button}">
+
+                                    <!--- Border -->
+                                    <Border x:Name="Border" Background="{TemplateBinding Background}">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+
+                                    <!-- Triggers -->
+                                    <ControlTemplate.Triggers>
+
+                                        <!-- On Mouse Hover over -->
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="Background" Value="{StaticResource highlightButton}" TargetName="Border"/>
+                                        </Trigger>
+
+                                        <!-- On Mouse Click -->
+                                        <Trigger Property="IsPressed" Value="True">
+                                            <Setter Property="Background" Value="{StaticResource clickButton}" TargetName="Border"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </Button.Style>
+            </Button>
+
+            <Button x:Name="noFallDamage" Content="No Fall Damage" Margin="202,195,369,0" Background="{StaticResource defaultButton}" Foreground="#FFEBBE32" FontFamily="/Better_Craft;component/Fonts/#Minecraft" BorderBrush="{x:Null}" Height="36" VerticalAlignment="Top" Click="NoFallDamage_Click">
+                <Button.Style>
+                    <Style TargetType="{x:Type Button}">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="{x:Type Button}">
+
+                                    <!--- Border -->
+                                    <Border x:Name="Border" Background="{TemplateBinding Background}">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+
+                                    <!-- Triggers -->
+                                    <ControlTemplate.Triggers>
+
+                                        <!-- On Mouse Hover over -->
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="Background" Value="{StaticResource highlightButton}" TargetName="Border"/>
+                                        </Trigger>
+
+                                        <!-- On Mouse Click -->
+                                        <Trigger Property="IsPressed" Value="True">
+                                            <Setter Property="Background" Value="{StaticResource clickButton}" TargetName="Border"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </Button.Style>
+            </Button>
+
+            <Button x:Name="instantMine" Content="Instant Mine" Margin="35,236,536,0" Background="{StaticResource defaultButton}" Foreground="#FFEBBE32" FontFamily="/Better_Craft;component/Fonts/#Minecraft" BorderBrush="{x:Null}" Height="36" VerticalAlignment="Top" Click="InstantMine_Click">
+                <Button.Style>
+                    <Style TargetType="{x:Type Button}">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="{x:Type Button}">
+
+                                    <!--- Border -->
+                                    <Border x:Name="Border" Background="{TemplateBinding Background}">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+
+                                    <!-- Triggers -->
+                                    <ControlTemplate.Triggers>
+
+                                        <!-- On Mouse Hover over -->
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="Background" Value="{StaticResource highlightButton}" TargetName="Border"/>
+                                        </Trigger>
+
+                                        <!-- On Mouse Click -->
+                                        <Trigger Property="IsPressed" Value="True">
+                                            <Setter Property="Background" Value="{StaticResource clickButton}" TargetName="Border"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </Button.Style>
+            </Button>
+
+            <Button x:Name="infinteBreath" Content="Infinte Breath" Margin="202,236,369,0" Background="{StaticResource defaultButton}" Foreground="#FFEBBE32" FontFamily="/Better_Craft;component/Fonts/#Minecraft" BorderBrush="{x:Null}" Height="36" VerticalAlignment="Top" Click="InfinteBreath_Click">
+                <Button.Style>
+                    <Style TargetType="{x:Type Button}">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="{x:Type Button}">
+
+                                    <!--- Border -->
+                                    <Border x:Name="Border" Background="{TemplateBinding Background}">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+
+                                    <!-- Triggers -->
+                                    <ControlTemplate.Triggers>
+
+                                        <!-- On Mouse Hover over -->
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="Background" Value="{StaticResource highlightButton}" TargetName="Border"/>
+                                        </Trigger>
+
+                                        <!-- On Mouse Click -->
+                                        <Trigger Property="IsPressed" Value="True">
+                                            <Setter Property="Background" Value="{StaticResource clickButton}" TargetName="Border"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </Button.Style>
+            </Button>
+
+            <Button x:Name="moveTime" Content="Drunk Time" Margin="369,113,202,0" Background="{StaticResource defaultButton}" Foreground="#FFEBBE32" FontFamily="/Better_Craft;component/Fonts/#Minecraft" BorderBrush="{x:Null}" Height="36" VerticalAlignment="Top" Click="MoveTime_Click">
+                <Button.Style>
+                    <Style TargetType="{x:Type Button}">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="{x:Type Button}">
+
+                                    <!--- Border -->
+                                    <Border x:Name="Border" Background="{TemplateBinding Background}">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+
+                                    <!-- Triggers -->
+                                    <ControlTemplate.Triggers>
+
+                                        <!-- On Mouse Hover over -->
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="Background" Value="{StaticResource highlightButton}" TargetName="Border"/>
+                                        </Trigger>
+
+                                        <!-- On Mouse Click -->
+                                        <Trigger Property="IsPressed" Value="True">
+                                            <Setter Property="Background" Value="{StaticResource clickButton}" TargetName="Border"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </Button.Style>
+            </Button>
+
+            <Button x:Name="caveXRay" Content="Cave X-Ray" Margin="536,113,35,0" Background="{StaticResource defaultButton}" Foreground="#FFEBBE32" FontFamily="/Better_Craft;component/Fonts/#Minecraft" BorderBrush="{x:Null}" Height="36" VerticalAlignment="Top" Click="DebugMod_Click">
+                <Button.Style>
+                    <Style TargetType="{x:Type Button}">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="{x:Type Button}">
+
+                                    <!--- Border -->
+                                    <Border x:Name="Border" Background="{TemplateBinding Background}">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+
+                                    <!-- Triggers -->
+                                    <ControlTemplate.Triggers>
+
+                                        <!-- On Mouse Hover over -->
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="Background" Value="{StaticResource highlightButton}" TargetName="Border"/>
+                                        </Trigger>
+
+                                        <!-- On Mouse Click -->
+                                        <Trigger Property="IsPressed" Value="True">
+                                            <Setter Property="Background" Value="{StaticResource clickButton}" TargetName="Border"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </Button.Style>
+            </Button>
+
+            <Button x:Name="fieldOfView" Content="Field of View" Margin="369,154,202,0" Background="{StaticResource defaultButton}" Foreground="#FFEBBE32" FontFamily="/Better_Craft;component/Fonts/#Minecraft" BorderBrush="{x:Null}" Height="36" VerticalAlignment="Top" Click="FieldOfView_Click">
+                <Button.Style>
+                    <Style TargetType="{x:Type Button}">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="{x:Type Button}">
+
+                                    <!--- Border -->
+                                    <Border x:Name="Border" Background="{TemplateBinding Background}">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+
+                                    <!-- Triggers -->
+                                    <ControlTemplate.Triggers>
+
+                                        <!-- On Mouse Hover over -->
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="Background" Value="{StaticResource highlightButton}" TargetName="Border"/>
+                                        </Trigger>
+
+                                        <!-- On Mouse Click -->
+                                        <Trigger Property="IsPressed" Value="True">
+                                            <Setter Property="Background" Value="{StaticResource clickButton}" TargetName="Border"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </Button.Style>
+            </Button>
+
+            <Button x:Name="b" Content="" Margin="536,154,35,0" Background="{StaticResource defaultButton}" Foreground="#FFEBBE32" FontFamily="/Better_Craft;component/Fonts/#Minecraft" BorderBrush="{x:Null}" Height="36" VerticalAlignment="Top" Click="DebugMod_Click">
+                <Button.Style>
+                    <Style TargetType="{x:Type Button}">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="{x:Type Button}">
+
+                                    <!--- Border -->
+                                    <Border x:Name="Border" Background="{TemplateBinding Background}">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+
+                                    <!-- Triggers -->
+                                    <ControlTemplate.Triggers>
+
+                                        <!-- On Mouse Hover over -->
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="Background" Value="{StaticResource highlightButton}" TargetName="Border"/>
+                                        </Trigger>
+
+                                        <!-- On Mouse Click -->
+                                        <Trigger Property="IsPressed" Value="True">
+                                            <Setter Property="Background" Value="{StaticResource clickButton}" TargetName="Border"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </Button.Style>
+            </Button>
+
+            <Button x:Name="c" Content="" Margin="369,195,202,0" Background="{StaticResource defaultButton}" Foreground="#FFEBBE32" FontFamily="/Better_Craft;component/Fonts/#Minecraft" BorderBrush="{x:Null}" Height="36" VerticalAlignment="Top" Click="DebugMod_Click">
+                <Button.Style>
+                    <Style TargetType="{x:Type Button}">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="{x:Type Button}">
+
+                                    <!--- Border -->
+                                    <Border x:Name="Border" Background="{TemplateBinding Background}">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+
+                                    <!-- Triggers -->
+                                    <ControlTemplate.Triggers>
+
+                                        <!-- On Mouse Hover over -->
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="Background" Value="{StaticResource highlightButton}" TargetName="Border"/>
+                                        </Trigger>
+
+                                        <!-- On Mouse Click -->
+                                        <Trigger Property="IsPressed" Value="True">
+                                            <Setter Property="Background" Value="{StaticResource clickButton}" TargetName="Border"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </Button.Style>
+            </Button>
+
+            <Button x:Name="d" Content="" Margin="536,195,35,0" Background="{StaticResource defaultButton}" Foreground="#FFEBBE32" FontFamily="/Better_Craft;component/Fonts/#Minecraft" BorderBrush="{x:Null}" Height="36" VerticalAlignment="Top" Click="DebugMod_Click">
+                <Button.Style>
+                    <Style TargetType="{x:Type Button}">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="{x:Type Button}">
+
+                                    <!--- Border -->
+                                    <Border x:Name="Border" Background="{TemplateBinding Background}">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+
+                                    <!-- Triggers -->
+                                    <ControlTemplate.Triggers>
+
+                                        <!-- On Mouse Hover over -->
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="Background" Value="{StaticResource highlightButton}" TargetName="Border"/>
+                                        </Trigger>
+
+                                        <!-- On Mouse Click -->
+                                        <Trigger Property="IsPressed" Value="True">
+                                            <Setter Property="Background" Value="{StaticResource clickButton}" TargetName="Border"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </Button.Style>
+            </Button>
+
+            <Button x:Name="e" Content="" Margin="369,236,202,0" Background="{StaticResource defaultButton}" Foreground="#FFEBBE32" FontFamily="/Better_Craft;component/Fonts/#Minecraft" BorderBrush="{x:Null}" Height="36" VerticalAlignment="Top" Click="DebugMod_Click">
+                <Button.Style>
+                    <Style TargetType="{x:Type Button}">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="{x:Type Button}">
+
+                                    <!--- Border -->
+                                    <Border x:Name="Border" Background="{TemplateBinding Background}">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+
+                                    <!-- Triggers -->
+                                    <ControlTemplate.Triggers>
+
+                                        <!-- On Mouse Hover over -->
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="Background" Value="{StaticResource highlightButton}" TargetName="Border"/>
+                                        </Trigger>
+
+                                        <!-- On Mouse Click -->
+                                        <Trigger Property="IsPressed" Value="True">
+                                            <Setter Property="Background" Value="{StaticResource clickButton}" TargetName="Border"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </Button.Style>
+            </Button>
+
+            <Button x:Name="f" Content="" Margin="536,236,35,0" Background="{StaticResource defaultButton}" Foreground="#FFEBBE32" FontFamily="/Better_Craft;component/Fonts/#Minecraft" BorderBrush="{x:Null}" Height="36" VerticalAlignment="Top" Click="DebugMod_Click">
+                <Button.Style>
+                    <Style TargetType="{x:Type Button}">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="{x:Type Button}">
+
+                                    <!--- Border -->
+                                    <Border x:Name="Border" Background="{TemplateBinding Background}">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+
+                                    <!-- Triggers -->
+                                    <ControlTemplate.Triggers>
+
+                                        <!-- On Mouse Hover over -->
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="Background" Value="{StaticResource highlightButton}" TargetName="Border"/>
+                                        </Trigger>
+
+                                        <!-- On Mouse Click -->
+                                        <Trigger Property="IsPressed" Value="True">
+                                            <Setter Property="Background" Value="{StaticResource clickButton}" TargetName="Border"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </Button.Style>
+            </Button>
+
+            <Button x:Name="modsReturnToConnectButton" Margin="202,324,202,59" Background="{StaticResource defaultButton}" Content="Return" Foreground="White" FontFamily="/Better_Craft;component/Fonts/#Minecraft" BorderBrush="{x:Null}" Click="ModsReturnToConnectButton_Click">
+                <Button.Style>
+                    <Style TargetType="{x:Type Button}">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="{x:Type Button}">
+
+                                    <!--- Border -->
+                                    <Border x:Name="Border" Background="{TemplateBinding Background}">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+
+                                    <!-- Triggers -->
+                                    <ControlTemplate.Triggers>
+
+                                        <!-- On Mouse Hover over -->
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="Background" Value="{StaticResource highlightButton}" TargetName="Border"/>
+                                        </Trigger>
+
+                                        <!-- On Mouse Click -->
+                                        <Trigger Property="IsPressed" Value="True">
+                                            <Setter Property="Background" Value="{StaticResource clickButton}" TargetName="Border"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </Button.Style>
+            </Button>
+        </Grid>
+
+        <!-- Options -->
+        <Grid x:Name="optionsGrid" Visibility="Hidden">
+            <Image x:Name="optionsBackgroundImage" Margin="0,0,0,0" Stretch="Fill" Source="Images/betterCraftStoneBackground.png"/>
+            <Image x:Name="ccapiTorch" Height="100" Margin="564,42,60,0" VerticalAlignment="Top" gif:ImageBehavior.AnimatedSource="Images/redstoneTorchOn.gif"/>
+            <Image x:Name="tmapiTorch" HorizontalAlignment="Left" Height="100" Margin="60,42,0,0" VerticalAlignment="Top" Width="100" gif:ImageBehavior.AnimatedSource="Images/redStoneTorchOff.png"/>
+            <TextBlock FontFamily="/Better_Craft;component/Fonts/#Minecraft" HorizontalAlignment="Left" Margin="50,110,0,0" TextWrapping="Wrap" Text="Target Manager API" VerticalAlignment="Top"/>
+            <TextBlock FontFamily="/Better_Craft;component/Fonts/#Minecraft" HorizontalAlignment="Left" Margin="556,110,0,0" TextWrapping="Wrap" Text="Control Console API" VerticalAlignment="Top"/>
+
+            <Button x:Name="optionsReturnToConnectButton" Margin="202,324,202,59" Background="{StaticResource defaultButton}" Content="Return" Foreground="White" FontFamily="/Better_Craft;component/Fonts/#Minecraft" BorderBrush="{x:Null}" Click="OptionsReturnToConnectButton_Click">
+                <Button.Style>
+                    <Style TargetType="{x:Type Button}">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="{x:Type Button}">
+
+                                    <!--- Border -->
+                                    <Border x:Name="Border" Background="{TemplateBinding Background}">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+
+                                    <!-- Triggers -->
+                                    <ControlTemplate.Triggers>
+
+                                        <!-- On Mouse Hover over -->
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="Background" Value="{StaticResource highlightButton}" TargetName="Border"/>
+                                        </Trigger>
+
+                                        <!-- On Mouse Click -->
+                                        <Trigger Property="IsPressed" Value="True">
+                                            <Setter Property="Background" Value="{StaticResource clickButton}" TargetName="Border"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </Button.Style>
+            </Button>
+
+            <Button x:Name="selectCCAPIButton" Margin="0,128,38,0" Background="{StaticResource defaultButton}" Content="CCAPI" Foreground="White" FontFamily="/Better_Craft;component/Fonts/#Minecraft" BorderBrush="{x:Null}" Click="SelectCCAPIButton_Click" HorizontalAlignment="Right" Width="146" Height="36" VerticalAlignment="Top">
+                <Button.Style>
+                    <Style TargetType="{x:Type Button}">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="{x:Type Button}">
+
+                                    <!--- Border -->
+                                    <Border x:Name="Border" Background="{TemplateBinding Background}">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+
+                                    <!-- Triggers -->
+                                    <ControlTemplate.Triggers>
+
+                                        <!-- On Mouse Hover over -->
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="Background" Value="{StaticResource highlightButton}" TargetName="Border"/>
+                                        </Trigger>
+
+                                        <!-- On Mouse Click -->
+                                        <Trigger Property="IsPressed" Value="True">
+                                            <Setter Property="Background" Value="{StaticResource clickButton}" TargetName="Border"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </Button.Style>
+            </Button>
+
+            <Button x:Name="selectTMAPIButton" Margin="36,128,0,0" Background="{StaticResource defaultButton}" Content="TMAPI" Foreground="White" FontFamily="/Better_Craft;component/Fonts/#Minecraft" BorderBrush="{x:Null}" Click="SelectTMAPIButton_Click" HorizontalAlignment="Left" Width="146" Height="36" VerticalAlignment="Top">
+                <Button.Style>
+                    <Style TargetType="{x:Type Button}">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="{x:Type Button}">
+
+                                    <!--- Border -->
+                                    <Border x:Name="Border" Background="{TemplateBinding Background}">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+
+                                    <!-- Triggers -->
+                                    <ControlTemplate.Triggers>
+
+                                        <!-- On Mouse Hover over -->
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="Background" Value="{StaticResource highlightButton}" TargetName="Border"/>
+                                        </Trigger>
+
+                                        <!-- On Mouse Click -->
+                                        <Trigger Property="IsPressed" Value="True">
+                                            <Setter Property="Background" Value="{StaticResource clickButton}" TargetName="Border"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </Button.Style>
+            </Button>
+        </Grid>
+    </Grid>
+</Window>
