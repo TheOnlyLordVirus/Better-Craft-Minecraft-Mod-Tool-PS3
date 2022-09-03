@@ -77,8 +77,9 @@
         <Grid x:Name="connectAndAttachGrid" Margin="0,25,0,0" Visibility="Visible">
             
             <!-- Background images -->
-            <Image x:Name="scrollImageOne" Source="Images/betterCraftScrollingBackground.png" Stretch="Fill" />
-            <Image x:Name="scrollImageTwo" Source="Images/betterCraftScrollingBackground.png" Stretch="Fill" Margin="732,0,-732,0"/>
+            <Image x:Name="scrollImageOne" Source="Images/betterCraftScrollingBackground.png" Stretch="Fill" Margin="0,0,-350,0" />
+            <Image x:Name="scrollImageTwo" Source="Images/betterCraftScrollingBackground.png" Stretch="Fill" Margin="1082,0,-1432,0" />
+            <!--<Image x:Name="scrollImageTwo" Source="Images/betterCraftScrollingBackground.png" Stretch="Fill" Margin="870,0,-870,0"/>-->
             
             <!-- Title -->
             <Image x:Name="titleImage" Margin="95,15,94,0" VerticalAlignment="Top" Source="Images/betterCraftTitle.png"/>

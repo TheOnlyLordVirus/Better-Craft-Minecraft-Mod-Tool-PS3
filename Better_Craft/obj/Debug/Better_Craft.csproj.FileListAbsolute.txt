@@ -18,3 +18,4 @@ C:\Users\Hunter\OneDrive\Documents\Trentons Shit\Minecraft Mods\Better-Craft-Min
 C:\Users\Hunter\OneDrive\Documents\Trentons Shit\Minecraft Mods\Better-Craft-Minecraft-Mod-Tool-PS3-master\Better_Craft\obj\Debug\Better_Craft.csproj.CopyComplete
 C:\Users\Hunter\OneDrive\Documents\Trentons Shit\Minecraft Mods\Better-Craft-Minecraft-Mod-Tool-PS3-master\Better_Craft\obj\Debug\Better_Craft.exe
 C:\Users\Hunter\OneDrive\Documents\Trentons Shit\Minecraft Mods\Better-Craft-Minecraft-Mod-Tool-PS3-master\Better_Craft\obj\Debug\Better_Craft.pdb
+C:\Users\Hunter\OneDrive\Documents\Trentons Shit\Minecraft Mods\Better-Craft-Minecraft-Mod-Tool-PS3-master\Better_Craft\obj\Debug\GeneratedInternalTypeHelper.g.cs

@@ -1341,6 +1341,15 @@ namespace Minecraft_Cheats
 
             if (toggle)
             {
+                if (!bLSD_TRIP)
+                {
+                    MessageBoxResult YesNo = MessageBox.Show("This option may trigger epileptic people to have seisures!\nDo you wish to continue?", "Warning!", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                    if (YesNo.Equals(MessageBoxResult.No))
+                    {
+                        return;
+                    }
+                }
+
                 bRAINBOW_SKY = true;
                 while (bRAINBOW_SKY)
                 {
@@ -1381,6 +1390,15 @@ namespace Minecraft_Cheats
 
             if (toggle)
             {
+                if(!bLSD_TRIP)
+                {
+                    MessageBoxResult YesNo = MessageBox.Show("This option may trigger epileptic people to have seisures!\nDo you wish to continue?", "Warning!", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                    if(YesNo.Equals(MessageBoxResult.No))
+                    {
+                        return;
+                    }
+                }
+
                 bRAINBOW_VISION = true;
                 while (bRAINBOW_VISION)
                 {
@@ -1437,6 +1455,15 @@ namespace Minecraft_Cheats
 
             if (toggle)
             {
+                if(!bLSD_TRIP)
+                {
+                    MessageBoxResult YesNo = MessageBox.Show("This option may trigger epileptic people to have seisures!\nDo you wish to continue?", "Warning!", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                    if (YesNo.Equals(MessageBoxResult.No))
+                    {
+                        return;
+                    }
+                }
+
                 bRAINBOW_HUD = true;
                 while (bRAINBOW_HUD)
                 {
@@ -1468,29 +1495,37 @@ namespace Minecraft_Cheats
         /// <summary>
         /// Lysergic Acid Diethylamide Simulation.
         /// </summary>
+        private static bool bLSD_TRIP = false;
         public static void LSD_TRIP(bool toggle)
         {
             if (toggle)
             {
-                Minecraft_Cheats.RAINBOW_HUD(true);
-                Minecraft_Cheats.RAINBOW_SKY(true);
-                Minecraft_Cheats.RAINBOW_VISION(true);
-                Minecraft_Cheats.RED_ESP_ENTITYS(true);
-                Minecraft_Cheats.FAR_REACH_ATTACK(true);
-                Minecraft_Cheats.FROST_WALKER_WITH_DIAMOND_ORE(true);
-                Minecraft_Cheats.FAST_BOW(true);
-                Minecraft_Cheats.SPEED_CLOUDS(true);
-                Minecraft_Cheats.BLUE_CLOUDS(true);
-                Minecraft_Cheats.WEIRD_SUN_MOON_STATES(2);
-                Minecraft_Cheats.TIME_CYCLE(2);
-                Minecraft_Cheats.SELECTED_BLOCK_LINE_COLOR(3);
-                Minecraft_Cheats.FOV_VALUE(5);
-                Minecraft_Cheats.ENTITY_RENDER_HEIGHT(3);
-                Minecraft_Cheats.ENTITY_RENDER_WIDTH(2);
+                MessageBoxResult YesNo = MessageBox.Show("This option may trigger epileptic people to have seisures!\nDo you wish to continue?", "Warning!", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                
+                if(YesNo.Equals(MessageBoxResult.Yes))
+                {
+                    bLSD_TRIP = true;
+                    Minecraft_Cheats.RAINBOW_HUD(true);
+                    Minecraft_Cheats.RAINBOW_SKY(true);
+                    Minecraft_Cheats.RAINBOW_VISION(true);
+                    Minecraft_Cheats.RED_ESP_ENTITYS(true);
+                    Minecraft_Cheats.FAR_REACH_ATTACK(true);
+                    Minecraft_Cheats.FROST_WALKER_WITH_DIAMOND_ORE(true);
+                    Minecraft_Cheats.FAST_BOW(true);
+                    Minecraft_Cheats.SPEED_CLOUDS(true);
+                    Minecraft_Cheats.BLUE_CLOUDS(true);
+                    Minecraft_Cheats.WEIRD_SUN_MOON_STATES(2);
+                    Minecraft_Cheats.TIME_CYCLE(2);
+                    Minecraft_Cheats.SELECTED_BLOCK_LINE_COLOR(3);
+                    Minecraft_Cheats.FOV_VALUE(5);
+                    Minecraft_Cheats.ENTITY_RENDER_HEIGHT(3);
+                    Minecraft_Cheats.ENTITY_RENDER_WIDTH(2);
+                }
             }
 
             else
             {
+                bLSD_TRIP = false;
                 Minecraft_Cheats.RAINBOW_HUD(false);
                 Minecraft_Cheats.RAINBOW_SKY(false);
                 Minecraft_Cheats.RAINBOW_VISION(false);
@@ -2002,11 +2037,11 @@ namespace Minecraft_Cheats
                 Minecraft_Cheats.RED_ESP_ENTITYS(true);
                 Minecraft_Cheats.FAR_REACH_ATTACK(true);
                 PS3.SetMemory(0x00AD8158, new byte[] { 0x4C }); ////Name Over Head
-                PS3.SetMemory(0x00B01DEC, new byte[] { 0x40, 0x82 }); ////AutoSprint
+                PS3.SetMemory(0x00B01DEC, new byte[] { 0x40 }); ////AutoSprint
                 PS3.SetMemory(0x003097C8, new byte[] { 0x40 }); ////ID Items
                 PS3.SetMemory(0x003097B8, new byte[] { 0x40 }); ////ID Items
-                PS3.SetMemory(0x0090B5F0, new byte[] { 0x38, 0x80, 0x00, 0x01 }); ////Show Armor
-                PS3.SetMemory(0x00AD5A5C, new byte[] { 0x3F, 0xFF }); ////Damage Indicator
+                PS3.SetMemory(0x0090B5F3, new byte[] { 0x01 }); ////Show Armor
+                PS3.SetMemory(0x00AD5A5D, new byte[] { 0xFF }); ////Damage Indicator
                 PS3.SetMemory(0x00227BDC, new byte[] { 0x40 }); ////Remove Run Anim
             }
             else
@@ -2016,11 +2051,11 @@ namespace Minecraft_Cheats
                 Minecraft_Cheats.RED_ESP_ENTITYS(false);
                 Minecraft_Cheats.FAR_REACH_ATTACK(false);
                 PS3.SetMemory(0x00AD8158, new byte[] { 0x2C }); ////Name Over Head
-                PS3.SetMemory(0x00B01DEC, new byte[] { 0x41, 0x82 }); ////AutoSprint
+                PS3.SetMemory(0x00B01DEC, new byte[] { 0x41 }); ////AutoSprint
                 PS3.SetMemory(0x003097C8, new byte[] { 0x41 }); ////ID Items
                 PS3.SetMemory(0x003097B8, new byte[] { 0x41 }); ////ID Items
-                PS3.SetMemory(0x0090B5F0, new byte[] { 0x38, 0x80, 0x00, 0x00 }); ////Show Armor
-                PS3.SetMemory(0x00AD5A5C, new byte[] { 0x3F, 0x80 }); ////Damage Indicator
+                PS3.SetMemory(0x0090B5F3, new byte[] { 0x00 }); ////Show Armor
+                PS3.SetMemory(0x00AD5A5D, new byte[] { 0x80 }); ////Damage Indicator
                 PS3.SetMemory(0x00227BDC, new byte[] { 0x41 }); ////Remove Run Anim
             }
         }
@@ -2220,7 +2255,7 @@ namespace Minecraft_Cheats
         {
             if (toogle)
             {
-                MessageBox.Show("Eggs of Shulker has been changed to the Wither eggs, you can spawn it by using the egg on a empty Monster Spawner", "Infos");
+                MessageBox.Show("Eggs of Shulker has been changed to the Wither eggs, you can spawn it by using the egg on a empty Monster Spawner", "Notice!", MessageBoxButton.OK, MessageBoxImage.Information);
                 PS3.SetMemory(0x32418A79, new byte[] { 0x77, 0x00, 0x69, 0x00, 0x74, 0x00, 0x68, 0x00, 0x65, 0x00, 0x72, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x06 }); ////MODIFED VALUE
             }
             else
@@ -2233,7 +2268,7 @@ namespace Minecraft_Cheats
         {
             if (toogle)
             {
-                MessageBox.Show("Elder Guardian has been changed to the Iron Golem eggs, you can spawn it by using the egg on a empty Monster Spawner", "Infos");
+                MessageBox.Show("Elder Guardian has been changed to the Iron Golem eggs, you can spawn it by using the egg on a empty Monster Spawner", "Notice!", MessageBoxButton.OK, MessageBoxImage.Information);
                 PS3.SetMemory(0x32418D18, new byte[] { 0x30, 0x99, 0xF6, 0xA0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0E }); ////MODIFED VALUE
             }
             else

@@ -15,6 +15,8 @@ namespace Better_Craft
     using System.Windows.Input;
     using System.Reflection;
     using System.Globalization;
+    using System.Threading;
+    using System.Windows.Threading;
 
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -53,15 +55,45 @@ namespace Better_Craft
         /// <summary>
         /// Loops the main image background.
         /// </summary>
-        private Task loopBackground()
+        private async void loopBackground()
         {
+            Thickness originalImgOnePOS = new Thickness(0, 0, -350, 0);
+            Thickness originalImgTwoPOS = new Thickness(1082, 0, -1432, 0);
+
+            void reset()
+            {
+                this.Dispatcher.Invoke
+                (
+                    DispatcherPriority.Normal,
+                    (ThreadStart)delegate
+                    {
+                        scrollImageOne.Margin = originalImgOnePOS;
+                        scrollImageTwo.Margin = originalImgTwoPOS;
+                    }
+                );
+            }
 
             while(connectAndAttachOpen)
             {
+                this.Dispatcher.Invoke
+                (
+                    DispatcherPriority.Normal,
+                    (ThreadStart)delegate
+                    {
+                        scrollImageOne.Margin = new Thickness(scrollImageOne.Margin.Left - 1, 0, scrollImageOne.Margin.Right + 1, 0);
+                        scrollImageTwo.Margin = new Thickness(scrollImageTwo.Margin.Left - 1, 0, scrollImageTwo.Margin.Right + 1, 0);
 
+                        if(scrollImageTwo.Margin.Equals(originalImgOnePOS))
+                        {
+                            reset();
+                        }
+                    }
+                );
+
+                await Task.Delay(60);
             }
 
-            return Task.CompletedTask;
+            reset();
         }
 
         /// <summary>
@@ -225,14 +257,17 @@ namespace Better_Craft
         {
             if (visible)
             {
+                connectAndAttachOpen = false;
                 connectAndAttachGrid.Visibility = Visibility.Hidden;
                 modsGrid.Visibility = Visibility.Visible;
             }
 
             else
             {
+                connectAndAttachOpen = true;
                 modsGrid.Visibility = Visibility.Hidden;
                 connectAndAttachGrid.Visibility = Visibility.Visible;
+                Task.Run(() => loopBackground());
             }
         }
 
@@ -244,14 +279,17 @@ namespace Better_Craft
         {
             if(visible)
             {
+                connectAndAttachOpen = false;
                 connectAndAttachGrid.Visibility = Visibility.Hidden;
                 optionsGrid.Visibility = Visibility.Visible;
             }
 
             else
             {
+                connectAndAttachOpen = true;
                 optionsGrid.Visibility = Visibility.Hidden;
                 connectAndAttachGrid.Visibility = Visibility.Visible;
+                Task.Run(() => loopBackground());
             }
         }
 
