@@ -48,7 +48,6 @@ namespace Better_Craft
         public MainWindow()
         {
             InitializeComponent();
-            LoadCheats();
             Task.Run(() => loopBackground());
         }
 
@@ -152,6 +151,7 @@ namespace Better_Craft
             clickSound.Play();
             if (Minecraft_Cheats.isConnected)
             {
+                LoadCheats();
                 ToggleModsScreen(true);
             }
 
@@ -183,7 +183,6 @@ namespace Better_Craft
         /// <param name="e"></param>
         private void filterTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            cheatPanel.Children.Clear();
             LoadCheats(filterTextBox.Text.Trim());
         }
 
@@ -319,6 +318,7 @@ namespace Better_Craft
         /// </summary>
         private void LoadCheats(string filter = "")
         {
+            cheatPanel.Children.Clear();
             string[] badFuncNames = { "tostring", "gettype", "gethashcode", "equals" };
             MethodInfo[] cheats = (typeof(Minecraft_Cheats)).GetMethods();
 

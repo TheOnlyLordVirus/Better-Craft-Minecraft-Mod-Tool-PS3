@@ -234,6 +234,8 @@ namespace Minecraft_Cheats
             /// </summary>
             public static void Reset_All_Mods()
             {
+                CheatKeyValuePairs.Clear();
+
                 string[] badFuncNames = { "tostring", "gettype", "gethashcode", "equals" };
                 MethodInfo[] cheats = (typeof(Minecraft_Cheats)).GetMethods();
 
