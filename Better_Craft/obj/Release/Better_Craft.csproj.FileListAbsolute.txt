@@ -1,8 +1,6 @@
 C:\Users\Hunter\OneDrive\Documents\Trentons Shit\Minecraft Mods\Better-Craft-Minecraft-Mod-Tool-PS3-master\Better_Craft\bin\Release\Better_Craft.exe.config
 C:\Users\Hunter\OneDrive\Documents\Trentons Shit\Minecraft Mods\Better-Craft-Minecraft-Mod-Tool-PS3-master\Better_Craft\bin\Release\Better_Craft.exe
 C:\Users\Hunter\OneDrive\Documents\Trentons Shit\Minecraft Mods\Better-Craft-Minecraft-Mod-Tool-PS3-master\Better_Craft\bin\Release\Better_Craft.pdb
-C:\Users\Hunter\OneDrive\Documents\Trentons Shit\Minecraft Mods\Better-Craft-Minecraft-Mod-Tool-PS3-master\Better_Craft\bin\Release\WpfAnimatedGif.dll
-C:\Users\Hunter\OneDrive\Documents\Trentons Shit\Minecraft Mods\Better-Craft-Minecraft-Mod-Tool-PS3-master\Better_Craft\bin\Release\WpfAnimatedGif.pdb
 C:\Users\Hunter\OneDrive\Documents\Trentons Shit\Minecraft Mods\Better-Craft-Minecraft-Mod-Tool-PS3-master\Better_Craft\bin\Release\WpfAnimatedGif.xml
 C:\Users\Hunter\OneDrive\Documents\Trentons Shit\Minecraft Mods\Better-Craft-Minecraft-Mod-Tool-PS3-master\Better_Craft\obj\Release\Better_Craft.csproj.AssemblyReference.cache
 C:\Users\Hunter\OneDrive\Documents\Trentons Shit\Minecraft Mods\Better-Craft-Minecraft-Mod-Tool-PS3-master\Better_Craft\obj\Release\Better_Craft.csproj.SuggestedBindingRedirects.cache
@@ -19,3 +17,5 @@ C:\Users\Hunter\OneDrive\Documents\Trentons Shit\Minecraft Mods\Better-Craft-Min
 C:\Users\Hunter\OneDrive\Documents\Trentons Shit\Minecraft Mods\Better-Craft-Minecraft-Mod-Tool-PS3-master\Better_Craft\obj\Release\Better_Craft.csproj.CopyComplete
 C:\Users\Hunter\OneDrive\Documents\Trentons Shit\Minecraft Mods\Better-Craft-Minecraft-Mod-Tool-PS3-master\Better_Craft\obj\Release\Better_Craft.exe
 C:\Users\Hunter\OneDrive\Documents\Trentons Shit\Minecraft Mods\Better-Craft-Minecraft-Mod-Tool-PS3-master\Better_Craft\obj\Release\Better_Craft.pdb
+C:\Users\Hunter\OneDrive\Documents\Trentons Shit\Minecraft Mods\Better-Craft-Minecraft-Mod-Tool-PS3-master\Better_Craft\bin\Release\System.Diagnostics.DiagnosticSource.xml
+C:\Users\Hunter\OneDrive\Documents\Trentons Shit\Minecraft Mods\Better-Craft-Minecraft-Mod-Tool-PS3-master\Better_Craft\obj\Release\Better_Craft.csproj.Fody.CopyLocal.cache
