@@ -17,6 +17,7 @@ namespace Better_Craft
     using System.Globalization;
     using System.Threading;
     using System.Windows.Threading;
+    using System.Windows.Media.Animation;
 
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -48,51 +49,6 @@ namespace Better_Craft
         public MainWindow()
         {
             InitializeComponent();
-            Task.Run(() => loopBackground());
-        }
-
-        /// <summary>
-        /// Loops the main image background.
-        /// </summary>
-        private async void loopBackground()
-        {
-            Thickness originalImgOnePOS = new Thickness(0, 0, -350, 0);
-            Thickness originalImgTwoPOS = new Thickness(1082, 0, -1432, 0);
-
-            void reset()
-            {
-                this.Dispatcher.Invoke
-                (
-                    DispatcherPriority.Normal,
-                    (ThreadStart)delegate
-                    {
-                        scrollImageOne.Margin = originalImgOnePOS;
-                        scrollImageTwo.Margin = originalImgTwoPOS;
-                    }
-                );
-            }
-
-            while(connectAndAttachOpen)
-            {
-                this.Dispatcher.Invoke
-                (
-                    DispatcherPriority.Normal,
-                    (ThreadStart)delegate
-                    {
-                        scrollImageOne.Margin = new Thickness(scrollImageOne.Margin.Left - 1, 0, scrollImageOne.Margin.Right + 1, 0);
-                        scrollImageTwo.Margin = new Thickness(scrollImageTwo.Margin.Left - 1, 0, scrollImageTwo.Margin.Right + 1, 0);
-
-                        if(scrollImageTwo.Margin.Equals(originalImgOnePOS))
-                        {
-                            reset();
-                        }
-                    }
-                );
-
-                await Task.Delay(60);
-            }
-
-            reset();
         }
 
         /// <summary>
@@ -186,16 +142,6 @@ namespace Better_Craft
             LoadCheats(filterTextBox.Text.Trim());
         }
 
-        ///// <summary>
-        ///// God Mode.
-        ///// </summary>
-        ///// <param name="sender"></param>
-        ///// <param name="e"></param>
-        //private void GodModeMod_Click(object sender, RoutedEventArgs e)
-        //{
-        //    DoMod(sender, Minecraft_Cheats.GOD_MODE);
-        //}
-
         /// <summary>
         /// Return to connect and attach.
         /// </summary>
@@ -266,7 +212,6 @@ namespace Better_Craft
                 connectAndAttachOpen = true;
                 modsGrid.Visibility = Visibility.Hidden;
                 connectAndAttachGrid.Visibility = Visibility.Visible;
-                Task.Run(() => loopBackground());
             }
         }
 
@@ -288,7 +233,6 @@ namespace Better_Craft
                 connectAndAttachOpen = true;
                 optionsGrid.Visibility = Visibility.Hidden;
                 connectAndAttachGrid.Visibility = Visibility.Visible;
-                Task.Run(() => loopBackground());
             }
         }
 

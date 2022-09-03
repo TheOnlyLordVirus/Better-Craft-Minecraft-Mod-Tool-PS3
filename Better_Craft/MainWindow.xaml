@@ -63,6 +63,25 @@
             </Style>
         </Grid.Resources>
 
+        <!-- Moveing Background -->
+        <Grid.Triggers>
+            <EventTrigger RoutedEvent="Grid.Loaded">
+                <BeginStoryboard>
+                    <Storyboard x:Name="loopImgBackground" BeginTime="00:00:00.000" Duration="00:01:00.000" RepeatBehavior="Forever">
+                        <ThicknessAnimationUsingKeyFrames Storyboard.TargetName="scrollImageOne" Storyboard.TargetProperty="Margin" BeginTime="00:00:00">
+                            <SplineThicknessKeyFrame KeyTime="00:00:00" Value="0,0,-350,0" />
+                            <SplineThicknessKeyFrame KeyTime="00:01:00" Value="-1080,0,730,0" />
+                        </ThicknessAnimationUsingKeyFrames>
+
+                        <ThicknessAnimationUsingKeyFrames Storyboard.TargetName="scrollImageTwo" Storyboard.TargetProperty="Margin" BeginTime="00:00:00">
+                            <SplineThicknessKeyFrame KeyTime="00:00:00" Value="1082,0,-1432,0" />
+                            <SplineThicknessKeyFrame KeyTime="00:01:00" Value="0,0,-350,0" />
+                        </ThicknessAnimationUsingKeyFrames>
+                    </Storyboard>
+                </BeginStoryboard>
+            </EventTrigger>
+        </Grid.Triggers>
+
         <!-- Top close bar and window title -->
         <Grid x:Name="topBar" MouseDown="Window_MouseDown">
             <Grid.Background>
@@ -75,12 +94,10 @@
 
         <!-- Connect and Attach -->
         <Grid x:Name="connectAndAttachGrid" Margin="0,25,0,0" Visibility="Visible">
-            
             <!-- Background images -->
-            <Image x:Name="scrollImageOne" Source="Images/betterCraftScrollingBackground.png" Stretch="Fill" Margin="0,0,-350,0" />
+            <Image x:Name="scrollImageOne" Source="Images/betterCraftScrollingBackground.png" Stretch="Fill" Margin="0,0,-350,0"  />
             <Image x:Name="scrollImageTwo" Source="Images/betterCraftScrollingBackground.png" Stretch="Fill" Margin="1082,0,-1432,0" />
-            <!--<Image x:Name="scrollImageTwo" Source="Images/betterCraftScrollingBackground.png" Stretch="Fill" Margin="870,0,-870,0"/>-->
-            
+
             <!-- Title -->
             <Image x:Name="titleImage" Margin="95,15,94,0" VerticalAlignment="Top" Source="Images/betterCraftTitle.png"/>
 
@@ -98,7 +115,6 @@
             </Grid.Background>
 
             <!-- Buttons Viewer -->
-            
             <Grid x:Name="cheatGrid" Margin="50,25,50,75">
                 <Grid.Background>
                     <ImageBrush ImageSource="Images/betterCraftDirtBackground.png"/>
