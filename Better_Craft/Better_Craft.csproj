@@ -14,6 +14,7 @@
     <WarningLevel>4</WarningLevel>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -37,6 +38,26 @@
   <PropertyGroup>
     <ApplicationIcon>Images\TNT.ico</ApplicationIcon>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -54,8 +75,8 @@
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
-    <Reference Include="WpfAnimatedGif, Version=1.4.18.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\WpfAnimatedGif.1.4.18\lib\net\WpfAnimatedGif.dll</HintPath>
+    <Reference Include="WpfAnimatedGif, Version=2.0.0.0, Culture=neutral, PublicKeyToken=9e7cd3b544a090dc, processorArchitecture=MSIL">
+      <HintPath>..\packages\WpfAnimatedGif.2.0.2\lib\net40\WpfAnimatedGif.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -63,16 +84,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="PS3Lib\ArrayBuilder.cs" />
-    <Compile Include="PS3Lib\CCAPI.cs" />
-    <Compile Include="PS3Lib\EndianType.cs" />
-    <Compile Include="PS3Lib\Extension.cs" />
-    <Compile Include="PS3Lib\Lang.cs" />
-    <Compile Include="PS3Lib\NET\PS3TMAPI.cs" />
-    <Compile Include="PS3Lib\PS3API.cs" />
-    <Compile Include="PS3Lib\RPC.cs" />
-    <Compile Include="PS3Lib\SelectAPI.cs" />
-    <Compile Include="PS3Lib\TMAPI.cs" />
+    <Compile Include="Additional Classes\ScrollWrapPanel.cs" />
+    <Compile Include="Minecraft Cheats\MinecraftCheats.cs" />
+    <Compile Include="Minecraft Cheats\PS3Lib\api\CCAPI.cs" />
+    <Compile Include="Minecraft Cheats\PS3Lib\api\PS3API.cs" />
+    <Compile Include="Minecraft Cheats\PS3Lib\api\TMAPI.cs" />
+    <Compile Include="Minecraft Cheats\PS3Lib\api\TMAPI_NET.cs" />
+    <Compile Include="Minecraft Cheats\PS3Lib\extra\ArrayBuilder.cs" />
+    <Compile Include="Minecraft Cheats\PS3Lib\extra\Extensions.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -133,6 +152,12 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\TNT.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\betterCraftStoneBrickBackground.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\betterCraftScrollingBackground.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

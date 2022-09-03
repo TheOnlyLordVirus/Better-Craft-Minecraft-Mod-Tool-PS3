@@ -7,9 +7,14 @@ namespace Better_Craft
     using System.Windows;
     using System.Windows.Media.Imaging;
     using System.Media;
-    using System.IO;
+    using System.Threading.Tasks;
+    using System.Windows.Media;
+    using System.Windows.Controls;
     using PS3Lib;
-    using System.Linq;
+    using Minecraft_Cheats;
+    using System.Windows.Input;
+    using System.Reflection;
+    using System.Globalization;
 
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -19,98 +24,19 @@ namespace Better_Craft
         #region variables
 
         /// <summary>
-        /// The main PS3 API Object.
-        /// </summary>
-        private PS3API mainPS3 = new PS3API();
-
-        /// <summary>
         /// Our current API.
         /// </summary>
         private SelectAPI currentAPI = SelectAPI.ControlConsole;
 
         /// <summary>
-        /// Are we connected?
-        /// </summary>
-        private bool isConnected = false;
-
-        /// <summary>
         /// The sound that plays when you click a button.
         /// </summary>
-        private SoundPlayer clickSound;
-
-        #region Offsets
+        private SoundPlayer clickSound = new SoundPlayer(Properties.Resources.minecraftClick);
 
         /// <summary>
-        /// Creative mode invetory and instant mine.
+        /// Is the connect and attach grid open?
         /// </summary>
-        private static uint creativeModeGUI = 0x002F0350;
-
-        /// <summary>
-        /// Ininite blocks.
-        /// </summary>
-        private static uint infCraft = 0x0010673C;
-
-        /// <summary>
-        /// Health Regen Speed.
-        /// </summary>
-        private static uint godMode1 = 0x003A3F48;
-
-        /// <summary>
-        /// Extended Health.
-        /// </summary>
-        private static uint godMode2 = 0x004B2028;
-
-        /// <summary>
-        /// Fast mine.
-        /// </summary>
-        private static uint fastBreak = 0x00BBBD54;
-
-        /// <summary>
-        /// Instant mine.
-        /// </summary>
-        private static uint instantBreak = 0x00AED8B0;
-
-        /// <summary>
-        /// Movement speed.
-        /// </summary>
-        private static uint moveSpeed = 0x003AA9A0;
-
-        /// <summary>
-        /// Multi-Jump.
-        /// </summary>
-        private static uint multiJumpMod = 0x00227910;
-
-        /// <summary>
-        /// No fall damage.
-        /// </summary>
-        private static uint noFallDmg = 0x0039DC98;
-
-        /// <summary>
-        /// Infinte Breath underwater.
-        /// </summary>
-        private static uint infBreath = 0x0039DCF0;
-
-        /// <summary>
-        /// The current in game time.
-        /// </summary>
-        private static uint timeOfDay = 0x001DA1D8;
-
-        /// <summary>
-        /// FOV.
-        /// </summary>
-        private static uint FOV = 0x00C6FF88;
-
-        /// <summary>
-        /// Knock Back.
-        /// </summary>
-        //private static uint knockBack = 0x003A4020;
-
-        /// <summary>
-        /// Cave rendering.
-        /// </summary>
-        //private static uint groundHack = 0x00A9B768;
-
-        #endregion
+        private bool connectAndAttachOpen = true;
 
         #endregion
 
@@ -120,9 +46,43 @@ namespace Better_Craft
         public MainWindow()
         {
             InitializeComponent();
-            Stream clickSoundStream = Properties.Resources.minecraftClick;
-            clickSound = new SoundPlayer(clickSoundStream);
-            mainPS3.ChangeAPI(currentAPI);
+            LoadCheats();
+            Task.Run(() => loopBackground());
+        }
+
+        /// <summary>
+        /// Loops the main image background.
+        /// </summary>
+        private Task loopBackground()
+        {
+
+            while(connectAndAttachOpen)
+            {
+
+            }
+
+            return Task.CompletedTask;
+        }
+
+        /// <summary>
+        /// Move window.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Window_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.ChangedButton == MouseButton.Left)
+                this.DragMove();
+        }
+
+        /// <summary>
+        /// Close the tool
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void CloseButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
         }
 
         #region Connect and Attach Grid
@@ -135,42 +95,7 @@ namespace Better_Craft
         private void ConnectAndAttachButton_Click(object sender, RoutedEventArgs e)
         {
             clickSound.Play();
-
-            if(mainPS3.ConnectTarget())
-            {
-                if(mainPS3.AttachProcess())
-                {
-                    isConnected = true;
-                }
-
-                // Failed to attach.
-                else
-                {
-                    if (currentAPI == SelectAPI.ControlConsole)
-                    {
-                        MessageBox.Show("Connected, but failed to attach with: \"Control Console API\"", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
-                    }
-
-                    else if (currentAPI == SelectAPI.TargetManager)
-                    {
-                        MessageBox.Show("Connected, but failed to attach with: \"Target Manager API\"", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
-                    }
-                }
-            }
-
-            // Failed to connect.
-            else
-            {
-                if(currentAPI == SelectAPI.ControlConsole)
-                {
-                    MessageBox.Show("Failed to connect & attach with: \"Control Console API\"", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
-
-                else if(currentAPI == SelectAPI.TargetManager)
-                {
-                    MessageBox.Show("Failed to connect & attach with: \"Target Manager API\"", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
-            }
+            Minecraft_Cheats.HelperFunctions.Connect(currentAPI);
         }
 
         /// <summary>
@@ -181,16 +106,7 @@ namespace Better_Craft
         private void DisconnectButton_Click(object sender, RoutedEventArgs e)
         {
             clickSound.Play();
-            if (isConnected)
-            {
-                mainPS3.DisconnectTarget();
-                isConnected = false;
-            }
-
-            else
-            {
-                MessageBox.Show("You must first be connected to your PlayStation 3 to disconnect from it.", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
+            Minecraft_Cheats.HelperFunctions.Disconnect();
         }
 
 
@@ -202,14 +118,14 @@ namespace Better_Craft
         private void ModsButton_Click(object sender, RoutedEventArgs e)
         {
             clickSound.Play();
-            if (isConnected)
+            if (Minecraft_Cheats.isConnected)
             {
                 ToggleModsScreen(true);
             }
 
             else
             {
-                MessageBox.Show("You must be connected to your PlayStation 3 before you can modify its memory.", "Notice", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("You must be connected to your PlayStation 3 before you can modify its memory.", "Notice", MessageBoxButton.OK, MessageBoxImage.Information);
             }
         }
 
@@ -229,224 +145,25 @@ namespace Better_Craft
         #region Main Mods Grid
 
         /// <summary>
-        /// Creative mode GUI toggle.
+        /// Filter the mods in the wrap pannel.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void CreativeMode_Click(object sender, RoutedEventArgs e)
+        private void filterTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            clickSound.Play();
-            if (mainPS3.GetBytes(creativeModeGUI, 4).SequenceEqual(new byte[] { 0x38, 0x80, 0x00, 0x00 }))
-            {
-                mainPS3.SetMemory(creativeModeGUI, new byte[] { 0x38, 0x80, 0x00, 0x01 });
-            }
-
-            else
-            {
-                mainPS3.SetMemory(creativeModeGUI, new byte[] { 0x38, 0x80, 0x00, 0x00 });
-            }
+            cheatPanel.Children.Clear();
+            LoadCheats(filterTextBox.Text.Trim());
         }
 
-        /// <summary>
-        /// Infinte Blocks.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void InfBlock_Click(object sender, RoutedEventArgs e)
-        {
-            clickSound.Play();
-            if(mainPS3.GetBytes(infCraft, 4).SequenceEqual(new byte[] { 0x38, 0x80, 0x00, 0x00 }))
-            {
-                mainPS3.SetMemory(infCraft, new byte[] { 0x38, 0x80, 0x00, 0x01 });
-            }
-
-            else
-            {
-                mainPS3.SetMemory(infCraft, new byte[] { 0x38, 0x80, 0x00, 0x00 });
-            }
-        }
-
-        /// <summary>
-        /// God mode.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void GodMode_Click(object sender, RoutedEventArgs e)
-        {
-            clickSound.Play();
-            if(mainPS3.GetBytes(godMode1, 2).SequenceEqual(new byte[] { 0xFC, 0x20 }) && mainPS3.GetBytes(godMode2, 2).SequenceEqual(new byte[] { 0xFC, 0x20 }))
-            {
-                mainPS3.SetMemory(godMode1, new byte[] { 0xFF, 0x20 });
-                mainPS3.SetMemory(godMode2, new byte[] { 0xFF, 0x20 });
-            }
-
-            else
-            {
-                mainPS3.SetMemory(godMode1, new byte[] { 0xFC, 0x20 });
-                mainPS3.SetMemory(godMode2, new byte[] { 0xFC, 0x20 });
-            }
-        }
-
-        /// <summary>
-        /// Instant mine.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void InstantMine_Click(object sender, RoutedEventArgs e)
-        {
-            clickSound.Play();
-            if (mainPS3.GetBytes(fastBreak, 2).SequenceEqual(new byte[] { 0x3F, 0x80 }) && mainPS3.GetBytes(instantBreak, 2).SequenceEqual(new byte[] { 0x3F, 0x80 }))
-            {
-                mainPS3.SetMemory(fastBreak, new byte[] { 0x00, 0x00 });
-                mainPS3.SetMemory(instantBreak, new byte[] { 0x00, 0x00 });
-            }
-
-            else
-            {
-                mainPS3.SetMemory(fastBreak, new byte[] { 0x3F, 0x80 });
-                mainPS3.SetMemory(instantBreak, new byte[] { 0x3F, 0x80 });
-            }
-        }
-
-        /// <summary>
-        /// Movement Speed.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void SpeedMovement_Click(object sender, RoutedEventArgs e)
-        {
-            clickSound.Play();
-            if(mainPS3.GetBytes(moveSpeed, 2).SequenceEqual(new byte[] { 0x3F, 0x68 }))
-            {
-                mainPS3.SetMemory(moveSpeed, new byte[] { 0x3F, 0x30 });
-            }
-
-            else if (mainPS3.GetBytes(moveSpeed, 2).SequenceEqual(new byte[] { 0x3F, 0x30 }))
-            {
-                mainPS3.SetMemory(moveSpeed, new byte[] { 0x3F, 0x00 });
-            }
-
-            else
-            {
-                mainPS3.SetMemory(moveSpeed, new byte[] { 0x3F, 0x68 });
-            }
-        }
-
-        /// <summary>
-        /// Multi-Jump.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void MultiJump_Click(object sender, RoutedEventArgs e)
-        {
-            clickSound.Play();
-            if (mainPS3.GetBytes(multiJumpMod, 4).SequenceEqual(new byte[] { 0x41, 0x82, 0x00, 0x18 }))
-            {
-                mainPS3.SetMemory(multiJumpMod, new byte[] { 0x41, 0x82, 0x00, 0x28 });
-            }
-
-            else
-            {
-                mainPS3.SetMemory(multiJumpMod, new byte[] { 0x41, 0x82, 0x00, 0x18 });
-            }
-        }
-
-        /// <summary>
-        /// No Fall Damage.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void NoFallDamage_Click(object sender, RoutedEventArgs e)
-        {
-            clickSound.Play();
-            if (mainPS3.GetBytes(noFallDmg, 1).SequenceEqual(new byte[] { 0xFC }))
-            {
-                mainPS3.SetMemory(noFallDmg, new byte[] { 0xFF });
-            }
-
-            else
-            {
-                mainPS3.SetMemory(noFallDmg, new byte[] { 0xFC });
-            }
-        }
-
-        /// <summary>
-        /// Infinte breath under water.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void InfinteBreath_Click(object sender, RoutedEventArgs e)
-        {
-            clickSound.Play();
-            if (mainPS3.GetBytes(infBreath, 4).SequenceEqual(new byte[] { 0x38, 0x60, 0x00, 0x00 }))
-            {
-                mainPS3.SetMemory(infBreath, new byte[] { 0x38, 0x60, 0x00, 0x01 });
-            }
-
-            else
-            {
-                mainPS3.SetMemory(infBreath, new byte[] { 0x38, 0x60, 0x00, 0x00 });
-            }
-        }
-
-        /// <summary>
-        /// Progress time.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void MoveTime_Click(object sender, RoutedEventArgs e)
-        {
-            clickSound.Play();
-            if (mainPS3.GetBytes(timeOfDay, 5).SequenceEqual(new byte[] { 0x3F, 0x00, 0x00, 0x00, 0x40 }))
-            {
-                mainPS3.SetMemory(timeOfDay, new byte[] { 0x3F, 0x00, 0x00, 0x00, 0xC4 });
-            }
-
-            else
-            {
-                mainPS3.SetMemory(timeOfDay, new byte[] { 0x3F, 0x00, 0x00, 0x00, 0x40,  });
-            }
-        }
-
-        /// <summary>
-        /// Toggle cave rendering on chunk update.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void CaveXRay_Click(object sender, RoutedEventArgs e)
-        {
-            clickSound.Play();
-        }
-
-        /// <summary>
-        /// Edit FOV.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void FieldOfView_Click(object sender, RoutedEventArgs e)
-        {
-            clickSound.Play();
-            if (mainPS3.GetBytes(FOV, 2).SequenceEqual(new byte[] { 0x3F, 0xC9 }))
-            {
-                mainPS3.SetMemory(FOV, new byte[] { 0x3F, 0xB4 });
-            }
-
-            else
-            {
-                mainPS3.SetMemory(FOV, new byte[] { 0x3F, 0xC9 });
-            }
-        }
-
-        /// <summary>
-        /// Debug...
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void DebugMod_Click(object sender, RoutedEventArgs e)
-        {
-            clickSound.Play();
-            MessageBox.Show("No HaX Here...", "Debug", MessageBoxButton.OK, MessageBoxImage.Error);
-        }
+        ///// <summary>
+        ///// God Mode.
+        ///// </summary>
+        ///// <param name="sender"></param>
+        ///// <param name="e"></param>
+        //private void GodModeMod_Click(object sender, RoutedEventArgs e)
+        //{
+        //    DoMod(sender, Minecraft_Cheats.GOD_MODE);
+        //}
 
         /// <summary>
         /// Return to connect and attach.
@@ -544,21 +261,134 @@ namespace Better_Craft
         /// <param name="myAPI"></param>
         private void ToggleAPI (SelectAPI myAPI)
         {
-            if(myAPI == SelectAPI.ControlConsole)
+            currentAPI = myAPI;
+            
+            if (myAPI.Equals(SelectAPI.ControlConsole))
             {
-                currentAPI = SelectAPI.ControlConsole;
-                mainPS3.ChangeAPI(currentAPI);
                 WpfAnimatedGif.ImageBehavior.SetAnimatedSource(ccapiTorch, new BitmapImage(new Uri(@"pack://application:,,,/Better_Craft;component/Images/redstoneTorchOn.gif")));
                 WpfAnimatedGif.ImageBehavior.SetAnimatedSource(tmapiTorch, new BitmapImage(new Uri(@"pack://application:,,,/Better_Craft;component/Images/redStoneTorchOff.png")));
             }
 
             else
             {
-                currentAPI = SelectAPI.TargetManager;
-                mainPS3.ChangeAPI(currentAPI);
                 WpfAnimatedGif.ImageBehavior.SetAnimatedSource(ccapiTorch, new BitmapImage(new Uri(@"pack://application:,,,/Better_Craft;component/Images/redStoneTorchOff.png")));
                 WpfAnimatedGif.ImageBehavior.SetAnimatedSource(tmapiTorch, new BitmapImage(new Uri(@"pack://application:,,,/Better_Craft;component/Images/redstoneTorchOn.gif")));
             }
+        }
+
+        /// <summary>
+        /// Loads the cheats to the tile controll
+        /// </summary>
+        private void LoadCheats(string filter = "")
+        {
+            string[] badFuncNames = { "tostring", "gettype", "gethashcode", "equals" };
+            MethodInfo[] cheats = (typeof(Minecraft_Cheats)).GetMethods();
+
+            foreach (MethodInfo cheat in cheats)
+            {
+                bool flag = true;
+                foreach (string badFuncName in badFuncNames)
+                {
+                    if (cheat.Name.ToLower().Equals(badFuncName))
+                        flag = false;
+                }
+
+                string cheatName = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(CultureInfo.CurrentCulture.TextInfo.ToLower(cheat.Name.Replace("_", " ")));
+
+                if (flag)
+                {
+                    if (filter.Equals(string.Empty) || cheatName.ToLower().Contains(filter.ToLower()))
+                    {
+                        SolidColorBrush toggleStateColor = new SolidColorBrush(Colors.LightCoral);
+
+                        if (Minecraft_Cheats.ToggleStates.ContainsKey(cheat.Name))
+                        {
+                            if(Minecraft_Cheats.ToggleStates[cheat.Name] is bool && Minecraft_Cheats.ToggleStates[cheat.Name])
+                            {
+                                toggleStateColor = new SolidColorBrush(Colors.LightGreen);
+                            }
+
+                            else if (Minecraft_Cheats.ToggleStates[cheat.Name] is int && !Minecraft_Cheats.ToggleStates[cheat.Name].Equals(0))
+                            {
+                                toggleStateColor = new SolidColorBrush(Colors.Cyan);
+                            }
+                        }
+
+                        Button button = new Button()
+                        {
+                            Content = cheatName,
+                            Width = 180,
+                            Height = 40,
+                            FontSize = 9,
+                            Margin = new Thickness(10),
+                            Padding = new Thickness(300),
+                            Foreground = toggleStateColor
+                        };
+
+                        // Check toggle type for delgate cast.
+                        if (cheat.GetParameters().Length.Equals(1))
+                        {
+                            Type ParameterType = cheat.GetParameters()[0].ParameterType;
+
+                            if (ParameterType.ToString().Equals("System.Boolean"))
+                            {
+                                button.Click += (sender, e) =>
+                                {
+                                    DoMod(button, (Action<bool>)Delegate.CreateDelegate(typeof(Action<bool>), cheat));
+                                };
+
+                                cheatPanel.Children.Add(button);
+                            }
+
+                            else if (ParameterType.ToString().Equals("System.Int32"))
+                            {
+                                button.Click += (sender, e) =>
+                                {
+                                    DoMod(button, (Action<int>)Delegate.CreateDelegate(typeof(Action<int>), cheat));
+                                };
+
+                                cheatPanel.Children.Add(button);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Toggle Logic for mods with boolean values.
+        /// </summary>
+        /// <param name="button"></param>
+        /// <param name="FunctionToggle"></param>
+        private void DoMod(object button, Action<bool> FunctionToggle)
+        {
+            clickSound.Play();
+
+            bool flag = Minecraft_Cheats.HelperFunctions.ToggleOption(FunctionToggle);
+            SolidColorBrush brush = flag ? new SolidColorBrush(Colors.LightGreen) : new SolidColorBrush(Colors.LightCoral);
+            toggleState.Content = flag ? "On" : "Off";
+            toggleState.Foreground = brush;
+            ((Button)button).Foreground = brush;
+
+            Task.Delay(1300).GetAwaiter().OnCompleted(() => { toggleState.Content = ""; });
+        }
+
+        /// <summary>
+        /// Toggle Logic for mods with multible toggle states.
+        /// </summary>
+        /// <param name="button"></param>
+        /// <param name="FunctionToggle"></param>
+        private void DoMod(object button, Action<int> FunctionToggle)
+        {
+            clickSound.Play();
+
+            int currentToggleState = Minecraft_Cheats.HelperFunctions.ToggleOption(FunctionToggle);
+            SolidColorBrush brush = !currentToggleState.Equals(0) ? new SolidColorBrush(Colors.Cyan) : new SolidColorBrush(Colors.LightCoral);
+            toggleState.Content = currentToggleState;
+            toggleState.Foreground = brush;
+            ((Button)button).Foreground = brush;
+
+            Task.Delay(1300).GetAwaiter().OnCompleted(() => { toggleState.Content = ""; });
         }
 
         #endregion
