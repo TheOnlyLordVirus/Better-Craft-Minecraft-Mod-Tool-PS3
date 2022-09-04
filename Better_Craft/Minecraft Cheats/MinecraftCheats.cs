@@ -8,6 +8,7 @@
 namespace Minecraft_Cheats
 {
     using PS3Lib;
+    using PS3ManagerAPI;
     using System;
     using System.Collections.Generic;
     using System.Reflection;
@@ -59,6 +60,12 @@ namespace Minecraft_Cheats
         /// </summary>
         private static Dictionary<string, dynamic> CheatKeyValuePairs = new Dictionary<string, dynamic>();
 
+        /// <summary>
+        /// The time needed to wait between async looping opperations.
+        /// This really is used to lighten the load on PS3MAPI becuase it is painfully slow.
+        /// </summary>
+        private static int WaitTime = 300;
+
 
         /// <summary>
         /// Helper class file.
@@ -85,7 +92,20 @@ namespace Minecraft_Cheats
                                 Minecraft_Cheats.CurrentPS3Api.CCAPI.RingBuzzer(CCAPI.BuzzerMode.Double);
                             }
 
-                            Task.Run(() => { Minecraft_Cheats.HelperFunctions.Reset_All_Mods(); }); 
+                            else if(Api.Equals(SelectAPI.PS3Manager))
+                            {
+                                Minecraft_Cheats.CurrentPS3Api.PS3MAPI.Notify("Successfully connected and attached cheat tool to Minecraft!");
+                                Minecraft_Cheats.CurrentPS3Api.PS3MAPI.RingBuzzer(PS3MAPI.PS3_CMD.BuzzerMode.Double);
+                                WaitTime = 1500;
+                            }
+
+                            // PS3MAPI just writes to memory way too slowly to reset the memory durring connect.
+                            if(!Api.Equals(SelectAPI.PS3Manager))
+                            {
+                                Task.Run(() => { Minecraft_Cheats.HelperFunctions.Reset_All_Mods(); });
+                                WaitTime = 300;
+                            }
+
                             MessageBox.Show($"Connected and Attached with \"{Api} API\"", "Status", MessageBoxButton.OK, MessageBoxImage.Information);
                             Connected = true;
                         }
@@ -97,6 +117,13 @@ namespace Minecraft_Cheats
                             {
                                 Minecraft_Cheats.CurrentPS3Api.CCAPI.Notify(CCAPI.NotifyIcon.WRONGWAY, "Failed to attach to Minecraft...");
                                 Minecraft_Cheats.CurrentPS3Api.CCAPI.RingBuzzer(CCAPI.BuzzerMode.Single);
+                                MessageBox.Show($"Connected, but failed to attach with: \"{Api} API\"", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
+                            }
+
+                            else if (Api.Equals(SelectAPI.PS3Manager))
+                            {
+                                Minecraft_Cheats.CurrentPS3Api.PS3MAPI.Notify("Failed to attach to Minecraft...");
+                                Minecraft_Cheats.CurrentPS3Api.PS3MAPI.RingBuzzer(PS3MAPI.PS3_CMD.BuzzerMode.Single);
                                 MessageBox.Show($"Connected, but failed to attach with: \"{Api} API\"", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
                             }
 
@@ -158,7 +185,7 @@ namespace Minecraft_Cheats
             /// <summary>
             /// Toggles an option with a boolean state.
             /// </summary>
-            /// <param name="ModOption"></param>
+            /// <param name="ModOption">The static function for a Minecraft_Cheats mod.</param>
             public static bool ToggleOption(Action<bool> ModOption)
             {
                 string ModFunctionName = ModOption.GetMethodInfo().Name;
@@ -190,7 +217,7 @@ namespace Minecraft_Cheats
             /// <summary>
             /// Toggles an option with multible toggle states.
             /// </summary>
-            /// <param name="ModOption"></param>
+            /// <param name="ModOption">The static function for a Minecraft_Cheats mod.</param>
             public static int ToggleOption(Action<int> ModOption)
             {
                 int toggleSize = (int)ModOption.GetMethodInfo().GetParameters()[0].DefaultValue;
@@ -568,54 +595,52 @@ namespace Minecraft_Cheats
             uint offset = 0x001DA1D4;
             if (toggle.Equals(0))
             {
-                byte[] buffer = new byte[] { 0x40 }; //SET TO DEFAULT
-                PS3.SetMemory(offset, buffer);
+                //SET TO DEFAULT
+                PS3.SetMemory(offset, new byte[] { 0x40 });
             }
             else if (toggle.Equals(1))
             {
-                byte[] buffer = new byte[] { 0x43 };
-                PS3.SetMemory(offset, buffer);
+                PS3.SetMemory(offset, new byte[] { 0x43 });
             }
             else if (toggle.Equals(2))
             {
-                byte[] buffer = new byte[] { 0x44 };
-                PS3.SetMemory(offset, buffer);
+                PS3.SetMemory(offset, new byte[] { 0x44 });
             }
         }
 
         public static void SLOW_TIME_SCALE(int toggle = 5)
         {
-            uint offset = 0x00C202C8;
+            uint offset = 0x00C202C9;
             if (toggle.Equals(0))
             {
-                byte[] buffer = new byte[] { 0x3F, 0x50 }; //SET TO DEFAULT
-                PS3.SetMemory(offset, buffer);
+                //SET TO DEFAULT
+                PS3.SetMemory(offset, new byte[] { 0x50 });
             }
 
             else if (toggle.Equals(1))
             {
-                byte[] buffer = new byte[] { 0x3F, 0x40 }; //Speed Time -1
-                PS3.SetMemory(offset, buffer);
+                //Speed Time -1
+                PS3.SetMemory(offset, new byte[] { 0x40 });
             }
             else if (toggle.Equals(2))
             {
-                byte[] buffer = new byte[] { 0x3F, 0x30 }; //Speed Time -2
-                PS3.SetMemory(offset, buffer);
+                //Speed Time -2
+                PS3.SetMemory(offset, new byte[] { 0x30 });
             }
             else if (toggle.Equals(3))
             {
-                byte[] buffer = new byte[] { 0x3F, 0x20 }; //Speed Time -3
-                PS3.SetMemory(offset, buffer);
+                //Speed Time -3
+                PS3.SetMemory(offset, new byte[] { 0x20 });
             }
             else if (toggle.Equals(4))
             {
-                byte[] buffer = new byte[] { 0x3F, 0x10 }; //Speed Time -4
-                PS3.SetMemory(offset, buffer);
+                //Speed Time -4
+                PS3.SetMemory(offset, new byte[] { 0x10 });
             }
             else if (toggle.Equals(5))
             {
-                byte[] buffer = new byte[] { 0x3F, 0x00 }; //Speed Time -5
-                PS3.SetMemory(offset, buffer);
+                //Speed Time -5
+                PS3.SetMemory(offset, new byte[] { 0x00 });
             }
         }
 
@@ -1208,11 +1233,11 @@ namespace Minecraft_Cheats
         {
             if (toggle)  //////Instant Kill
             {
-                PS3.SetMemory(0x001AC411, new byte[] { 0xE0, 0x28, 0x90 }); ////MODIFED VALUE
+                PS3.SetMemory(0x001AC412, new byte[] { 0x28, 0x90 }); ////MODIFED VALUE
             }
             else
             {
-                PS3.SetMemory(0x001AC411, new byte[] { 0xE0, 0x08, 0x90 }); ////SET to default
+                PS3.SetMemory(0x001AC412, new byte[] { 0x08, 0x90 }); ////SET to default
             }
         }
 
@@ -1220,11 +1245,11 @@ namespace Minecraft_Cheats
         {
             if (toggle)  //////Bow Fast
             {
-                PS3.SetMemory(0x000FB4C5, new byte[] { 0xE0, 0x18, 0x18 }); ////MODIFED VALUE
+                PS3.SetMemory(0x000FB4C6, new byte[] { 0x18, 0x18 }); ////MODIFED VALUE
             }
             else
             {
-                PS3.SetMemory(0x000FB4C5, new byte[] { 0xE0, 0x08, 0x18 }); ////SET to default
+                PS3.SetMemory(0x000FB4C6, new byte[] { 0x08, 0x18 }); ////SET to default
             }
         }
 
@@ -1268,11 +1293,11 @@ namespace Minecraft_Cheats
         {
             if (toggle)  //////XRay
             {
-                PS3.SetMemory(0x00A99154, new byte[] { 0xFC, 0x80, 0x30, 0x90 }); ////MODIFED VALUE
+                PS3.SetMemory(0x00A99155, new byte[] { 0x80 }); ////MODIFED VALUE
             }
             else
             {
-                PS3.SetMemory(0x00A99154, new byte[] { 0xFC, 0x60, 0x30, 0x90 }); ////SET to default
+                PS3.SetMemory(0x00A99155, new byte[] { 0x60 }); ////SET to default
             }
         }
 
@@ -1356,25 +1381,25 @@ namespace Minecraft_Cheats
                 while (bRAINBOW_SKY)
                 {
                     PS3.SetMemory(offset, new byte[] { 0x40, 0x50, 0x00, 0x00, 0x3F, 0x80 }); // Green
-                    await Task.Delay(300);
+                    await Task.Delay(WaitTime);
 
                     PS3.SetMemory(offset, new byte[] { 0x40, 0x50, 0x00, 0x00, 0xBF, 0x80 }); // Blue
-                    await Task.Delay(300);
+                    await Task.Delay(WaitTime);
 
                     PS3.SetMemory(offset, new byte[] { 0x49, 0xC0, 0x00, 0x00, 0xBF, 0x80 }); // Purple
-                    await Task.Delay(300);
+                    await Task.Delay(WaitTime);
 
                     PS3.SetMemory(offset, new byte[] { 0x42, 0xC0, 0x00, 0x00, 0xBF, 0x80 }); // Pink
-                    await Task.Delay(300);
+                    await Task.Delay(WaitTime);
 
                     PS3.SetMemory(offset, new byte[] { 0x43, 0xC0, 0x00, 0x00, 0xBF, 0x80 }); // Orange
-                    await Task.Delay(300);
+                    await Task.Delay(WaitTime);
 
                     //PS3.SetMemory(offset, new byte[] { 0xF0, 0xC0, 0x00, 0x00, 0xBF, 0x80 }); // Black
-                    //await Task.Delay(300);
+                    //await Task.Delay(WaitTime);
 
                     //PS3.SetMemory(offset, new byte[] { 0x40, 0xC0, 0x00, 0x00, 0x3F, 0xF0 }); // White
-                    //await Task.Delay(300);
+                    //await Task.Delay(WaitTime);
                 }
             }
             else
@@ -1405,40 +1430,40 @@ namespace Minecraft_Cheats
                 while (bRAINBOW_VISION)
                 {
                     PS3.SetMemory(offset, new byte[] { 0x3F, 0xFF, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00, 0x3F, 0x80 });
-                    await Task.Delay(300);
+                    await Task.Delay(WaitTime);
 
                     PS3.SetMemory(offset, new byte[] { 0x3F, 0x00, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00, 0x3F, 0x80 });
-                    await Task.Delay(300);
+                    await Task.Delay(WaitTime);
 
                     //PS3.SetMemory(offset, new byte[] { 0x4F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00, 0x3F, 0x80 });
-                    //await Task.Delay(300);
+                    //await Task.Delay(WaitTime);
 
                     PS3.SetMemory(offset, new byte[] { 0x3F, 0x80, 0x00, 0x00, 0x3F, 0x00, 0x00, 0x00, 0x3F, 0x80 });
-                    await Task.Delay(300);
+                    await Task.Delay(WaitTime);
 
                     PS3.SetMemory(offset, new byte[] { 0x3F, 0x80, 0x00, 0x00, 0x3F, 0xFF, 0x00, 0x00, 0x3F, 0x80 });
-                    await Task.Delay(300);
+                    await Task.Delay(WaitTime);
 
                     //PS3.SetMemory(offset, new byte[] { 0x3F, 0x80, 0x00, 0x00, 0x4F, 0x80, 0x00, 0x00, 0x3F, 0x80 });
-                    //await Task.Delay(300);
+                    //await Task.Delay(WaitTime);
 
                     PS3.SetMemory(offset, new byte[] { 0x3F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00, 0x3F, 0x00 });
-                    await Task.Delay(300);
+                    await Task.Delay(WaitTime);
 
                     PS3.SetMemory(offset, new byte[] { 0x3F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00, 0x3F, 0xFF });
-                    await Task.Delay(300);
+                    await Task.Delay(WaitTime);
 
                     //PS3.SetMemory(offset, new byte[] { 0x3F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00, 0x4F, 0x80 });
-                    //await Task.Delay(300);
+                    //await Task.Delay(WaitTime);
 
                     //PS3.SetMemory(offset, new byte[] { 0x3F, 0x80, 0x00, 0x00, 0x4F, 0x80, 0x00, 0x00, 0x4F, 0x80 });
-                    //await Task.Delay(300);
+                    //await Task.Delay(WaitTime);
 
                     //PS3.SetMemory(offset, new byte[] { 0x4F, 0x80, 0x00, 0x00, 0x4F, 0x80, 0x00, 0x00, 0x4F, 0x80 });
-                    //await Task.Delay(300);
+                    //await Task.Delay(WaitTime);
 
                     //PS3.SetMemory(offset, new byte[] { 0x4F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00, 0x4F, 0x80 });
-                    //await Task.Delay(300);
+                    //await Task.Delay(WaitTime);
                 }
             }
 
@@ -1470,19 +1495,19 @@ namespace Minecraft_Cheats
                 while (bRAINBOW_HUD)
                 {
                     PS3.SetMemory(offset, new byte[] { 0x3F, 0x80, 0x00, 0x00, 0x4F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00 });
-                    await Task.Delay(300);
+                    await Task.Delay(WaitTime);
 
                     PS3.SetMemory(offset, new byte[] { 0x3F, 0x80, 0x00, 0x00, 0x1F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00 });
-                    await Task.Delay(300);
+                    await Task.Delay(WaitTime);
 
                     PS3.SetMemory(offset, new byte[] { 0x3F, 0xFF, 0x00, 0x00, 0x1F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00 });
-                    await Task.Delay(300);
+                    await Task.Delay(WaitTime);
 
                     PS3.SetMemory(offset, new byte[] { 0X5F, 0x80, 0x00, 0x00, 0x5F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00 });
-                    await Task.Delay(300);
+                    await Task.Delay(WaitTime);
 
                     PS3.SetMemory(offset, new byte[] { 0X8F, 0x80, 0x00, 0x00, 0x8F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00 });
-                    await Task.Delay(300);
+                    await Task.Delay(WaitTime);
                 }
             }
 
@@ -1563,16 +1588,16 @@ namespace Minecraft_Cheats
 
         public static void SPEED_CLOUDS(bool toggle)
         {
-            uint offset = 0x00B230AC;
+            uint offset = 0x00B230AD;
 
             if (toggle)
             {
-                PS3.SetMemory(offset, new byte[] { 0xBF, 0x70 });
+                PS3.SetMemory(offset, new byte[] { 0x70 });
             }
 
             else
             {
-                PS3.SetMemory(offset, new byte[] { 0xBF, 0x80 });
+                PS3.SetMemory(offset, new byte[] { 0x80 });
             }
         }
 
@@ -1918,11 +1943,11 @@ namespace Minecraft_Cheats
         {
             if (toggle)  /////Demi God
             {
-                PS3.SetMemory(0x003A4064, new byte[] { 0xFF, 0x40, 0x88, 0x90 }); ////MODIFED VALUE
+                PS3.SetMemory(0x003A4066, new byte[] { 0x88 }); ////MODIFED VALUE
             }
             else
             {
-                PS3.SetMemory(0x003A4064, new byte[] { 0xFF, 0x40, 0x08, 0x90 }); ////SET to default
+                PS3.SetMemory(0x003A4066, new byte[] { 0x08 }); ////SET to default
             }
         }
 
@@ -2159,11 +2184,11 @@ namespace Minecraft_Cheats
         {
             if (toggle)  /////Max Gamma
             {
-                PS3.SetMemory(0x00A9C2B4, new byte[] { 0x3F, 0xFF }); ////MODIFED VALUE
+                PS3.SetMemory(0x00A9C2B5, new byte[] { 0xFF }); ////MODIFED VALUE
             }
             else
             {
-                PS3.SetMemory(0x00A9C2B4, new byte[] { 0x3F, 0x80 }); ////SET to default
+                PS3.SetMemory(0x00A9C2B5, new byte[] { 0x80 }); ////SET to default
             }
         }
 
@@ -2203,8 +2228,9 @@ namespace Minecraft_Cheats
             }
         }
 
-        public static void FROST_WALKER_WITH_DIAMOND_ORE(bool toggle) // 32 19 F1 E0
+        public static void FROST_WALKER_WITH_DIAMOND_ORE(bool toggle)
         {
+            // 32 19 F1 E0 change these 4 bytes for different block values.
             if (toggle)  // Pimp walker
             {
                 PS3.SetMemory(0x014C8C84, new byte[] { 0x32, 0x18, 0xB4, 0x60 }); ////Diamond ore
@@ -2307,11 +2333,11 @@ namespace Minecraft_Cheats
         {
             if (toggle)  /////All Players Hand To Left
             {
-                PS3.SetMemory(0x0151F2F0, new byte[] { 0x30, 0x01, 0x87, 0xF0 }); ////MODIFED VALUE
+                PS3.SetMemory(0x0151F2F3, new byte[] { 0xF0 }); ////MODIFED VALUE
             }
             else
             {
-                PS3.SetMemory(0x0151F2F0, new byte[] { 0x30, 0x01, 0x87, 0xF8 }); ////SET to default
+                PS3.SetMemory(0x0151F2F3, new byte[] { 0xF8 }); ////SET to default
             }
         }
 
@@ -2391,11 +2417,11 @@ namespace Minecraft_Cheats
         {
             if (toggle)  ////Disable Portal
             {
-                PS3.SetMemory(0x002379E4, new byte[] { 0x38, 0x60, 0x00, 0x00 }); ////MODIFED VALUE
+                PS3.SetMemory(0x002379E7, new byte[] { 0x00 }); ////MODIFED VALUE
             }
             else
             {
-                PS3.SetMemory(0x002379E4, new byte[] { 0x38, 0x60, 0x00, 0x01 }); ////SET to default
+                PS3.SetMemory(0x002379E7, new byte[] { 0x01 }); ////SET to default
             }
         }
 
@@ -2415,11 +2441,11 @@ namespace Minecraft_Cheats
         {
             if (toggle)  ///////Elytra on all players
             {
-                PS3.SetMemory(0x014C93D8, new byte[] { 0x32, 0x1C, 0x0A, 0x60 }); ////MODIFED VALUE
+                PS3.SetMemory(0x014C93D9, new byte[] { 0x1C, 0x0A, 0x60 }); ////MODIFED VALUE
             }
             else
             {
-                PS3.SetMemory(0x014C93D8, new byte[] { 0x32, 0x20, 0x94, 0x50 }); ////MODIFED VALUE
+                PS3.SetMemory(0x014C93D9, new byte[] { 0x20, 0x94, 0x50 }); ////MODIFED VALUE
             }
         }
 
@@ -2451,11 +2477,11 @@ namespace Minecraft_Cheats
         {
             if (toggle)  ////Nether Portal With Dirt
             {
-                PS3.SetMemory(0x014C89FC, new byte[] { 0x32, 0x18, 0x14, 0x70 }); ////MODIFED VALUE
+                PS3.SetMemory(0x014C89FE, new byte[] { 0x14, 0x70 }); ////MODIFED VALUE
             }
             else
             {
-                PS3.SetMemory(0x014C89FC, new byte[] { 0x32, 0x18, 0x5E, 0x70 }); ////SET to default
+                PS3.SetMemory(0x014C89FE, new byte[] { 0x5E, 0x70 }); ////SET to default
             }
         }
 
@@ -2463,11 +2489,11 @@ namespace Minecraft_Cheats
         {
             if (toggle)  ////Nether Portal With Stone
             {
-                PS3.SetMemory(0x014C89FC, new byte[] { 0x32, 0x18, 0x11, 0xC0 }); ////MODIFED VALUE
+                PS3.SetMemory(0x014C89FE, new byte[] { 0x11, 0xC0 }); ////MODIFED VALUE
             }
             else
             {
-                PS3.SetMemory(0x014C89FC, new byte[] { 0x32, 0x18, 0x5E, 0x70 }); ////SET to default
+                PS3.SetMemory(0x014C89FE, new byte[] { 0x5E, 0x70 }); ////SET to default
             }
         }
 

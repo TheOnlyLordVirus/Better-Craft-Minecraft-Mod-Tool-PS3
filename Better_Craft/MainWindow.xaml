@@ -126,7 +126,7 @@
                     </ScrollViewer>
                 </Border>
             </Grid>
-            
+
 
             <Label x:Name="toggleState" HorizontalContentAlignment="Center" Margin="522,366,50,0" VerticalAlignment="Top" FontSize="48" Height="53"/>
             <Label Content="Filter Mods" HorizontalContentAlignment="Center" Margin="82,364,562,42"/>
@@ -142,13 +142,18 @@
 
             <Image x:Name="ccapiTorch" Height="100" Margin="475,59,148,0" VerticalAlignment="Top" gif:ImageBehavior.AnimatedSource="Images/redstoneTorchOn.gif"/>
             <Image x:Name="tmapiTorch" HorizontalAlignment="Left" Height="100" Margin="153,59,0,0" VerticalAlignment="Top" Width="100" gif:ImageBehavior.AnimatedSource="Images/redStoneTorchOff.png"/>
+            <Image x:Name="ps3mapiTorch" HorizontalAlignment="Center" Height="100" Margin="0,59,0,0" VerticalAlignment="Top" Width="100" gif:ImageBehavior.AnimatedSource="Images/redStoneTorchOff.png"/>
             <Label HorizontalAlignment="Left" Margin="139,127,0,0" Content="Target Manager API"  Foreground="White" VerticalAlignment="Top"/>
             <Label HorizontalAlignment="Left" Margin="467,127,0,0" Content="Control Console API"  Foreground="White" VerticalAlignment="Top"/>
+            <Label HorizontalAlignment="Center" Margin="0,127,0,0" Content="PS3 Manager API"  Foreground="White" VerticalAlignment="Top"/>
 
             <!-- Buttons -->
-            <Button x:Name="selectCCAPIButton" Margin="0,263,130,0" Content="CCAPI" Foreground="White" Click="SelectCCAPIButton_Click" HorizontalAlignment="Right" Width="146" Height="36" VerticalAlignment="Top"/>
-            <Button x:Name="selectTMAPIButton" Margin="130,263,0,0" Content="TMAPI" Foreground="White" Click="SelectTMAPIButton_Click" HorizontalAlignment="Left" Width="146" Height="36" VerticalAlignment="Top"/>
+            <Button x:Name="selectCCAPIButton" Margin="0,178,129,0" Content="CCAPI" Foreground="White" Click="SelectCCAPIButton_Click" HorizontalAlignment="Right" Width="146" Height="36" VerticalAlignment="Top"/>
+            <Button x:Name="selectTMAPIButton" Margin="130,178,0,0" Content="TMAPI" Foreground="White" Click="SelectTMAPIButton_Click" HorizontalAlignment="Left" Width="146" Height="36" VerticalAlignment="Top"/>
+            <Button x:Name="selectPS3MAPIButton" Margin="0,178,0,0" Content="PS3API" Foreground="White" Click="selectPS3MAPIButton_Click" HorizontalAlignment="Center" Width="146" Height="36" VerticalAlignment="Top"/>
+
             <Button x:Name="optionsReturnToConnectButton" Margin="215,375,216,18" Content="Return" Foreground="White" Click="OptionsReturnToConnectButton_Click"/>
+
         </Grid>
     </Grid>
 </Window>

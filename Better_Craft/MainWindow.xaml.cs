@@ -15,9 +15,6 @@ namespace Better_Craft
     using System.Windows.Input;
     using System.Reflection;
     using System.Globalization;
-    using System.Threading;
-    using System.Windows.Threading;
-    using System.Windows.Media.Animation;
 
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -37,9 +34,9 @@ namespace Better_Craft
         private SoundPlayer clickSound = new SoundPlayer(Properties.Resources.minecraftClick);
 
         /// <summary>
-        /// Is the connect and attach grid open?
+        /// Should we show the user a warning about not using CCAPI?
         /// </summary>
-        private bool connectAndAttachOpen = true;
+        private bool apiMessage = true;
 
         #endregion
 
@@ -54,8 +51,6 @@ namespace Better_Craft
         /// <summary>
         /// Move window.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void Window_MouseDown(object sender, MouseButtonEventArgs e)
         {
             if (e.ChangedButton == MouseButton.Left)
@@ -65,8 +60,6 @@ namespace Better_Craft
         /// <summary>
         /// Close the tool
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void CloseButton_Click(object sender, RoutedEventArgs e)
         {
             this.Close();
@@ -77,8 +70,6 @@ namespace Better_Craft
         /// <summary>
         /// Connect and attach to your PlayStation 3.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void ConnectAndAttachButton_Click(object sender, RoutedEventArgs e)
         {
             clickSound.Play();
@@ -88,8 +79,6 @@ namespace Better_Craft
         /// <summary>
         /// Disconnect from your PlayStation 3.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void DisconnectButton_Click(object sender, RoutedEventArgs e)
         {
             clickSound.Play();
@@ -100,8 +89,6 @@ namespace Better_Craft
         /// <summary>
         /// Open the main mods grid.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void ModsButton_Click(object sender, RoutedEventArgs e)
         {
             clickSound.Play();
@@ -120,8 +107,6 @@ namespace Better_Craft
         /// <summary>
         /// Open the select API grid.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void OptionsButton_Click(object sender, RoutedEventArgs e)
         {
             clickSound.Play();
@@ -135,8 +120,6 @@ namespace Better_Craft
         /// <summary>
         /// Filter the mods in the wrap pannel.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void filterTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             LoadCheats(filterTextBox.Text.Trim());
@@ -145,8 +128,6 @@ namespace Better_Craft
         /// <summary>
         /// Return to connect and attach.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void ModsReturnToConnectButton_Click(object sender, RoutedEventArgs e)
         {
             clickSound.Play();
@@ -160,8 +141,6 @@ namespace Better_Craft
         /// <summary>
         /// Return to connect and attach.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void OptionsReturnToConnectButton_Click(object sender, RoutedEventArgs e)
         {
             clickSound.Play();
@@ -171,8 +150,6 @@ namespace Better_Craft
         /// <summary>
         /// Toggles CCAPI.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void SelectCCAPIButton_Click(object sender, RoutedEventArgs e)
         {
             clickSound.Play();
@@ -182,12 +159,19 @@ namespace Better_Craft
         /// <summary>
         /// Toggles TMAPI.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void SelectTMAPIButton_Click(object sender, RoutedEventArgs e)
         {
             clickSound.Play();
             ToggleAPI(SelectAPI.TargetManager);
+        }
+
+        /// <summary>
+        /// Toggles PS3MAPI
+        /// </summary>
+        private void selectPS3MAPIButton_Click(object sender, RoutedEventArgs e)
+        {
+            clickSound.Play();
+            ToggleAPI(SelectAPI.PS3Manager);
         }
 
         #endregion
@@ -197,19 +181,16 @@ namespace Better_Craft
         /// <summary>
         /// Toggles the Mods screen.
         /// </summary>
-        /// <param name="visible"></param>
         private void ToggleModsScreen(bool visible)
         {
             if (visible)
             {
-                connectAndAttachOpen = false;
                 connectAndAttachGrid.Visibility = Visibility.Hidden;
                 modsGrid.Visibility = Visibility.Visible;
             }
 
             else
             {
-                connectAndAttachOpen = true;
                 modsGrid.Visibility = Visibility.Hidden;
                 connectAndAttachGrid.Visibility = Visibility.Visible;
             }
@@ -218,19 +199,16 @@ namespace Better_Craft
         /// <summary>
         /// Toggles the Options screen.
         /// </summary>
-        /// <param name="visible"></param>
         private void ToggleOptionScreen(bool visible)
         {
-            if(visible)
+            if (visible)
             {
-                connectAndAttachOpen = false;
                 connectAndAttachGrid.Visibility = Visibility.Hidden;
                 optionsGrid.Visibility = Visibility.Visible;
             }
 
             else
             {
-                connectAndAttachOpen = true;
                 optionsGrid.Visibility = Visibility.Hidden;
                 connectAndAttachGrid.Visibility = Visibility.Visible;
             }
@@ -239,21 +217,42 @@ namespace Better_Craft
         /// <summary>
         /// Toggles our currently selected API.
         /// </summary>
-        /// <param name="myAPI"></param>
-        private void ToggleAPI (SelectAPI myAPI)
+        private void ToggleAPI(SelectAPI myAPI)
         {
+            if(apiMessage)
+            {
+                MessageBoxResult YesNo = MessageBox.Show("This tool is best experienced using CCAPI with a CEX eboot.bin!\n\nUsing a debug eboot.bin will change the location of some memory addresses, therefore some mods may not work while using TMAPI.\n(Most work properly though)\n\nWhile using PS3MAPI adds HEN support, it is painfully slow when writing to memory.\n\nDo you wish to continue?", "Warning!", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+
+                if (YesNo.Equals(MessageBoxResult.Yes))
+                {
+                    apiMessage = false;
+                }
+
+                else
+                    return;
+            }
+
             currentAPI = myAPI;
-            
+
             if (myAPI.Equals(SelectAPI.ControlConsole))
             {
                 WpfAnimatedGif.ImageBehavior.SetAnimatedSource(ccapiTorch, new BitmapImage(new Uri(@"pack://application:,,,/Better_Craft;component/Images/redstoneTorchOn.gif")));
                 WpfAnimatedGif.ImageBehavior.SetAnimatedSource(tmapiTorch, new BitmapImage(new Uri(@"pack://application:,,,/Better_Craft;component/Images/redStoneTorchOff.png")));
+                WpfAnimatedGif.ImageBehavior.SetAnimatedSource(ps3mapiTorch, new BitmapImage(new Uri(@"pack://application:,,,/Better_Craft;component/Images/redStoneTorchOff.png")));
             }
 
-            else
+            else if (myAPI.Equals(SelectAPI.PS3Manager))
+            {
+                WpfAnimatedGif.ImageBehavior.SetAnimatedSource(ccapiTorch, new BitmapImage(new Uri(@"pack://application:,,,/Better_Craft;component/Images/redStoneTorchOff.png")));
+                WpfAnimatedGif.ImageBehavior.SetAnimatedSource(tmapiTorch, new BitmapImage(new Uri(@"pack://application:,,,/Better_Craft;component/Images/redStoneTorchOff.png")));
+                WpfAnimatedGif.ImageBehavior.SetAnimatedSource(ps3mapiTorch, new BitmapImage(new Uri(@"pack://application:,,,/Better_Craft;component/Images/redstoneTorchOn.gif")));
+            }
+
+            else if(myAPI.Equals(SelectAPI.TargetManager))
             {
                 WpfAnimatedGif.ImageBehavior.SetAnimatedSource(ccapiTorch, new BitmapImage(new Uri(@"pack://application:,,,/Better_Craft;component/Images/redStoneTorchOff.png")));
                 WpfAnimatedGif.ImageBehavior.SetAnimatedSource(tmapiTorch, new BitmapImage(new Uri(@"pack://application:,,,/Better_Craft;component/Images/redstoneTorchOn.gif")));
+                WpfAnimatedGif.ImageBehavior.SetAnimatedSource(ps3mapiTorch, new BitmapImage(new Uri(@"pack://application:,,,/Better_Craft;component/Images/redStoneTorchOff.png")));
             }
         }
 
@@ -285,7 +284,7 @@ namespace Better_Craft
 
                         if (Minecraft_Cheats.ToggleStates.ContainsKey(cheat.Name))
                         {
-                            if(Minecraft_Cheats.ToggleStates[cheat.Name] is bool && Minecraft_Cheats.ToggleStates[cheat.Name])
+                            if (Minecraft_Cheats.ToggleStates[cheat.Name] is bool && Minecraft_Cheats.ToggleStates[cheat.Name])
                             {
                                 toggleStateColor = new SolidColorBrush(Colors.LightGreen);
                             }
@@ -340,8 +339,6 @@ namespace Better_Craft
         /// <summary>
         /// Toggle Logic for mods with boolean values.
         /// </summary>
-        /// <param name="button"></param>
-        /// <param name="FunctionToggle"></param>
         private void DoMod(object button, Action<bool> FunctionToggle)
         {
             clickSound.Play();
@@ -358,8 +355,6 @@ namespace Better_Craft
         /// <summary>
         /// Toggle Logic for mods with multible toggle states.
         /// </summary>
-        /// <param name="button"></param>
-        /// <param name="FunctionToggle"></param>
         private void DoMod(object button, Action<int> FunctionToggle)
         {
             clickSound.Play();
