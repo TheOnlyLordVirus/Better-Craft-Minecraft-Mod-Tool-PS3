@@ -1000,46 +1000,6 @@ namespace Minecraft_Cheats
             }
         }
 
-        public static void ITEMS_IN_HAND_POSITIONS(int toggle = 6)
-        {
-            uint offset = 0x00ACA524;
-            if (toggle.Equals(0))
-            {
-                byte[] buffer = new byte[] { 0xBF, 0x00 }; //DEFAULT
-                PS3.SetMemory(offset, buffer);
-            }
-            else if (toggle.Equals(1))
-            {
-                byte[] buffer = new byte[] { 0xAF, 0x80 }; //X1 RIGHT
-                PS3.SetMemory(offset, buffer);
-            }
-            else if (toggle.Equals(2))
-            {
-                byte[] buffer = new byte[] { 0xBF, 0x80 }; //X1 LEFT
-                PS3.SetMemory(offset, buffer);
-            }
-            else if (toggle.Equals(3))
-            {
-                byte[] buffer = new byte[] { 0x3F, 0x00 }; //X2 RIGHT
-                PS3.SetMemory(offset, buffer);
-            }
-            else if (toggle.Equals(4))
-            {
-                byte[] buffer = new byte[] { 0xBF, 0xFF }; //X2 LEFT
-                PS3.SetMemory(offset, buffer);
-            }
-            else if (toggle.Equals(5))
-            {
-                byte[] buffer = new byte[] { 0x3F, 0xFF }; //X3 RIGHT
-                PS3.SetMemory(offset, buffer);
-            }
-            else if (toggle.Equals(6))
-            {
-                byte[] buffer = new byte[] { 0x4F, 0xFF }; //REMOVE
-                PS3.SetMemory(offset, buffer);
-            }
-        }
-
         public static void WEIRD_SUN_MOON_STATES(int toggle = 4)
         {
             uint remove = 0x00B21F1C;
@@ -1161,7 +1121,7 @@ namespace Minecraft_Cheats
             }
             else
             {
-                PS3.TMAPI.SetMemory(0x004B2021, new byte[] { 0x20 });
+                PS3.SetMemory(0x004B2021, new byte[] { 0x20 });
             }
         }
 
@@ -1650,32 +1610,6 @@ namespace Minecraft_Cheats
             }
         }
 
-        public static void REMOVE_PARTICLES(bool toggle)
-        {
-            if (toggle)  //////Remove Particles
-            {
-                PS3.SetMemory(0x014C6881, new byte[] { 0x00 }); ////MODIFED VALUE
-            }
-            else
-            {
-                PS3.SetMemory(0x014C6881, new byte[] { 0x80 }); ////SET to default
-            }
-        }
-
-
-        public static void BIG_PARTICLES(bool toggle)
-        {
-            if (toggle)  //////Big Particles
-            {
-                PS3.SetMemory(0x014C6881, new byte[] { 0xFF }); ////MODIFED VALUE
-            }
-            else
-            {
-                PS3.SetMemory(0x014C6881, new byte[] { 0x80 }); ////SET to default
-            }
-        }
-
-
         public static void FAST_BUILD(bool toggle)
         {
             if (toggle)  //////Fast Build
@@ -1710,18 +1644,6 @@ namespace Minecraft_Cheats
             else
             {
                 PS3.SetMemory(0x0038C658, new byte[] { 0x3F }); ////SET to default
-            }
-        }
-
-        public static void BYPASS_MAX_ITEMS(bool toggle)
-        {
-            if (toggle)  //////Bypass Max Items
-            {
-                PS3.SetMemory(0x00310AFC, new byte[] { 0x41 }); ////MODIFED VALUE
-            }
-            else
-            {
-                PS3.SetMemory(0x00310AFC, new byte[] { 0x40 }); ////SET to default
             }
         }
 
@@ -1878,7 +1800,7 @@ namespace Minecraft_Cheats
                 while (bMOVE_WITH_INV)
                 {
                     PS3.SetMemory(0x3000CF68, new byte[] { 0x00 }); ////For inventory open anytime
-                    await Task.Delay(1000);
+                    await Task.Delay(2000);
                 }
             }
             else
@@ -2084,18 +2006,6 @@ namespace Minecraft_Cheats
                 PS3.SetMemory(0x0090B5F3, new byte[] { 0x00 }); ////Show Armor
                 PS3.SetMemory(0x00AD5A5D, new byte[] { 0x80 }); ////Damage Indicator
                 PS3.SetMemory(0x00227BDC, new byte[] { 0x41 }); ////Remove Run Anim
-            }
-        }
-
-        public static void DISABLE_FOG(bool toggle)
-        {
-            if (toggle)  //////Disable Fog
-            {
-                PS3.SetMemory(0x003A3FF0, new byte[] { 0xFF, 0x00 }); //MODIFIED VALUES
-            }
-            else
-            {
-                PS3.SetMemory(0x003A3FF0, new byte[] { 0x3F, 0x80 }); //DEFAULT VALUES
             }
         }
 
@@ -2341,9 +2251,9 @@ namespace Minecraft_Cheats
             }
         }
 
-        public static void ROBLOX_ANIMATION(bool toggle)
+        public static void DERP_WALK(bool toggle)
         {
-            if (toggle)  /////ROBLOX ANIM
+            if (toggle)
             {
                 PS3.SetMemory(0x002341D0, new byte[] { 0xC3 }); ////MODIFED VALUE
             }
@@ -2389,14 +2299,16 @@ namespace Minecraft_Cheats
             }
         }
 
-        public static void PLAYERS_ON_ELYTRA(bool toggle)
+        public static void ELYTRA_MODE(bool toggle)
         {
             if (toggle)  /////Player on Elytra
             {
+                Minecraft_Cheats.ELYTRA_CAPES(true);
                 PS3.SetMemory(0x003B3008, new byte[] { 0x4E, 0x80, 0x00, 0x20 }); ////MODIFED VALUE
             }
             else
             {
+                Minecraft_Cheats.ELYTRA_CAPES(false);
                 PS3.SetMemory(0x003B3008, new byte[] { 0xF8, 0x21, 0xFF, 0x91 }); ////SET to default
             }
         }
@@ -2437,7 +2349,7 @@ namespace Minecraft_Cheats
             }
         }
 
-        public static void ELYTRA_ON_ALL_ENTITY(bool toggle)
+        public static void ELYTRA_CAPES(bool toggle)
         {
             if (toggle)  ///////Elytra on all players
             {
@@ -2470,6 +2382,18 @@ namespace Minecraft_Cheats
             else
             {
                 PS3.SetMemory(0x00B2437C, new byte[] { 0xF8, 0x21, 0xFF, 0x71 }); ////MODIFED VALUE
+            }
+        }
+
+        public static void OPTIMIZE_CHUNKS_LOAD(bool toggle)
+        {
+            if (toggle)  ///////Optimize Chunks Load
+            {
+                PS3.SetMemory(0x00B21C61, new byte[] { 0xD7 }); ////MODIFED VALUE
+            }
+            else if (!toggle)
+            {
+                PS3.SetMemory(0x00B21C61, new byte[] { 0x30 }); ////MODIFED VALUE
             }
         }
 
