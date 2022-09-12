@@ -11,11 +11,27 @@ namespace Minecraft_Cheats
     using PS3ManagerAPI;
     using System;
     using System.Collections.Generic;
+    using System.Linq.Expressions;
     using System.Reflection;
     using System.Threading.Tasks;
     using System.Windows;
     using MessageBox = System.Windows.MessageBox;
 
+    [System.AttributeUsage(AttributeTargets.Property | AttributeTargets.Method)]
+    public class MaxToggleStateAttribute : Attribute
+    {
+        private int maxValue;
+
+        public MaxToggleStateAttribute(int maxValue)
+        {
+            this.maxValue = maxValue;
+        }
+
+        public int MaxValue
+        {
+            get;
+        }
+    }
     public static class Minecraft_Cheats
     {
         #region Connect and Attatch
@@ -183,142 +199,175 @@ namespace Minecraft_Cheats
             }
 
             /// <summary>
-            /// Toggles an option with a boolean state.
+            /// Toggles a mod.
             /// </summary>
             /// <param name="ModOption">The static function for a Minecraft_Cheats mod.</param>
-            public static bool ToggleOption(Action<bool> ModOption)
+            public static dynamic ToggleOption<T>(Expression<Func<T>> ModOption)
             {
-                string ModFunctionName = ModOption.GetMethodInfo().Name;
-                if (!CheatKeyValuePairs.ContainsKey(ModFunctionName))
+                // Get propertyInfo and make sure it exists.
+                PropertyInfo propertyInfo = ((MemberExpression)ModOption.Body).Member as PropertyInfo;
+
+                if (propertyInfo == null)
                 {
-                    CheatKeyValuePairs.Add(ModFunctionName, true);
-                    ModOption(true);
-                    return true;
+                    throw new ArgumentException("The lambda expression 'ModOption' should point to a valid mod Property.");
+                }
+
+                // Get the name of the property.
+                string propertyName = propertyInfo.Name;
+
+                // Get the value of the property.
+                dynamic value = propertyInfo.GetValue(null/*Static class*/);
+
+                // If this toggle has multible toggle states
+                if(value is int)
+                {
+                    int toggleSize = ((MaxToggleStateAttribute)ModOption.Compile().Method.GetCustomAttribute(typeof(MaxToggleStateAttribute))).MaxValue;
+
+                    // Reset to 0
+                    if (value.Equals(toggleSize))
+                    {
+                        propertyInfo.SetValue(null/*Static class*/, 0);
+                    }
+
+                    // Increase toggle by 1.
+                    else
+                    {
+                        propertyInfo.SetValue(null/*Static class*/, ++value);
+                    }
+                    
+                    return propertyInfo.GetValue(null/*Static class*/);
+                }
+
+                // Toggle current state.
+                else if (value is bool)
+                {
+                    propertyInfo.SetValue(null/*Static class*/, !value);
+                    return propertyInfo.GetValue(null/*Static class*/);
                 }
 
                 else
                 {
-                    if (CheatKeyValuePairs.TryGetValue(ModFunctionName, out dynamic toggleState))
-                    {
-                        if (toggleState is bool)
-                        {
-                            CheatKeyValuePairs[ModFunctionName] = !toggleState;
-                            ModOption(!toggleState);
-                            return !toggleState;
-                        }
-                    }
-
-                    MessageBox.Show("Toggle Failed!", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
-                    return false;
+                    throw new ArgumentException("ModOption should be a property of the 'Minecraft_Cheats' class that is either an int or bool!");
                 }
             }
-
-
-            /// <summary>
-            /// Toggles an option with multible toggle states.
-            /// </summary>
-            /// <param name="ModOption">The static function for a Minecraft_Cheats mod.</param>
-            public static int ToggleOption(Action<int> ModOption)
-            {
-                int toggleSize = (int)ModOption.GetMethodInfo().GetParameters()[0].DefaultValue;
-
-                string ModFunctionName = ModOption.GetMethodInfo().Name;
-                if (!CheatKeyValuePairs.ContainsKey(ModFunctionName))
-                {
-                    CheatKeyValuePairs.Add(ModFunctionName, 1);
-                    ModOption(1);
-                    return 1;
-                }
-
-                else
-                {
-                    if (CheatKeyValuePairs.TryGetValue(ModFunctionName, out dynamic toggleState))
-                    {
-                        if (toggleState is int)
-                        {
-                            if (!toggleState.Equals(toggleSize))
-                            {
-                                ++toggleState;
-                                CheatKeyValuePairs[ModFunctionName] = toggleState;
-                                ModOption(toggleState);
-                                return toggleState;
-                            }
-
-                            CheatKeyValuePairs[ModFunctionName] = 0;
-                            ModOption(0);
-                            return 0;
-                        }
-                    }
-
-                    MessageBox.Show("Toggle Failed!", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
-                    return 0;
-                }
-            }
-
 
             /// <summary>
             /// Resets all of the mods.
             /// </summary>
             public static void Reset_All_Mods()
             {
-                CheatKeyValuePairs.Clear();
+                //CheatKeyValuePairs.Clear();
 
-                string[] badFuncNames = { "tostring", "gettype", "gethashcode", "equals" };
-                MethodInfo[] cheats = (typeof(Minecraft_Cheats)).GetMethods();
+                //string[] badFuncNames = { "tostring", "gettype", "gethashcode", "equals" };
+                //MethodInfo[] cheats = (typeof(Minecraft_Cheats)).GetMethods();
 
-                foreach (MethodInfo cheat in cheats)
-                {
-                    bool flag = true;
-                    foreach (string badFuncName in badFuncNames)
-                    {
-                        if (cheat.Name.ToLower().Equals(badFuncName))
-                            flag = false;
-                    }
+                //foreach (MethodInfo cheat in cheats)
+                //{
+                //    bool flag = true;
+                //    foreach (string badFuncName in badFuncNames)
+                //    {
+                //        if (cheat.Name.ToLower().Equals(badFuncName))
+                //            flag = false;
+                //    }
 
-                    if (flag && cheat.GetParameters().Length.Equals(1))
-                    {
-                        Type ParameterType = cheat.GetParameters()[0].ParameterType;
+                //    if (flag && cheat.GetParameters().Length.Equals(1))
+                //    {
+                //        Type ParameterType = cheat.GetParameters()[0].ParameterType;
 
-                        if (ParameterType.ToString().Equals("System.Boolean"))
-                        {
-                            cheat.Invoke(null/*static call*/, new object[] { false });
-                        }
+                //        if (ParameterType.ToString().Equals("System.Boolean"))
+                //        {
+                //            cheat.Invoke(null/*static call*/, new object[] { false });
+                //        }
 
-                        else if (ParameterType.ToString().Equals("System.Int32"))
-                        {
-                            cheat.Invoke(null/*static call*/, new object[] { 0 });
-                        }
-                    }
-                }
+                //        else if (ParameterType.ToString().Equals("System.Int32"))
+                //        {
+                //            cheat.Invoke(null/*static call*/, new object[] { 0 });
+                //        }
+                //    }
+                //}
             }
         }
         #endregion
 
         #region "Int Toggles"
-        public static void SUPER_JUMP(int toggle = 2) // 3E D7 0A 3D 3C 60 00
+        //public static void SUPER_JUMP(int toggle) // 3E D7 0A 3D 3C 60 00
+        //{
+        //    uint offset = 0x003AA77C;
+
+        //    if (toggle.Equals(0))  //////Super Jump
+        //    {
+        //        Minecraft_Cheats.REMOVE_FALL_DAMAGE(false);
+        //        PS3.SetMemory(offset, new byte[] { 0x3E, 0xD7, 0x0A, 0x3D }); ////SET to default
+        //    }
+
+        //    else if (toggle.Equals(1))
+        //    {
+        //        Minecraft_Cheats.REMOVE_FALL_DAMAGE(true);
+        //        PS3.SetMemory(offset, new byte[] { 0x3F, 0x47, 0x7F, 0x42 });
+        //    }
+
+        //    else if (toggle.Equals(2))
+        //    {
+        //        Minecraft_Cheats.REMOVE_FALL_DAMAGE(true);
+        //        PS3.SetMemory(offset, new byte[] { 0x3F, 0xD7, 0x0A, 0x3D }); 
+        //    }
+        //}
+
+        [MaxToggleState(2)]
+        public static int SUPER_JUMP
         {
-            uint offset = 0x003AA77C;
-
-            if (toggle.Equals(0))  //////Super Jump
+            // Get current state from reading memory
+            get
             {
-                Minecraft_Cheats.REMOVE_FALL_DAMAGE(false);
-                PS3.SetMemory(offset, new byte[] { 0x3E, 0xD7, 0x0A, 0x3D }); ////SET to default
+                byte[] buffer = new byte[4];
+                PS3.GetMemory(0x003AA77C, buffer);
+
+                if (buffer.Equals(new byte[] { 0x3E, 0xD7, 0x0A, 0x3D }))
+                    return 0;
+                else if (buffer.Equals(new byte[] { 0x3F, 0x47, 0x7F, 0x42 }))
+                    return 1;
+                else if (buffer.Equals(new byte[] { 0x3F, 0xD7, 0x0A, 0x3D }))
+                    return 2;
+                else
+                {
+                    PS3.SetMemory(0x004B2021, new byte[] { 0x3E, 0xD7, 0x0A, 0x3D });
+                    return 0;
+                }
+
             }
 
-            else if (toggle.Equals(1))
+            // Set memory and use a number to represent current toggle state.
+            set
             {
-                Minecraft_Cheats.REMOVE_FALL_DAMAGE(true);
-                PS3.SetMemory(offset, new byte[] { 0x3F, 0x47, 0x7F, 0x42 });
-            }
+                uint offset = 0x003AA77C;
 
-            else if (toggle.Equals(2))
-            {
-                Minecraft_Cheats.REMOVE_FALL_DAMAGE(true);
-                PS3.SetMemory(offset, new byte[] { 0x3F, 0xD7, 0x0A, 0x3D }); 
+                if (value.Equals(0))
+                {
+                    Minecraft_Cheats.REMOVE_FALL_DAMAGE(false);
+                    PS3.SetMemory(offset, new byte[] { 0x3E, 0xD7, 0x0A, 0x3D }); ////SET to default
+                }
+
+                else if(value.Equals(1))
+                {
+                    Minecraft_Cheats.REMOVE_FALL_DAMAGE(true);
+                    PS3.SetMemory(offset, new byte[] { 0x3F, 0x47, 0x7F, 0x42 });
+                }
+
+                else if(value.Equals(2))
+                {
+                    Minecraft_Cheats.REMOVE_FALL_DAMAGE(true);
+                    PS3.SetMemory(offset, new byte[] { 0x3F, 0xD7, 0x0A, 0x3D });
+                }
+
+                else
+                {
+                    throw new ArgumentException($"The max value for this toggle is: {2}");
+                }
             }
         }
 
-        public static void TNT_EXPLOSION_SIZE(int toggle = 5)
+        [MaxToggleState(5)]
+        public static void TNT_EXPLOSION_SIZE(int toggle)
         {
             uint offset = 0x0051E0D0;
 
@@ -354,7 +403,8 @@ namespace Minecraft_Cheats
             }
         }
 
-        public static void CREEPER_EXPLOSION_SIZE(int toggle = 4)
+        [MaxToggleState(4)]
+        public static void CREEPER_EXPLOSION_SIZE(int toggle)
         {
             uint offset = 0x001CC7E0;
 
@@ -385,7 +435,8 @@ namespace Minecraft_Cheats
             }
         }
 
-        public static void ITEMS_SIZE(int toggle = 7)
+        [MaxToggleState(7)]
+        public static void ITEMS_SIZE(int toggle)
         {
             uint offset = 0x00AF6B9C;
             uint offset1 = 0x00AF6B98;
@@ -434,7 +485,8 @@ namespace Minecraft_Cheats
             }
         }
 
-        public static void FOV_VALUE(int toggle = 11) //FOV
+        [MaxToggleState(11)]
+        public static void FOV_VALUE(int toggle) //FOV
         {
             uint offset = 0x014C670C;
 
@@ -500,7 +552,8 @@ namespace Minecraft_Cheats
             }
         }
 
-        public static void SKY_COLORS(int toggle = 7)
+        [MaxToggleState(7)]
+        public static void SKY_COLORS(int toggle)
         {
             uint offset1 = 0x00410734;
             uint offset2 = 0x00410738;
@@ -549,7 +602,8 @@ namespace Minecraft_Cheats
             }
         }
 
-        public static void HUD_COLORS(int toggle = 6)
+        [MaxToggleState(6)]
+        public static void HUD_COLORS(int toggle)
         {
             uint offset = 0x30DBAD64;
 
@@ -590,7 +644,8 @@ namespace Minecraft_Cheats
             }
         }
 
-        public static void TIME_CYCLE(int toggle = 2)
+        [MaxToggleState(2)]
+        public static void TIME_CYCLE(int toggle)
         {
             uint offset = 0x001DA1D4;
             if (toggle.Equals(0))
@@ -608,7 +663,8 @@ namespace Minecraft_Cheats
             }
         }
 
-        public static void SLOW_TIME_SCALE(int toggle = 5)
+        [MaxToggleState(5)]
+        public static void SLOW_TIME_SCALE(int toggle)
         {
             uint offset = 0x00C202C9;
             if (toggle.Equals(0))
@@ -644,7 +700,8 @@ namespace Minecraft_Cheats
             }
         }
 
-        public static void FAST_TIME_SCALE(int toggle = 5)
+        [MaxToggleState(5)]
+        public static void FAST_TIME_SCALE(int toggle)
         {
             uint offset = 0x00C202C8;
             if (toggle.Equals(0))
@@ -680,7 +737,8 @@ namespace Minecraft_Cheats
             }
         }
 
-        public static void ENTITY_RENDER_HEIGHT(int toggle = 7)
+        [MaxToggleState(7)]
+        public static void ENTITY_RENDER_HEIGHT(int toggle)
         {
             uint offset = 0x00AD5EC8;
             if (toggle.Equals(0))
@@ -725,7 +783,8 @@ namespace Minecraft_Cheats
             }
         }
 
-        public static void ENTITY_RENDER_WIDTH(int toggle = 6)
+        [MaxToggleState(6)]
+        public static void ENTITY_RENDER_WIDTH(int toggle)
         {
             uint offset = 0x00AD5ECC;
             if (toggle.Equals(0))
@@ -765,7 +824,8 @@ namespace Minecraft_Cheats
             }
         }
 
-        public static void FPS_VALUES(int toggle = 15)
+        [MaxToggleState(15)]
+        public static void FPS_VALUES(int toggle)
         {
             uint offset = 0x00AF0443;
             if (toggle.Equals(0))
@@ -850,7 +910,8 @@ namespace Minecraft_Cheats
             }
         }
 
-        public static void GAMEPLAY_COLORS(int toggle = 12)
+        [MaxToggleState(12)]
+        public static void GAMEPLAY_COLORS(int toggle)
         {
             uint offset = 0x3000AAF8;
             if (toggle.Equals(0))
@@ -920,7 +981,8 @@ namespace Minecraft_Cheats
             }
         }
 
-        public static void SELECTED_BLOCK_LINE_COLOR(int toggle = 5)
+        [MaxToggleState(5)]
+        public static void SELECTED_BLOCK_LINE_COLOR(int toggle)
         {
             uint offset1 = 0x00B25990;
             uint offset2 = 0x00B25A59;
@@ -975,7 +1037,8 @@ namespace Minecraft_Cheats
             
         }
 
-        public static void SELECTED_BLOCK_LINE_SIZE(int toggle = 3)
+        [MaxToggleState(3)]
+        public static void SELECTED_BLOCK_LINE_SIZE(int toggle)
         {
             uint offset = 0x00B25998;
 
@@ -1000,7 +1063,8 @@ namespace Minecraft_Cheats
             }
         }
 
-        public static void WEIRD_SUN_MOON_STATES(int toggle = 4)
+        [MaxToggleState(4)]
+        public static void WEIRD_SUN_MOON_STATES(int toggle)
         {
             uint remove = 0x00B21F1C;
             uint size = 0x00B21F28;
@@ -1037,7 +1101,8 @@ namespace Minecraft_Cheats
             }
         }
 
-        public static void HAND_POSITION(int toggle = 9)
+        [MaxToggleState(9)]
+        public static void HAND_POSITION(int toggle)
         {
             uint normal = 0x00AD14EC;
             uint normal1 = 0x00AD14F0;
@@ -1113,15 +1178,41 @@ namespace Minecraft_Cheats
 
         #region "Bool Toggles"
 
-        public static void GOD_MODE(bool toggle)
+        //public static void GOD_MODE(bool toggle)
+        //{
+        //    if (toggle)
+        //    {
+        //        PS3.SetMemory(0x004B2021, new byte[] { 0x80 });
+        //    }
+        //    else
+        //    {
+        //        PS3.SetMemory(0x004B2021, new byte[] { 0x20 });
+        //    }
+        //}
+
+        /// <summary>
+        /// Sets god mode to be enabled or disabled,
+        /// Returns the current toggle state based off of value set in memory.
+        /// </summary>
+        public static bool GOD_MODE
         {
-            if (toggle)
+            get 
             {
-                PS3.SetMemory(0x004B2021, new byte[] { 0x80 });
+                byte[] buffer = new byte[1];
+                PS3.GetMemory(0x004B2021, buffer);
+
+                if (buffer.Equals(new byte[] { 0x20 }))
+                    return false;
+                else
+                    return true;
             }
-            else
+
+            set 
             {
-                PS3.SetMemory(0x004B2021, new byte[] { 0x20 });
+                if(value.Equals(true))
+                    PS3.SetMemory(0x004B2021, new byte[] { 0x80 });
+                else
+                    PS3.SetMemory(0x004B2021, new byte[] { 0x20 });
             }
         }
 
