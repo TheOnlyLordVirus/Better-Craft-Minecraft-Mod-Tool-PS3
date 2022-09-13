@@ -11,55 +11,58 @@ namespace Minecraft_Cheats
     using PS3ManagerAPI;
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.Linq;
     using System.Linq.Expressions;
     using System.Reflection;
     using System.Threading.Tasks;
     using System.Windows;
     using MessageBox = System.Windows.MessageBox;
 
-    [System.AttributeUsage(AttributeTargets.Property | AttributeTargets.Method)]
-    public class MaxToggleStateAttribute : Attribute
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Method)]
+    public class ToggleState : Attribute
     {
         private int maxValue;
+        private int minValue;
 
-        public MaxToggleStateAttribute(int maxValue)
+        public ToggleState(int maxValue, int minValue = 0)
         {
-            this.maxValue = maxValue;
+            try
+            {
+                if (minValue > 0)
+                    throw new ArgumentException("MinValue for the 'ToggleState' attribute must be less than 0!");
+
+                this.maxValue = maxValue;
+                this.minValue = minValue;
+            }
+
+            catch (Exception Ex)
+            {
+                MessageBox.Show(Ex.Message, "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
+                Process.GetCurrentProcess().Kill();
+            }
         }
 
+        /// <summary>
+        /// The max value of this toggle state.
+        /// </summary>
         public int MaxValue
         {
-            get;
+            get { return maxValue; }
+        }
+
+        /// <summary>
+        /// The min value for this toggle state
+        /// (Must be less than 1!)
+        /// </summary>
+        public int MinValue
+        {
+            get { return minValue; }
         }
     }
     public static class Minecraft_Cheats
     {
         #region Connect and Attatch
-
-        /// <summary>
-        /// Set the API.
-        /// </summary>
-        public static PS3API CurrentPS3Api
-        {
-            get { return PS3; }
-        }
-
-        /// <summary>
-        /// Are we connected?
-        /// </summary>
-        public static bool isConnected
-        {
-            get { return Connected; }
-        }
-
-        /// <summary>
-        /// Read the current cheat toggle states
-        /// (This only will track and store the states of the cheats if you use the toggle helper functions)
-        /// </summary>
-        public static Dictionary<string, dynamic> ToggleStates
-        {
-            get { return CheatKeyValuePairs; }
-        }
 
         /// <summary>
         /// Current API Instance.
@@ -70,11 +73,6 @@ namespace Minecraft_Cheats
         /// Are we connected?
         /// </summary>
         private static bool Connected = false;
-
-        /// <summary>
-        /// Stores the current cheats loaded and their toggle states.
-        /// </summary>
-        private static Dictionary<string, dynamic> CheatKeyValuePairs = new Dictionary<string, dynamic>();
 
         /// <summary>
         /// The time needed to wait between async looping opperations.
@@ -88,6 +86,22 @@ namespace Minecraft_Cheats
         /// </summary>
         public static class HelperFunctions
         {
+            /// <summary>
+            /// Set the API.
+            /// </summary>
+            public static PS3API CurrentPS3Api
+            {
+                get { return PS3; }
+            }
+
+            /// <summary>
+            /// Are we connected?
+            /// </summary>
+            public static bool isConnected
+            {
+                get { return Connected; }
+            }
+
             /// <summary>
             /// Connect to the damn ps3.
             /// </summary>
@@ -104,14 +118,14 @@ namespace Minecraft_Cheats
                         {
                             if (Api.Equals(SelectAPI.ControlConsole))
                             {
-                                Minecraft_Cheats.CurrentPS3Api.CCAPI.Notify(CCAPI.NotifyIcon.TROPHY2, "Successfully connected and attached cheat tool to Minecraft!");
-                                Minecraft_Cheats.CurrentPS3Api.CCAPI.RingBuzzer(CCAPI.BuzzerMode.Double);
+                                Minecraft_Cheats.HelperFunctions.CurrentPS3Api.CCAPI.Notify(CCAPI.NotifyIcon.TROPHY2, "Successfully connected and attached cheat tool to Minecraft!");
+                                Minecraft_Cheats.HelperFunctions.CurrentPS3Api.CCAPI.RingBuzzer(CCAPI.BuzzerMode.Double);
                             }
 
                             else if(Api.Equals(SelectAPI.PS3Manager))
                             {
-                                Minecraft_Cheats.CurrentPS3Api.PS3MAPI.Notify("Successfully connected and attached cheat tool to Minecraft!");
-                                Minecraft_Cheats.CurrentPS3Api.PS3MAPI.RingBuzzer(PS3MAPI.PS3_CMD.BuzzerMode.Double);
+                                Minecraft_Cheats.HelperFunctions.CurrentPS3Api.PS3MAPI.Notify("Successfully connected and attached cheat tool to Minecraft!");
+                                Minecraft_Cheats.HelperFunctions.CurrentPS3Api.PS3MAPI.RingBuzzer(PS3MAPI.PS3_CMD.BuzzerMode.Double);
                                 WaitTime = 1500;
                             }
 
@@ -131,15 +145,15 @@ namespace Minecraft_Cheats
                         {
                             if (Api.Equals(SelectAPI.ControlConsole))
                             {
-                                Minecraft_Cheats.CurrentPS3Api.CCAPI.Notify(CCAPI.NotifyIcon.WRONGWAY, "Failed to attach to Minecraft...");
-                                Minecraft_Cheats.CurrentPS3Api.CCAPI.RingBuzzer(CCAPI.BuzzerMode.Single);
+                                Minecraft_Cheats.HelperFunctions.CurrentPS3Api.CCAPI.Notify(CCAPI.NotifyIcon.WRONGWAY, "Failed to attach to Minecraft...");
+                                Minecraft_Cheats.HelperFunctions.CurrentPS3Api.CCAPI.RingBuzzer(CCAPI.BuzzerMode.Single);
                                 MessageBox.Show($"Connected, but failed to attach with: \"{Api} API\"", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
                             }
 
                             else if (Api.Equals(SelectAPI.PS3Manager))
                             {
-                                Minecraft_Cheats.CurrentPS3Api.PS3MAPI.Notify("Failed to attach to Minecraft...");
-                                Minecraft_Cheats.CurrentPS3Api.PS3MAPI.RingBuzzer(PS3MAPI.PS3_CMD.BuzzerMode.Single);
+                                Minecraft_Cheats.HelperFunctions.CurrentPS3Api.PS3MAPI.Notify("Failed to attach to Minecraft...");
+                                Minecraft_Cheats.HelperFunctions.CurrentPS3Api.PS3MAPI.RingBuzzer(PS3MAPI.PS3_CMD.BuzzerMode.Single);
                                 MessageBox.Show($"Connected, but failed to attach with: \"{Api} API\"", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
                             }
 
@@ -177,17 +191,17 @@ namespace Minecraft_Cheats
             /// </summary>
             public static void Disconnect()
             {
-                if (Minecraft_Cheats.isConnected)
+                if (Minecraft_Cheats.HelperFunctions.isConnected)
                 {
                     if (CurrentPS3Api.GetCurrentAPI().Equals(SelectAPI.ControlConsole))
                     {
-                        Minecraft_Cheats.CurrentPS3Api.CCAPI.RingBuzzer(CCAPI.BuzzerMode.Single);
-                        Minecraft_Cheats.CurrentPS3Api.CCAPI.Notify(CCAPI.NotifyIcon.WRONGWAY, "Disconnected cheat tool from Minecraft!");
+                        Minecraft_Cheats.HelperFunctions.CurrentPS3Api.CCAPI.RingBuzzer(CCAPI.BuzzerMode.Single);
+                        Minecraft_Cheats.HelperFunctions.CurrentPS3Api.CCAPI.Notify(CCAPI.NotifyIcon.WRONGWAY, "Disconnected cheat tool from Minecraft!");
                     }
 
                     MessageBox.Show("Disconnected from your Playstation 3", "Status", MessageBoxButton.OK, MessageBoxImage.Information);
 
-                    Minecraft_Cheats.CurrentPS3Api.DisconnectTarget();
+                    Minecraft_Cheats.HelperFunctions.CurrentPS3Api.DisconnectTarget();
 
                     Connected = false;
                 }
@@ -204,50 +218,89 @@ namespace Minecraft_Cheats
             /// <param name="ModOption">The static function for a Minecraft_Cheats mod.</param>
             public static dynamic ToggleOption<T>(Expression<Func<T>> ModOption)
             {
-                // Get propertyInfo and make sure it exists.
-                PropertyInfo propertyInfo = ((MemberExpression)ModOption.Body).Member as PropertyInfo;
-
-                if (propertyInfo == null)
+                try
                 {
-                    throw new ArgumentException("The lambda expression 'ModOption' should point to a valid mod Property.");
-                }
+                    // Get propertyInfo and make sure it exists.
+                    PropertyInfo propertyInfo = ((MemberExpression)ModOption.Body).Member as PropertyInfo;
 
-                // Get the name of the property.
-                string propertyName = propertyInfo.Name;
-
-                // Get the value of the property.
-                dynamic value = propertyInfo.GetValue(null/*Static class*/);
-
-                // If this toggle has multible toggle states
-                if(value is int)
-                {
-                    int toggleSize = ((MaxToggleStateAttribute)ModOption.Compile().Method.GetCustomAttribute(typeof(MaxToggleStateAttribute))).MaxValue;
-
-                    // Reset to 0
-                    if (value.Equals(toggleSize))
+                    if (propertyInfo is null)
                     {
-                        propertyInfo.SetValue(null/*Static class*/, 0);
+                        throw new ArgumentException("The lambda expression 'ModOption' should point to a valid mod Property.");
                     }
 
-                    // Increase toggle by 1.
+                    // Get the name of the property.
+                    string propertyName = propertyInfo.Name;
+
+                    if (typeof(Minecraft_Cheats).GetProperty(propertyName) is null)
+                    {
+                        throw new ArgumentException("The lambda expression 'ModOption' should be a property of 'Minecraft_Cheats'");
+                    }
+
+                    // Get the value of the property.
+                    dynamic value = propertyInfo.GetValue(null/*Static class*/);
+
+                    // If this toggle has multible toggle states
+                    if (value is int)
+                    {
+                        if (Attribute.IsDefined(propertyInfo, typeof(ToggleState)).Equals(false))
+                        {
+                            throw new ArgumentException("Your int based toggle must contain the 'ToggleState' attribute!");
+                        }
+
+                        ToggleState toggleStateAttribute = (ToggleState)propertyInfo.GetCustomAttribute(typeof(ToggleState));
+                        int minSize = toggleStateAttribute.MinValue;
+                        int maxSize = toggleStateAttribute.MaxValue;
+
+                        // Reset to 0 from max size
+                        if (value.Equals(maxSize) && minSize.Equals(0))
+                        {
+                            propertyInfo.SetValue(null/*Static class*/, 0);
+                        }
+
+                        // Reset to 0 from min size.
+                        else if (value.Equals(minSize) && minSize < 0)
+                        {
+                            propertyInfo.SetValue(null/*Static class*/, 0);
+                        }
+
+                        // We are at max size, and min value is less than 0, we then start at -1.
+                        else if(value.Equals(maxSize) && minSize < 0)
+                        {
+                            propertyInfo.SetValue(null/*Static class*/, -1);
+                        }
+
+                        // We are at less than 0, deincrement until min size
+                        else if (value < 0)
+                        {
+                            propertyInfo.SetValue(null/*Static class*/, --value);
+                        }
+
+                        // Increase toggle by 1.
+                        else
+                        {
+                            propertyInfo.SetValue(null/*Static class*/, ++value);
+                        }
+
+                        return propertyInfo.GetValue(null/*Static class*/);
+                    }
+
+                    // Toggle current state.
+                    else if (value is bool)
+                    {
+                        propertyInfo.SetValue(null/*Static class*/, !value);
+                        return propertyInfo.GetValue(null/*Static class*/);
+                    }
+
                     else
                     {
-                        propertyInfo.SetValue(null/*Static class*/, ++value);
+                        throw new ArgumentException("ModOption should be a property of the 'Minecraft_Cheats' class that is either an int or bool!");
                     }
-                    
-                    return propertyInfo.GetValue(null/*Static class*/);
                 }
 
-                // Toggle current state.
-                else if (value is bool)
+                catch (Exception Ex)
                 {
-                    propertyInfo.SetValue(null/*Static class*/, !value);
-                    return propertyInfo.GetValue(null/*Static class*/);
-                }
-
-                else
-                {
-                    throw new ArgumentException("ModOption should be a property of the 'Minecraft_Cheats' class that is either an int or bool!");
+                    MessageBox.Show(Ex.Message, "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return null;
                 }
             }
 
@@ -256,6 +309,8 @@ namespace Minecraft_Cheats
             /// </summary>
             public static void Reset_All_Mods()
             {
+
+
                 //CheatKeyValuePairs.Clear();
 
                 //string[] badFuncNames = { "tostring", "gettype", "gethashcode", "equals" };
@@ -290,30 +345,7 @@ namespace Minecraft_Cheats
         #endregion
 
         #region "Int Toggles"
-        //public static void SUPER_JUMP(int toggle) // 3E D7 0A 3D 3C 60 00
-        //{
-        //    uint offset = 0x003AA77C;
-
-        //    if (toggle.Equals(0))  //////Super Jump
-        //    {
-        //        Minecraft_Cheats.REMOVE_FALL_DAMAGE(false);
-        //        PS3.SetMemory(offset, new byte[] { 0x3E, 0xD7, 0x0A, 0x3D }); ////SET to default
-        //    }
-
-        //    else if (toggle.Equals(1))
-        //    {
-        //        Minecraft_Cheats.REMOVE_FALL_DAMAGE(true);
-        //        PS3.SetMemory(offset, new byte[] { 0x3F, 0x47, 0x7F, 0x42 });
-        //    }
-
-        //    else if (toggle.Equals(2))
-        //    {
-        //        Minecraft_Cheats.REMOVE_FALL_DAMAGE(true);
-        //        PS3.SetMemory(offset, new byte[] { 0x3F, 0xD7, 0x0A, 0x3D }); 
-        //    }
-        //}
-
-        [MaxToggleState(2)]
+        [ToggleState(2)]
         public static int SUPER_JUMP
         {
             // Get current state from reading memory
@@ -322,11 +354,11 @@ namespace Minecraft_Cheats
                 byte[] buffer = new byte[4];
                 PS3.GetMemory(0x003AA77C, buffer);
 
-                if (buffer.Equals(new byte[] { 0x3E, 0xD7, 0x0A, 0x3D }))
+                if (Enumerable.SequenceEqual(buffer, new byte[] { 0x3E, 0xD7, 0x0A, 0x3D }))
                     return 0;
-                else if (buffer.Equals(new byte[] { 0x3F, 0x47, 0x7F, 0x42 }))
+                else if (Enumerable.SequenceEqual(buffer, new byte[] { 0x3F, 0x47, 0x7F, 0x42 }))
                     return 1;
-                else if (buffer.Equals(new byte[] { 0x3F, 0xD7, 0x0A, 0x3D }))
+                else if (Enumerable.SequenceEqual(buffer, new byte[] { 0x3F, 0xD7, 0x0A, 0x3D }))
                     return 2;
                 else
                 {
@@ -360,384 +392,490 @@ namespace Minecraft_Cheats
                 }
 
                 else
+                    MessageBox.Show($"The max value for this toggle is: {2}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        [ToggleState(5)]
+        public static int TNT_EXPLOSION_SIZE
+        {
+            // Get current state from reading memory
+            get
+            {
+                byte[] buffer = new byte[2];
+                PS3.GetMemory(0x0051E0D0, buffer);
+
+                if (Enumerable.SequenceEqual(buffer, new byte[] { 0x40, 0x80 }))
+                    return 0;
+                else if (Enumerable.SequenceEqual(buffer, new byte[] { 0x00, 0x00 }))
+                    return 1;
+                else if (Enumerable.SequenceEqual(buffer, new byte[] { 0x41, 0x30 }))
+                    return 2;
+                else if (Enumerable.SequenceEqual(buffer, new byte[] { 0x41, 0x99 }))
+                    return 3;
+                else if (Enumerable.SequenceEqual(buffer, new byte[] { 0x42, 0x00 }))
+                    return 4;
+                else if (Enumerable.SequenceEqual(buffer, new byte[] { 0x43, 0x00 }))
+                    return 5;
+                else
                 {
-                    throw new ArgumentException($"The max value for this toggle is: {2}");
+                    PS3.SetMemory(0x0051E0D0, new byte[] { 0x40, 0x80 });
+                    return 0;
                 }
             }
+
+            // Set memory and use a number to represent current toggle state.
+            set
+            {
+                uint offset = 0x0051E0D0;
+
+                if (value.Equals(0))
+                    PS3.SetMemory(offset, new byte[] { 0x40, 0x80 }); ////SET to default
+
+                else if (value.Equals(1))
+                    PS3.SetMemory(offset, new byte[] { 0x00, 0x00 }); //No explosion
+
+                else if (value.Equals(2))
+                    PS3.SetMemory(offset, new byte[] { 0x41, 0x30 }); //Small increase
+
+                else if (value.Equals(3))
+                    PS3.SetMemory(offset, new byte[] { 0x41, 0x99 }); //Medium increase
+
+                else if (value.Equals(4))
+                    PS3.SetMemory(offset, new byte[] { 0x42, 0x00 }); //Extreme increase
+
+                else if (value.Equals(5))
+                {
+                    MessageBox.Show("This selection will seriously lag your ps3.", "Notice!", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                    PS3.SetMemory(offset, new byte[] { 0x43, 0x00 }); //Nuclear Explosion
+                }
+
+                else
+                    MessageBox.Show($"The max value for this toggle is: {5}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
-        [MaxToggleState(5)]
-        public static void TNT_EXPLOSION_SIZE(int toggle)
+        [ToggleState(4)]
+        public static int CREEPER_EXPLOSION_SIZE
         {
-            uint offset = 0x0051E0D0;
-
-            if (toggle.Equals(0))
+            // Get current state from reading memory
+            get
             {
-                PS3.SetMemory(offset, new byte[] { 0x40, 0x80 }); ////SET to default
+                byte[] buffer = new byte[2];
+                PS3.GetMemory(0x001CC7E0, buffer);
+
+                if (Enumerable.SequenceEqual(buffer, new byte[] { 0x3F, 0x80 }))
+                    return 0;
+                else if (Enumerable.SequenceEqual(buffer, new byte[] { 0x00, 0x00 }))
+                    return 1;
+                else if (Enumerable.SequenceEqual(buffer, new byte[] { 0x41, 0x30 }))
+                    return 2;
+                else if (Enumerable.SequenceEqual(buffer, new byte[] { 0x41, 0x99 }))
+                    return 3;
+                else if (Enumerable.SequenceEqual(buffer, new byte[] { 0x42, 0x80 }))
+                    return 4;
+                else
+                {
+                    PS3.SetMemory(0x001CC7E0, new byte[] {  });
+                    return 0;
+                }
             }
 
-            else if(toggle.Equals(1))
+            // Set memory and use a number to represent current toggle state.
+            set
             {
-                PS3.SetMemory(offset, new byte[] { 0x00, 0x00 }); //No explosion
-            }
+                uint offset = 0x001CC7E0;
 
-            else if (toggle.Equals(2))
-            {
-                PS3.SetMemory(offset, new byte[] { 0x41, 0x30 }); //Small increase
-            }
+                if (value.Equals(0))
+                    PS3.SetMemory(offset, new byte[] { 0x3F, 0x80 }); ////SET to default
 
-            else if (toggle.Equals(3))
-            {
-                PS3.SetMemory(offset, new byte[] { 0x41, 0x99 }); //Medium increase
-            }
+                else if (value.Equals(1))
+                    PS3.SetMemory(offset, new byte[] { 0x00, 0x00 }); //No explosion
 
-            else if (toggle.Equals(4))
-            {
-                PS3.SetMemory(offset, new byte[] { 0x42, 0x00 }); //Extrem increase
-            }
+                else if (value.Equals(2))
+                    PS3.SetMemory(offset, new byte[] { 0x41, 0x30 }); //Small Explosion
 
-            else if (toggle.Equals(5))
-            {
-                MessageBox.Show("This selection might seriously crash your ps3.", "Notice!", MessageBoxButton.OK, MessageBoxImage.Exclamation);
-                PS3.SetMemory(offset, new byte[] { 0x43, 0x00 }); //Nuclear Explosion
+                else if (value.Equals(3))
+                    PS3.SetMemory(offset, new byte[] { 0x41, 0x99 }); //Medium Explosion
+
+                else if (value.Equals(4))
+                {
+                    MessageBox.Show("This selection will seriously lag your ps3.", "Notice!", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                    PS3.SetMemory(offset, new byte[] { 0x42, 0x80 }); //Large Explosion
+                }
+
+                else
+                    MessageBox.Show($"The max value for this toggle is: {4}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
-        [MaxToggleState(4)]
-        public static void CREEPER_EXPLOSION_SIZE(int toggle)
+        [ToggleState(11)]
+        public static int FOV_VALUE
         {
-            uint offset = 0x001CC7E0;
-
-            if (toggle.Equals(0))
+            // Get current state from reading memory
+            get
             {
-                PS3.SetMemory(offset, new byte[] { 0x3F, 0x80 }); ////SET to default
+                byte[] buffer = new byte[3];
+                PS3.GetMemory(0x014C670C, buffer);
+
+                if (Enumerable.SequenceEqual(buffer, new byte[] { 0x3F, 0x80, 0x00 }))
+                    return 0;
+                else if (Enumerable.SequenceEqual(buffer, new byte[] { 0x3F, 0x70, 0x00 }))
+                    return 1;
+                else if (Enumerable.SequenceEqual(buffer, new byte[] { 0x3F, 0x60, 0x00 }))
+                    return 2;
+                else if (Enumerable.SequenceEqual(buffer, new byte[] { 0x3F, 0x50, 0x00 }))
+                    return 3;
+                else if (Enumerable.SequenceEqual(buffer, new byte[] { 0x3F, 0x40, 0x00 }))
+                    return 4;
+                else if (Enumerable.SequenceEqual(buffer, new byte[] { 0x3F, 0x30, 0x00 }))
+                    return 5;
+                else if (Enumerable.SequenceEqual(buffer, new byte[] { 0x3F, 0x25, 0x00 }))
+                    return 6;
+                else if (Enumerable.SequenceEqual(buffer, new byte[] { 0x3F, 0x20, 0x00 }))
+                    return 7;
+                else if (Enumerable.SequenceEqual(buffer, new byte[] { 0x3F, 0x15, 0x00 }))
+                    return 8;
+                else if (Enumerable.SequenceEqual(buffer, new byte[] { 0x3F, 0x10, 0x00 }))
+                    return 9;
+                else if (Enumerable.SequenceEqual(buffer, new byte[] { 0x1F, 0x80, 0x00 }))
+                    return 10;
+                else if (Enumerable.SequenceEqual(buffer, new byte[] { 0x3F, 0xFF, 0xFF }))
+                    return 11;
+                else
+                {
+                    PS3.SetMemory(0x014C670C, new byte[] { 0x3F, 0x80, 0x00 });
+                    return 0;
+                }
             }
 
-            else if(toggle.Equals(1))
+            // Set memory and use a number to represent current toggle state.
+            set
             {
-                PS3.SetMemory(offset, new byte[] { 0x00, 0x00 }); //No explosion
-            }
+                uint offset = 0x014C670C;
 
-            else if (toggle.Equals(2))
-            {
-                PS3.SetMemory(offset, new byte[] { 0x41, 0x30 }); //Small Explosion
-            }
+                if (value.Equals(0))
+                    PS3.SetMemory(offset, new byte[] { 0x3F, 0x80, 0x00 }); //RESET
 
-            else if (toggle.Equals(3))
-            {
-                PS3.SetMemory(offset, new byte[] { 0x41, 0x99 }); //Medium Explosion
-            }
+                else if (value.Equals(1))
+                    PS3.SetMemory(offset, new byte[] { 0x3F, 0x70 }); //X1
 
-            else if (toggle.Equals(4))
-            {
-                MessageBox.Show("This selection will seriously lag your ps3.", "Notice!", MessageBoxButton.OK, MessageBoxImage.Exclamation);
-                PS3.SetMemory(offset, new byte[] { 0x42, 0x80 }); //Nuclear Explosion
+                else if (value.Equals(2))
+                    PS3.SetMemory(offset, new byte[] { 0x3F, 0x60 });//X2
+
+                else if (value.Equals(3))
+                    PS3.SetMemory(offset, new byte[] { 0x3F, 0x50 }); //X3
+
+                else if (value.Equals(4))
+                    PS3.SetMemory(offset, new byte[] { 0x3F, 0x40 });//X4
+
+                else if (value.Equals(5))
+                    PS3.SetMemory(offset, new byte[] { 0x3F, 0x30 }); //X5
+
+                else if (value.Equals(6))
+                    PS3.SetMemory(offset, new byte[] { 0x3F, 0x25 }); //X6
+
+                else if (value.Equals(7))
+                    PS3.SetMemory(offset, new byte[] { 0x3F, 0x20 }); //X7
+
+                else if (value.Equals(8))
+                    PS3.SetMemory(offset, new byte[] { 0x3F, 0x15 }); //X8 
+
+                else if (value.Equals(9))
+                    PS3.SetMemory(offset, new byte[] { 0x3F, 0x10 }); //X9
+
+                else if (value.Equals(10))
+                    PS3.SetMemory(offset, new byte[] { 0x1F, 0x80 }); //Updside Down
+
+                else if (value.Equals(11))
+                    PS3.SetMemory(offset, new byte[] { 0x3F, 0xFF, 0xFF }); //ZOOM
+
+                else
+                    MessageBox.Show($"The max value for this toggle is: {11}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
-        [MaxToggleState(7)]
-        public static void ITEMS_SIZE(int toggle)
+        [ToggleState(7)]
+        public static int SKY_COLORS
         {
-            uint offset = 0x00AF6B9C;
-            uint offset1 = 0x00AF6B98;
+            // Get current state from reading memory
+            get
+            {
+                byte[] buffer1 = new byte[2];
+                byte[] buffer2 = new byte[2];
+                PS3.GetMemory(0x00410734, buffer1);
+                PS3.GetMemory(0x00410738, buffer2);
 
-            if (toggle.Equals(0))
-            {
-                byte[] buffer = new byte[] { 0x41, 0x80 }; //RESET
-                byte[] buffer1 = new byte[] { 0xBF, 0x80 }; //RESET
-                PS3.SetMemory(offset, buffer);
-                PS3.SetMemory(offset1, buffer1);
+                if (Enumerable.SequenceEqual(buffer1, new byte[] { 0x40, 0xC0 }) && Enumerable.SequenceEqual(buffer2, new byte[] { 0x3F, 0x80 }))
+                    return 0;
+                else if (Enumerable.SequenceEqual(buffer1, new byte[] { 0x40, 0x50 }) && Enumerable.SequenceEqual(buffer2, new byte[] { 0x3F, 0x80 }))
+                    return 1;
+                else if (Enumerable.SequenceEqual(buffer1, new byte[] { 0x40, 0x50 }) && Enumerable.SequenceEqual(buffer2, new byte[] { 0xBF, 0x80 }))
+                    return 2;
+                else if (Enumerable.SequenceEqual(buffer1, new byte[] { 0x49, 0xC0 }) && Enumerable.SequenceEqual(buffer2, new byte[] { 0xBF, 0x80 }))
+                    return 3;
+                else if (Enumerable.SequenceEqual(buffer1, new byte[] { 0x49, 0xC0 }) && Enumerable.SequenceEqual(buffer2, new byte[] { 0x42, 0xC0 }))
+                    return 4;
+                else if (Enumerable.SequenceEqual(buffer1, new byte[] { 0x43, 0xC0 }) && Enumerable.SequenceEqual(buffer2, new byte[] { 0x42, 0xC0 }))
+                    return 5;
+                else if (Enumerable.SequenceEqual(buffer1, new byte[] { 0x43, 0xC0 }) && Enumerable.SequenceEqual(buffer2, new byte[] { 0xF0, 0xC0 }))
+                    return 6;
+                else if (Enumerable.SequenceEqual(buffer1, new byte[] { 0x40, 0xC0 }) && Enumerable.SequenceEqual(buffer2, new byte[] { 0x3F, 0xF0 }))
+                    return 7;
+                else
+                {
+                    PS3.SetMemory(0x00410734, new byte[] { 0x40, 0xC0 });
+                    PS3.SetMemory(0x00410738, new byte[] { 0x3F, 0x80 });
+                    return 0;
+                }
             }
-            else if (toggle.Equals(1))
+
+            // Set memory and use a number to represent current toggle state.
+            set
             {
-                byte[] buffer = new byte[] { 0xAF }; //Hide Items
-                PS3.SetMemory(offset1, buffer);
-            }
-            else if (toggle.Equals(2))
-            {
-                byte[] buffer = new byte[] { 0xBF, 0xFF }; //Big Items
-                PS3.SetMemory(offset1, buffer);
-            }
-            else if (toggle.Equals(3))
-            {
-                byte[] buffer = new byte[] { 0xEF }; //WTF Items
-                PS3.SetMemory(offset1, buffer);
-            }
-            else if (toggle.Equals(4))
-            {
-                byte[] buffer = new byte[] { 0x40, 0xFF }; //Little Items
-                PS3.SetMemory(offset, buffer);
-            }
-            else if (toggle.Equals(5))
-            {
-                byte[] buffer = new byte[] { 0x41, 0xF0 }; //items X1
-                PS3.SetMemory(offset, buffer);
-            }
-            else if (toggle.Equals(6))
-            {
-                byte[] buffer = new byte[] { 0x42, 0x80 }; //Items V2
-                PS3.SetMemory(offset, buffer);
-            }
-            else if (toggle.Equals(7))
-            {
-                byte[] buffer = new byte[] { 0x43, 0x80 }; //Extrem Items
-                PS3.SetMemory(offset, buffer);
+                uint offset1 = 0x00410734;
+                uint offset2 = 0x00410738;
+
+                if (value.Equals(0))
+                {
+                    // Reset
+                    PS3.SetMemory(offset1, new byte[] { 0x40, 0xC0 });
+                    PS3.SetMemory(offset2, new byte[] { 0x3F, 0x80 });
+                }
+
+                else if (value.Equals(1))
+                {
+                    //GREEN SKY COLORS
+                    PS3.SetMemory(offset1, new byte[] { 0x40, 0x50 });
+                }
+
+                else if (value.Equals(2))
+                {
+                    //BLUE SKY COLORS
+                    PS3.SetMemory(offset2, new byte[] { 0xBF, 0x80 });
+                }
+
+                else if (value.Equals(3))
+                {
+                    //Purple Sky Colors
+                    PS3.SetMemory(offset1, new byte[] { 0x49, 0xC0 });
+                }
+
+                else if (value.Equals(4))
+                {
+                    //Pink Sky Colors
+                    PS3.SetMemory(offset2, new byte[] { 0x42, 0xC0 });
+                }
+
+                else if (value.Equals(5))
+                {
+                    //Orange Sky Colors
+                    PS3.SetMemory(offset1, new byte[] { 0x43, 0xC0 });
+                }
+
+                else if (value.Equals(6))
+                {
+                    //Black Sky Colors
+                    PS3.SetMemory(offset2, new byte[] { 0xF0, 0xC0 });
+                }
+
+                else if (value.Equals(7))
+                {
+                    //White Sky Colors
+                    PS3.SetMemory(offset1, new byte[] { 0x40, 0xC0 });
+                    PS3.SetMemory(offset2, new byte[] { 0x3F, 0xF0 });
+                }
+
+                else
+                    MessageBox.Show($"The max value for this toggle is: {7}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
-        [MaxToggleState(11)]
-        public static void FOV_VALUE(int toggle) //FOV
+        [ToggleState(6)]
+        public static int HUD_COLORS
         {
-            uint offset = 0x014C670C;
+            // Get current state from reading memory
+            get
+            {
+                byte[] buffer = new byte[16];
+                PS3.GetMemory(0x30DBAD64, buffer);
 
-            if (toggle.Equals(0))
-            {
-                byte[] buffer = new byte[] { 0x3F, 0x80 }; //RESET
-                PS3.SetMemory(offset, buffer);
+                if (Enumerable.SequenceEqual(buffer, new byte[] { 0x3F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00 }))
+                    return 0;
+                else if (Enumerable.SequenceEqual(buffer, new byte[] { 0x3F, 0x80, 0x00, 0x00, 0x4F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00 }))
+                    return 1;
+                else if (Enumerable.SequenceEqual(buffer, new byte[] { 0x3F, 0x80, 0x00, 0x00, 0x1F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00 }))
+                    return 2;
+                else if (Enumerable.SequenceEqual(buffer, new byte[] { 0x3F, 0xFF, 0x00, 0x00, 0x1F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00 }))
+                    return 3;
+                else if (Enumerable.SequenceEqual(buffer, new byte[] { 0X5F, 0x80, 0x00, 0x00, 0x5F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00 }))
+                    return 4;
+                else if (Enumerable.SequenceEqual(buffer, new byte[] { 0X8F, 0x80, 0x00, 0x00, 0x8F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00 }))
+                    return 5;
+                else if (Enumerable.SequenceEqual(buffer, new byte[] { 0X00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }))
+                    return 6;
+                else
+                {
+                    PS3.SetMemory(0x30DBAD64, new byte[] { 0x3F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00 });
+                    return 0;
+                }
             }
-            else if (toggle.Equals(1))
+
+            // Set memory and use a number to represent current toggle state.
+            set
             {
-                byte[] buffer = new byte[] { 0x3F, 0x70 }; //X1
-                PS3.SetMemory(offset, buffer);
-            }
-            else if (toggle.Equals(2))
-            {
-                byte[] buffer = new byte[] { 0x3F, 0x60 }; //X2
-                PS3.SetMemory(offset, buffer);
-            }
-            else if (toggle.Equals(3))
-            {
-                byte[] buffer = new byte[] { 0x3F, 0x50 }; //X3
-                PS3.SetMemory(offset, buffer);
-            }
-            else if (toggle.Equals(4))
-            {
-                byte[] buffer = new byte[] { 0x3F, 0x40 }; //X4
-                PS3.SetMemory(offset, buffer);
-            }
-            else if (toggle.Equals(5))
-            {
-                byte[] buffer = new byte[] { 0x3F, 0x30 }; //X5
-                PS3.SetMemory(offset, buffer);
-            }
-            else if (toggle.Equals(6))
-            {
-                byte[] buffer = new byte[] { 0x3F, 0x25 }; //X6
-                PS3.SetMemory(offset, buffer);
-            }
-            else if (toggle.Equals(7))
-            {
-                byte[] buffer = new byte[] { 0x3F, 0x20 }; //X7
-                PS3.SetMemory(offset, buffer);
-            }
-            else if (toggle.Equals(8))
-            {
-                byte[] buffer = new byte[] { 0x3F, 0x15 }; //X8 
-                PS3.SetMemory(offset, buffer);
-            }
-            else if (toggle.Equals(9))
-            {
-                byte[] buffer = new byte[] { 0x3F, 0x10 }; //X9
-                PS3.SetMemory(offset, buffer);
-            }
-            else if (toggle.Equals(10))
-            {
-                byte[] buffer = new byte[] { 0x1F, 0x80 }; //Updside Down
-                PS3.SetMemory(offset, buffer);
-            }
-            else if (toggle.Equals(11))
-            {
-                byte[] buffer = new byte[] { 0x3F, 0xFF, 0xFF }; //ZOOM
-                PS3.SetMemory(offset, buffer);
+                uint offset = 0x30DBAD64;
+
+                if (value.Equals(0))
+                    PS3.SetMemory(offset, new byte[] { 0x3F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00 }); //RESET
+
+                else if (value.Equals(1))
+                    PS3.SetMemory(offset, new byte[] { 0x3F, 0x80, 0x00, 0x00, 0x4F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00 }); //GREEN
+
+                else if (value.Equals(2))
+                    PS3.SetMemory(offset, new byte[] { 0x3F, 0x80, 0x00, 0x00, 0x1F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00 }); //PURPLE
+
+                else if (value.Equals(3))
+                    PS3.SetMemory(offset, new byte[] { 0x3F, 0xFF, 0x00, 0x00, 0x1F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00 }); //RED
+
+                else if (value.Equals(4))
+                    PS3.SetMemory(offset, new byte[] { 0X5F, 0x80, 0x00, 0x00, 0x5F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00 }); //YELLOW
+
+                else if (value.Equals(5))
+                    PS3.SetMemory(offset, new byte[] { 0X8F, 0x80, 0x00, 0x00, 0x8F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00 }); //BLUE
+
+                else if (value.Equals(6))
+                    PS3.SetMemory(offset, new byte[] { 0X00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }); //INVISIBLE
+
+                else
+                    MessageBox.Show($"The max value for this toggle is: {11}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
-        [MaxToggleState(7)]
-        public static void SKY_COLORS(int toggle)
+        [ToggleState(2)]
+        public static int TIME_CYCLE
         {
-            uint offset1 = 0x00410734;
-            uint offset2 = 0x00410738;
+            // Get current state from reading memory
+            get
+            {
+                byte[] buffer = new byte[1];
+                PS3.GetMemory(0x001DA1D4, buffer);
 
-            if (toggle.Equals(0))
-            {
-                // Reset
-                PS3.SetMemory(offset1, new byte[] { 0x40, 0xC0 });
-                PS3.SetMemory(offset2, new byte[] { 0x3F, 0x80 });
+                if (Enumerable.SequenceEqual(buffer, new byte[] { 0x40 }))
+                    return 0;
+                else if (Enumerable.SequenceEqual(buffer, new byte[] { 0x43 }))
+                    return 1;
+                else if (Enumerable.SequenceEqual(buffer, new byte[] { 0x44 }))
+                    return 2;
+                else
+                {
+                    PS3.SetMemory(0x001DA1D4, new byte[] { 0x40 });
+                    return 0;
+                }
+
             }
-            else if (toggle.Equals(1))
+
+            // Set memory and use a number to represent current toggle state.
+            set
             {
-                //GREEN SKY COLORS
-                PS3.SetMemory(offset1, new byte[] { 0x40, 0x50 });
-            }
-            else if (toggle.Equals(2))
-            {
-                //BLUE SKY COLORS
-                PS3.SetMemory(offset2, new byte[] { 0xBF, 0x80 });
-            }
-            else if (toggle.Equals(3))
-            {
-                 //Purple Sky Colors
-                PS3.SetMemory(offset1, new byte[] { 0x49, 0xC0 });
-            }
-            else if (toggle.Equals(4))
-            {
-                //Pink Sky Colors
-                PS3.SetMemory(offset2, new byte[] { 0x42, 0xC0 });
-            }
-            else if (toggle.Equals(5))
-            {
-                //Orange Sky Colors
-                PS3.SetMemory(offset1, new byte[] { 0x43, 0xC0 });
-            }
-            else if (toggle.Equals(6))
-            {
-                //Black Sky Colors
-                PS3.SetMemory(offset2, new byte[] { 0xF0, 0xC0 });
-            }
-            else if (toggle.Equals(7))
-            {
-                //White Sky Colors
-                PS3.SetMemory(offset1, new byte[] { 0x40, 0xC0 });
-                PS3.SetMemory(offset2, new byte[] { 0x3F, 0xF0 });
+                uint offset = 0x001DA1D4;
+
+                if (value.Equals(0))
+                    PS3.SetMemory(offset, new byte[] { 0x40 }); ////SET to default
+
+                else if (value.Equals(1))
+                    PS3.SetMemory(offset, new byte[] { 0x43 });
+
+                else if (value.Equals(2))
+                    PS3.SetMemory(offset, new byte[] { 0x44 });
+
+                else
+                    MessageBox.Show($"The max value for this toggle is: {2}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
-        [MaxToggleState(6)]
-        public static void HUD_COLORS(int toggle)
+        [ToggleState(5, -5)]
+        public static int TIME_SCALE
         {
-            uint offset = 0x30DBAD64;
+            // Get current state from reading memory
+            get
+            {
+                byte[] buffer = new byte[1];
+                PS3.GetMemory(0x00C202C9, buffer);
 
-            if (toggle.Equals(0))
-            {
-                byte[] buffer = new byte[] { 0x3F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00 }; //RESET
-                PS3.SetMemory(offset, buffer);
+                if (Enumerable.SequenceEqual(buffer, new byte[] { 0x50 }))
+                    return 0;
+                else if (Enumerable.SequenceEqual(buffer, new byte[] { 0x40 }))
+                    return -1;
+                else if (Enumerable.SequenceEqual(buffer, new byte[] { 0x30 }))
+                    return -2;
+                else if (Enumerable.SequenceEqual(buffer, new byte[] { 0x20 }))
+                    return -3;
+                else if (Enumerable.SequenceEqual(buffer, new byte[] { 0x10 }))
+                    return -4;
+                else if (Enumerable.SequenceEqual(buffer, new byte[] { 0x00 }))
+                    return -5;
+                else if (Enumerable.SequenceEqual(buffer, new byte[] { 0x60 }))
+                    return 1;
+                else if (Enumerable.SequenceEqual(buffer, new byte[] { 0x70 }))
+                    return 2;
+                else if (Enumerable.SequenceEqual(buffer, new byte[] { 0x80 }))
+                    return 3;
+                else if (Enumerable.SequenceEqual(buffer, new byte[] { 0x90 }))
+                    return 4;
+                else if (Enumerable.SequenceEqual(buffer, new byte[] { 0xF0 }))
+                    return 5;
+                else
+                {
+                    PS3.SetMemory(0x00C202C9, new byte[] { 0x50 });
+                    return 0;
+                }
             }
-            else if (toggle.Equals(1))
+
+            // Set memory and use a number to represent current toggle state.
+            set
             {
-                byte[] buffer = new byte[] { 0x3F, 0x80, 0x00, 0x00, 0x4F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00 }; //GREEN
-                PS3.SetMemory(offset, buffer);
-            }
-            else if (toggle.Equals(2))
-            {
-                byte[] buffer = new byte[] { 0x3F, 0x80, 0x00, 0x00, 0x1F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00 }; //PURPLE
-                PS3.SetMemory(offset, buffer);
-            }
-            else if (toggle.Equals(3))
-            {
-                byte[] buffer = new byte[] { 0x3F, 0xFF, 0x00, 0x00, 0x1F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00 }; //RED
-                PS3.SetMemory(offset, buffer);
-            }
-            else if (toggle.Equals(4))
-            {
-                byte[] buffer = new byte[] { 0X5F, 0x80, 0x00, 0x00, 0x5F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00 }; //YELLOW
-                PS3.SetMemory(offset, buffer);
-            }
-            else if (toggle.Equals(5))
-            {
-                byte[] buffer = new byte[] { 0X8F, 0x80, 0x00, 0x00, 0x8F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00 }; //BLUE
-                PS3.SetMemory(offset, buffer);
-            }
-            else if (toggle.Equals(6))
-            {
-                byte[] buffer = new byte[] { 0X00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }; //INVISIBLE
-                PS3.SetMemory(offset, buffer);
+                uint offset = 0x00C202C9;
+
+                if (value.Equals(0))
+                    PS3.SetMemory(offset, new byte[] { 0x50 }); //SET TO DEFAULT
+
+                else if (value.Equals(-1))
+                    PS3.SetMemory(offset, new byte[] { 0x40 }); //Speed Time -1
+
+                else if (value.Equals(-2))
+                    PS3.SetMemory(offset, new byte[] { 0x30 }); //Speed Time -2
+
+                else if (value.Equals(-3))
+                    PS3.SetMemory(offset, new byte[] { 0x20 }); //Speed Time -3
+
+                else if (value.Equals(-4))
+                    PS3.SetMemory(offset, new byte[] { 0x10 }); //Speed Time -4
+
+                else if (value.Equals(-5))
+                    PS3.SetMemory(offset, new byte[] { 0x00 }); //Speed Time -5
+
+                else if (value.Equals(1))
+                    PS3.SetMemory(offset, new byte[] { 0x60 }); //Speed Time X1
+
+                else if (value.Equals(2))
+                    PS3.SetMemory(offset, new byte[] { 0x70 }); //Speed Time X2
+
+                else if (value.Equals(3))
+                    PS3.SetMemory(offset, new byte[] { 0x80 }); //Speed Time X3
+
+                else if (value.Equals(4))
+                    PS3.SetMemory(offset, new byte[] { 0x90 }); //Speed Time X4
+
+                else if (value.Equals(5))
+                    PS3.SetMemory(offset, new byte[] { 0xF0 }); //Speed Time X5
+
+                else
+                    MessageBox.Show($"The max value for this toggle is: {5}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
-        [MaxToggleState(2)]
-        public static void TIME_CYCLE(int toggle)
-        {
-            uint offset = 0x001DA1D4;
-            if (toggle.Equals(0))
-            {
-                //SET TO DEFAULT
-                PS3.SetMemory(offset, new byte[] { 0x40 });
-            }
-            else if (toggle.Equals(1))
-            {
-                PS3.SetMemory(offset, new byte[] { 0x43 });
-            }
-            else if (toggle.Equals(2))
-            {
-                PS3.SetMemory(offset, new byte[] { 0x44 });
-            }
-        }
-
-        [MaxToggleState(5)]
-        public static void SLOW_TIME_SCALE(int toggle)
-        {
-            uint offset = 0x00C202C9;
-            if (toggle.Equals(0))
-            {
-                //SET TO DEFAULT
-                PS3.SetMemory(offset, new byte[] { 0x50 });
-            }
-
-            else if (toggle.Equals(1))
-            {
-                //Speed Time -1
-                PS3.SetMemory(offset, new byte[] { 0x40 });
-            }
-            else if (toggle.Equals(2))
-            {
-                //Speed Time -2
-                PS3.SetMemory(offset, new byte[] { 0x30 });
-            }
-            else if (toggle.Equals(3))
-            {
-                //Speed Time -3
-                PS3.SetMemory(offset, new byte[] { 0x20 });
-            }
-            else if (toggle.Equals(4))
-            {
-                //Speed Time -4
-                PS3.SetMemory(offset, new byte[] { 0x10 });
-            }
-            else if (toggle.Equals(5))
-            {
-                //Speed Time -5
-                PS3.SetMemory(offset, new byte[] { 0x00 });
-            }
-        }
-
-        [MaxToggleState(5)]
-        public static void FAST_TIME_SCALE(int toggle)
-        {
-            uint offset = 0x00C202C8;
-            if (toggle.Equals(0))
-            {
-                byte[] buffer = new byte[] { 0x3F, 0x50 }; //SET TO DEFAULT
-                PS3.SetMemory(offset, buffer);
-            }
-
-            else if (toggle.Equals(1))
-            {
-                byte[] buffer = new byte[] { 0x3F, 0x60 }; //Speed Time X1
-                PS3.SetMemory(offset, buffer);
-            }
-            else if (toggle.Equals(2))
-            {
-                byte[] buffer = new byte[] { 0x3F, 0x70 }; //Speed Time X2
-                PS3.SetMemory(offset, buffer);
-            }
-            else if (toggle.Equals(3))
-            {
-                byte[] buffer = new byte[] { 0x3F, 0x80 }; //Speed Time X3
-                PS3.SetMemory(offset, buffer);
-            }
-            else if (toggle.Equals(4))
-            {
-                byte[] buffer = new byte[] { 0x3F, 0x90 }; //Speed Time X4
-                PS3.SetMemory(offset, buffer);
-            }
-            else if (toggle.Equals(5))
-            {
-                byte[] buffer = new byte[] { 0x3F, 0xF0 }; //Speed Time X5
-                PS3.SetMemory(offset, buffer);
-            }
-        }
-
-        [MaxToggleState(7)]
+        [ToggleState(7)]
         public static void ENTITY_RENDER_HEIGHT(int toggle)
         {
             uint offset = 0x00AD5EC8;
@@ -783,7 +921,7 @@ namespace Minecraft_Cheats
             }
         }
 
-        [MaxToggleState(6)]
+        [ToggleState(6)]
         public static void ENTITY_RENDER_WIDTH(int toggle)
         {
             uint offset = 0x00AD5ECC;
@@ -824,7 +962,7 @@ namespace Minecraft_Cheats
             }
         }
 
-        [MaxToggleState(15)]
+        [ToggleState(15)]
         public static void FPS_VALUES(int toggle)
         {
             uint offset = 0x00AF0443;
@@ -910,7 +1048,7 @@ namespace Minecraft_Cheats
             }
         }
 
-        [MaxToggleState(12)]
+        [ToggleState(12)]
         public static void GAMEPLAY_COLORS(int toggle)
         {
             uint offset = 0x3000AAF8;
@@ -981,7 +1119,7 @@ namespace Minecraft_Cheats
             }
         }
 
-        [MaxToggleState(5)]
+        [ToggleState(5)]
         public static void SELECTED_BLOCK_LINE_COLOR(int toggle)
         {
             uint offset1 = 0x00B25990;
@@ -1037,7 +1175,7 @@ namespace Minecraft_Cheats
             
         }
 
-        [MaxToggleState(3)]
+        [ToggleState(3)]
         public static void SELECTED_BLOCK_LINE_SIZE(int toggle)
         {
             uint offset = 0x00B25998;
@@ -1063,21 +1201,18 @@ namespace Minecraft_Cheats
             }
         }
 
-        [MaxToggleState(4)]
+        [ToggleState(4)]
         public static void WEIRD_SUN_MOON_STATES(int toggle)
         {
             uint remove = 0x00B21F1C;
-            uint size = 0x00B21F28;
             uint change = 0x00B21F5C;
 
             if (toggle.Equals(0))
             {
                 byte[] buffer = new byte[] { 0x3F, 0x80 }; //DEFAULT REMOVE SUN
-                byte[] buffer1 = new byte[] { 0x42, 0xC8 }; //DEFAULT SIZE SUN
-                byte[] buffer2 = new byte[] { 0x43, 0xB4 }; //DEFAULT CHANGE SUN / MOON
+                byte[] buffer1 = new byte[] { 0x43, 0xB4 }; //DEFAULT CHANGE SUN / MOON
                 PS3.SetMemory(remove, buffer);
-                PS3.SetMemory(size, buffer1);
-                PS3.SetMemory(change, buffer2);
+                PS3.SetMemory(change, buffer1);
             }
             else if (toggle.Equals(1))
             {
@@ -1101,7 +1236,7 @@ namespace Minecraft_Cheats
             }
         }
 
-        [MaxToggleState(9)]
+        [ToggleState(9)]
         public static void HAND_POSITION(int toggle)
         {
             uint normal = 0x00AD14EC;
@@ -1177,19 +1312,6 @@ namespace Minecraft_Cheats
         #endregion
 
         #region "Bool Toggles"
-
-        //public static void GOD_MODE(bool toggle)
-        //{
-        //    if (toggle)
-        //    {
-        //        PS3.SetMemory(0x004B2021, new byte[] { 0x80 });
-        //    }
-        //    else
-        //    {
-        //        PS3.SetMemory(0x004B2021, new byte[] { 0x20 });
-        //    }
-        //}
-
         /// <summary>
         /// Sets god mode to be enabled or disabled,
         /// Returns the current toggle state based off of value set in memory.
@@ -1201,7 +1323,7 @@ namespace Minecraft_Cheats
                 byte[] buffer = new byte[1];
                 PS3.GetMemory(0x004B2021, buffer);
 
-                if (buffer.Equals(new byte[] { 0x20 }))
+                if (Enumerable.SequenceEqual(buffer, new byte[] { 0x20 }))
                     return false;
                 else
                     return true;
@@ -1593,9 +1715,9 @@ namespace Minecraft_Cheats
                     Minecraft_Cheats.SPEED_CLOUDS(true);
                     Minecraft_Cheats.BLUE_CLOUDS(true);
                     Minecraft_Cheats.WEIRD_SUN_MOON_STATES(2);
-                    Minecraft_Cheats.TIME_CYCLE(2);
+                    //Minecraft_Cheats.TIME_CYCLE(2);
                     Minecraft_Cheats.SELECTED_BLOCK_LINE_COLOR(3);
-                    Minecraft_Cheats.FOV_VALUE(5);
+                    //Minecraft_Cheats.FOV_VALUE(5);
                     Minecraft_Cheats.ENTITY_RENDER_HEIGHT(3);
                     Minecraft_Cheats.ENTITY_RENDER_WIDTH(2);
                 }
@@ -1614,9 +1736,9 @@ namespace Minecraft_Cheats
                 Minecraft_Cheats.SPEED_CLOUDS(false);
                 Minecraft_Cheats.BLUE_CLOUDS(false);
                 Minecraft_Cheats.WEIRD_SUN_MOON_STATES(0);
-                Minecraft_Cheats.TIME_CYCLE(0);
+                //Minecraft_Cheats.TIME_CYCLE(0);
                 Minecraft_Cheats.SELECTED_BLOCK_LINE_COLOR(0);
-                Minecraft_Cheats.FOV_VALUE(0);
+                //Minecraft_Cheats.FOV_VALUE(0);
                 Minecraft_Cheats.ENTITY_RENDER_HEIGHT(0);
                 Minecraft_Cheats.ENTITY_RENDER_WIDTH(0);
             }

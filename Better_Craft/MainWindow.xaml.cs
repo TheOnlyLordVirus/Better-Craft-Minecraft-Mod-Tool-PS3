@@ -14,6 +14,8 @@ namespace Better_Craft
     using Minecraft_Cheats;
     using System.Windows.Input;
     using System.Reflection;
+    using System.Linq.Expressions;
+    using Expression = System.Linq.Expressions.Expression;
     using System.Globalization;
 
     /// <summary>
@@ -92,7 +94,7 @@ namespace Better_Craft
         private void ModsButton_Click(object sender, RoutedEventArgs e)
         {
             clickSound.Play();
-            if (Minecraft_Cheats.isConnected)
+            if (Minecraft_Cheats.HelperFunctions.isConnected)
             {
                 LoadCheats();
                 ToggleModsScreen(true);
@@ -262,112 +264,124 @@ namespace Better_Craft
         private void LoadCheats(string filter = "")
         {
             cheatPanel.Children.Clear();
-            string[] badFuncNames = { "tostring", "gettype", "gethashcode", "equals" };
-            MethodInfo[] cheats = (typeof(Minecraft_Cheats)).GetMethods();
 
-            foreach (MethodInfo cheat in cheats)
+            // Add all of the cheats.
+            PropertyInfo[] cheats = typeof(Minecraft_Cheats).GetProperties();
+            foreach(PropertyInfo cheat in cheats)
             {
-                bool flag = true;
-                foreach (string badFuncName in badFuncNames)
-                {
-                    if (cheat.Name.ToLower().Equals(badFuncName))
-                        flag = false;
-                }
-
                 string cheatName = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(CultureInfo.CurrentCulture.TextInfo.ToLower(cheat.Name.Replace("_", " ")));
+                dynamic cheatValue = cheat.GetValue(null);
 
-                if (flag)
+                if (filter.Equals(string.Empty) || cheatName.ToLower().Contains(filter.ToLower()))
                 {
-                    if (filter.Equals(string.Empty) || cheatName.ToLower().Contains(filter.ToLower()))
+                    SolidColorBrush toggleStateColor = new SolidColorBrush(Colors.LightCoral);
+
+                    if (cheatValue is bool && cheatValue)
+                        toggleStateColor = new SolidColorBrush(Colors.LightGreen);
+
+                    else if (cheatValue is int && !cheatValue.Equals(0))
+                        toggleStateColor = new SolidColorBrush(Colors.Cyan);
+
+                    Button button = new Button()
                     {
-                        SolidColorBrush toggleStateColor = new SolidColorBrush(Colors.LightCoral);
+                        Content = cheatName,
+                        Width = 180,
+                        Height = 40,
+                        FontSize = 9,
+                        Margin = new Thickness(10),
+                        Padding = new Thickness(300),
+                        Foreground = toggleStateColor
+                    };
 
-                        if (Minecraft_Cheats.ToggleStates.ContainsKey(cheat.Name))
+                    if(cheatValue is int)
+                    {
+                        button.Click += (sender, e) =>
                         {
-                            if (Minecraft_Cheats.ToggleStates[cheat.Name] is bool && Minecraft_Cheats.ToggleStates[cheat.Name])
-                            {
-                                toggleStateColor = new SolidColorBrush(Colors.LightGreen);
-                            }
-
-                            else if (Minecraft_Cheats.ToggleStates[cheat.Name] is int && !Minecraft_Cheats.ToggleStates[cheat.Name].Equals(0))
-                            {
-                                toggleStateColor = new SolidColorBrush(Colors.Cyan);
-                            }
-                        }
-
-                        Button button = new Button()
-                        {
-                            Content = cheatName,
-                            Width = 180,
-                            Height = 40,
-                            FontSize = 9,
-                            Margin = new Thickness(10),
-                            Padding = new Thickness(300),
-                            Foreground = toggleStateColor
+                            clickSound.Play();
+                            Expression<Func<int>> cheatAsALambdaProperty = Expression.Lambda<Func<int>>(Expression.MakeMemberAccess(null, cheat));
+                            DoMod(button, cheatAsALambdaProperty);
                         };
-
-                        // Check toggle type for delgate cast.
-                        if (cheat.GetParameters().Length.Equals(1))
-                        {
-                            Type ParameterType = cheat.GetParameters()[0].ParameterType;
-
-                            if (ParameterType.ToString().Equals("System.Boolean"))
-                            {
-                                button.Click += (sender, e) =>
-                                {
-                                    DoMod(button, (Action<bool>)Delegate.CreateDelegate(typeof(Action<bool>), cheat));
-                                };
-
-                                cheatPanel.Children.Add(button);
-                            }
-
-                            else if (ParameterType.ToString().Equals("System.Int32"))
-                            {
-                                button.Click += (sender, e) =>
-                                {
-                                    DoMod(button, (Action<int>)Delegate.CreateDelegate(typeof(Action<int>), cheat));
-                                };
-
-                                cheatPanel.Children.Add(button);
-                            }
-                        }
                     }
+
+                    else if(cheatValue is bool)
+                    {
+                        button.Click += (sender, e) =>
+                        {
+                            clickSound.Play();
+                            Expression<Func<bool>> cheatAsALambdaProperty = Expression.Lambda<Func<bool>>(Expression.MakeMemberAccess(null, cheat));
+                            DoMod(button, cheatAsALambdaProperty);
+                        };
+                    }
+
+                    cheatPanel.Children.Add(button);
                 }
             }
+
+            // Add the reset button.
+            Button resetButton = new Button()
+            {
+                Content = "Reset All Mods",
+                Width = 180,
+                Height = 40,
+                FontSize = 9,
+                Margin = new Thickness(10),
+                Padding = new Thickness(300),
+                Foreground = new SolidColorBrush(Colors.LightCoral)
+            };
+
+            resetButton.Click += (sender, e) =>
+            {
+                clickSound.Play();
+                Minecraft_Cheats.HelperFunctions.Reset_All_Mods();
+            };
+
+            cheatPanel.Children.Add(resetButton);
         }
 
         /// <summary>
-        /// Toggle Logic for mods with boolean values.
+        /// Toggle Logic for mods.
         /// </summary>
-        private void DoMod(object button, Action<bool> FunctionToggle)
+        private void DoMod<T>(object button, Expression<Func<T>> ModOption)
         {
             clickSound.Play();
 
-            bool flag = Minecraft_Cheats.HelperFunctions.ToggleOption(FunctionToggle);
-            SolidColorBrush brush = flag ? new SolidColorBrush(Colors.LightGreen) : new SolidColorBrush(Colors.LightCoral);
-            toggleState.Content = flag ? "On" : "Off";
-            toggleState.Foreground = brush;
-            ((Button)button).Foreground = brush;
+            dynamic toggleStateValue = Minecraft_Cheats.HelperFunctions.ToggleOption(ModOption);
 
-            Task.Delay(1300).GetAwaiter().OnCompleted(() => { toggleState.Content = ""; });
+            SolidColorBrush toggleStateColor = new SolidColorBrush(Colors.LightCoral);
+
+            if (toggleStateValue is bool)
+            {
+                if(toggleStateValue)
+                {
+                    toggleState.Content = "On";
+                    toggleStateColor = new SolidColorBrush(Colors.LightGreen);
+                }
+
+                else
+                    toggleState.Content = "Off";
+            }
+
+            else if (toggleStateValue is int)
+            {
+                if(!toggleStateValue.Equals(0))
+                {
+                    toggleStateColor = new SolidColorBrush(Colors.Cyan);
+                }
+
+                toggleState.Content = toggleStateValue;
+            }
+            
+            toggleState.Foreground = toggleStateColor;
+            ((Button)button).Foreground = toggleStateColor;
+            ((Button)button).IsEnabled = false;
+
+            // Clear toggle state notice.
+            Task.Delay(500).GetAwaiter().OnCompleted(() => 
+            { 
+                ((Button)button).IsEnabled = true; 
+                toggleState.Content = ""; 
+            });
         }
-
-        /// <summary>
-        /// Toggle Logic for mods with multible toggle states.
-        /// </summary>
-        private void DoMod(object button, Action<int> FunctionToggle)
-        {
-            clickSound.Play();
-
-            int currentToggleState = Minecraft_Cheats.HelperFunctions.ToggleOption(FunctionToggle);
-            SolidColorBrush brush = !currentToggleState.Equals(0) ? new SolidColorBrush(Colors.Cyan) : new SolidColorBrush(Colors.LightCoral);
-            toggleState.Content = currentToggleState;
-            toggleState.Foreground = brush;
-            ((Button)button).Foreground = brush;
-
-            Task.Delay(1300).GetAwaiter().OnCompleted(() => { toggleState.Content = ""; });
-        }
-
         #endregion
     }
 }
