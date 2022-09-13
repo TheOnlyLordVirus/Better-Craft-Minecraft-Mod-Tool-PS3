@@ -48,6 +48,10 @@ namespace Better_Craft
         public MainWindow()
         {
             InitializeComponent();
+            
+            // This is just here so the XAML view isn't so annoying to look at while coding...
+            scrollImageOne.Visibility = Visibility.Visible;
+            scrollImageTwo.Visibility = Visibility.Visible;
         }
 
         /// <summary>
@@ -332,7 +336,11 @@ namespace Better_Craft
             resetButton.Click += (sender, e) =>
             {
                 clickSound.Play();
+
                 Minecraft_Cheats.HelperFunctions.Reset_All_Mods();
+
+                // Update toggle states in UI.
+                LoadCheats();
             };
 
             cheatPanel.Children.Add(resetButton);
@@ -381,6 +389,9 @@ namespace Better_Craft
                 ((Button)button).IsEnabled = true; 
                 toggleState.Content = ""; 
             });
+
+            // Update toggle states in UI.
+            LoadCheats();
         }
         #endregion
     }

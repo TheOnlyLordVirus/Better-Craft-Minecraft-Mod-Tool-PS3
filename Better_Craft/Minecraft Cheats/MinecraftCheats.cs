@@ -1,7 +1,7 @@
 ﻿/*
  * Minecraft Cheats for BetterCraft by: LordVirus 8/26/2022
  * 
- * Thank you all for the extensive Minecraft ps3 reverse engineering! - LordVirus
+ * Thanks to all of the scene members that did the extensive Minecraft ps3 reverse engineering that has made this possible! - LordVirus
  * 
  */
 
@@ -19,6 +19,9 @@ namespace Minecraft_Cheats
     using System.Windows;
     using MessageBox = System.Windows.MessageBox;
 
+    /// <summary>
+    /// Custom toggle states being tracked as attributes.
+    /// </summary>
     [AttributeUsage(AttributeTargets.Property | AttributeTargets.Method)]
     public class ToggleState : Attribute
     {
@@ -118,21 +121,19 @@ namespace Minecraft_Cheats
                         {
                             if (Api.Equals(SelectAPI.ControlConsole))
                             {
-                                Minecraft_Cheats.HelperFunctions.CurrentPS3Api.CCAPI.Notify(CCAPI.NotifyIcon.TROPHY2, "Successfully connected and attached cheat tool to Minecraft!");
-                                Minecraft_Cheats.HelperFunctions.CurrentPS3Api.CCAPI.RingBuzzer(CCAPI.BuzzerMode.Double);
+                                PS3.CCAPI.Notify(CCAPI.NotifyIcon.TROPHY2, "Successfully connected and attached cheat tool to Minecraft!");
+                                PS3.CCAPI.RingBuzzer(CCAPI.BuzzerMode.Double);
                             }
 
                             else if(Api.Equals(SelectAPI.PS3Manager))
                             {
-                                Minecraft_Cheats.HelperFunctions.CurrentPS3Api.PS3MAPI.Notify("Successfully connected and attached cheat tool to Minecraft!");
-                                Minecraft_Cheats.HelperFunctions.CurrentPS3Api.PS3MAPI.RingBuzzer(PS3MAPI.PS3_CMD.BuzzerMode.Double);
+                                PS3.PS3MAPI.Notify("Successfully connected and attached cheat tool to Minecraft!");
+                                PS3.PS3MAPI.RingBuzzer(PS3MAPI.PS3_CMD.BuzzerMode.Double);
                                 WaitTime = 1500;
                             }
 
-                            // PS3MAPI just writes to memory way too slowly to reset the memory durring connect.
                             if(!Api.Equals(SelectAPI.PS3Manager))
                             {
-                                Task.Run(() => { Minecraft_Cheats.HelperFunctions.Reset_All_Mods(); });
                                 WaitTime = 300;
                             }
 
@@ -145,15 +146,15 @@ namespace Minecraft_Cheats
                         {
                             if (Api.Equals(SelectAPI.ControlConsole))
                             {
-                                Minecraft_Cheats.HelperFunctions.CurrentPS3Api.CCAPI.Notify(CCAPI.NotifyIcon.WRONGWAY, "Failed to attach to Minecraft...");
-                                Minecraft_Cheats.HelperFunctions.CurrentPS3Api.CCAPI.RingBuzzer(CCAPI.BuzzerMode.Single);
+                                PS3.CCAPI.Notify(CCAPI.NotifyIcon.WRONGWAY, "Failed to attach to Minecraft...");
+                                PS3.CCAPI.RingBuzzer(CCAPI.BuzzerMode.Single);
                                 MessageBox.Show($"Connected, but failed to attach with: \"{Api} API\"", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
                             }
 
                             else if (Api.Equals(SelectAPI.PS3Manager))
                             {
-                                Minecraft_Cheats.HelperFunctions.CurrentPS3Api.PS3MAPI.Notify("Failed to attach to Minecraft...");
-                                Minecraft_Cheats.HelperFunctions.CurrentPS3Api.PS3MAPI.RingBuzzer(PS3MAPI.PS3_CMD.BuzzerMode.Single);
+                                PS3.PS3MAPI.Notify("Failed to attach to Minecraft...");
+                                PS3.PS3MAPI.RingBuzzer(PS3MAPI.PS3_CMD.BuzzerMode.Single);
                                 MessageBox.Show($"Connected, but failed to attach with: \"{Api} API\"", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
                             }
 
@@ -201,7 +202,7 @@ namespace Minecraft_Cheats
 
                     MessageBox.Show("Disconnected from your Playstation 3", "Status", MessageBoxButton.OK, MessageBoxImage.Information);
 
-                    Minecraft_Cheats.HelperFunctions.CurrentPS3Api.DisconnectTarget();
+                    PS3.DisconnectTarget();
 
                     Connected = false;
                 }
@@ -309,37 +310,22 @@ namespace Minecraft_Cheats
             /// </summary>
             public static void Reset_All_Mods()
             {
+                PropertyInfo[] cheats = typeof(Minecraft_Cheats).GetProperties();
 
+                foreach(PropertyInfo cheat in cheats)
+                {
+                    dynamic cheatValue = cheat.GetValue(null);
 
-                //CheatKeyValuePairs.Clear();
+                    if(cheatValue is int)
+                    {
+                        cheat.SetValue(null, 0);
+                    }
 
-                //string[] badFuncNames = { "tostring", "gettype", "gethashcode", "equals" };
-                //MethodInfo[] cheats = (typeof(Minecraft_Cheats)).GetMethods();
-
-                //foreach (MethodInfo cheat in cheats)
-                //{
-                //    bool flag = true;
-                //    foreach (string badFuncName in badFuncNames)
-                //    {
-                //        if (cheat.Name.ToLower().Equals(badFuncName))
-                //            flag = false;
-                //    }
-
-                //    if (flag && cheat.GetParameters().Length.Equals(1))
-                //    {
-                //        Type ParameterType = cheat.GetParameters()[0].ParameterType;
-
-                //        if (ParameterType.ToString().Equals("System.Boolean"))
-                //        {
-                //            cheat.Invoke(null/*static call*/, new object[] { false });
-                //        }
-
-                //        else if (ParameterType.ToString().Equals("System.Int32"))
-                //        {
-                //            cheat.Invoke(null/*static call*/, new object[] { 0 });
-                //        }
-                //    }
-                //}
+                    else if (cheatValue is bool)
+                    {
+                        cheat.SetValue(null, false);
+                    }
+                }
             }
         }
         #endregion
@@ -748,7 +734,7 @@ namespace Minecraft_Cheats
                     PS3.SetMemory(offset, new byte[] { 0X00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }); //INVISIBLE
 
                 else
-                    MessageBox.Show($"The max value for this toggle is: {11}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show($"The max value for this toggle is: {6}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -1325,8 +1311,13 @@ namespace Minecraft_Cheats
 
                 if (Enumerable.SequenceEqual(buffer, new byte[] { 0x20 }))
                     return false;
-                else
+                else if (Enumerable.SequenceEqual(buffer, new byte[] { 0x80 }))
                     return true;
+                else
+                {
+                    PS3.SetMemory(0x004B2021, new byte[] { 0x20 });
+                    return false;
+                }
             }
 
             set 
@@ -1338,18 +1329,31 @@ namespace Minecraft_Cheats
             }
         }
 
-        public static void SUPER_SPEED(bool toggle) // 26 AD 89 40
+        public static bool SUPER_SPEED // 26 AD 89 40
         {
-            uint offset = 0x003ABD49;
-
-            if (toggle)  //////Super Speed
+            get
             {
-                PS3.SetMemory(offset, new byte[] { 0xFF, 0xFF, 0xFF }); ////MODIFED VALUE
+                byte[] buffer = new byte[3];
+                PS3.GetMemory(0x003ABD49, buffer);
+
+                if (Enumerable.SequenceEqual(buffer, new byte[] { 0x26, 0xAD, 0x89 }))
+                    return false;
+                else if (Enumerable.SequenceEqual(buffer, new byte[] { 0xFF, 0xFF, 0xFF }))
+                    return true;
+                else
+                {
+                    // If it isn't either one of these states reset it to normal and return false.
+                    PS3.SetMemory(0x003ABD49, new byte[] { 0x26, 0xAD, 0x89 });
+                    return false;
+                }
             }
 
-            else
+            set
             {
-                PS3.SetMemory(offset, new byte[] { 0x26, 0xAD, 0x89 }); ////SET to default
+                if (value.Equals(true))
+                    PS3.SetMemory(0x003ABD49, new byte[] { 0xFF, 0xFF, 0xFF });
+                else
+                    PS3.SetMemory(0x003ABD49, new byte[] { 0x26, 0xAD, 0x89 });
             }
         }
 
@@ -1366,7 +1370,7 @@ namespace Minecraft_Cheats
         //    }
         //}
 
-        public static void FAR_KNOCKBACK(bool toggle) //<== Options Knockback
+        public static void FAR_KNOCKBACK(bool toggle)
         {
             if (toggle)
             {
