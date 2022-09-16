@@ -340,7 +340,7 @@ namespace Better_Craft
                 Minecraft_Cheats.HelperFunctions.Reset_All_Mods();
 
                 // Update toggle states in UI.
-                LoadCheats();
+                UpdateToggleStates();
             };
 
             cheatPanel.Children.Add(resetButton);
@@ -391,6 +391,16 @@ namespace Better_Craft
             });
 
             // Update toggle states in UI.
+            UpdateToggleStates();
+        }
+
+        /// <summary>
+        /// Updates all of the buttons toggle state colors.
+        /// </summary>
+        private async void UpdateToggleStates()
+        {
+            await Task.Delay(2500);
+
             LoadCheats();
         }
         #endregion
