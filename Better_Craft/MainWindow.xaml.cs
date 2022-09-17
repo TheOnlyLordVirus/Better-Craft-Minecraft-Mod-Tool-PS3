@@ -17,6 +17,8 @@ namespace Better_Craft
     using System.Linq.Expressions;
     using Expression = System.Linq.Expressions.Expression;
     using System.Globalization;
+    using System.Collections.Generic;
+    using System.Data;
 
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -39,6 +41,11 @@ namespace Better_Craft
         /// Should we show the user a warning about not using CCAPI?
         /// </summary>
         private bool apiMessage = true;
+
+        /// <summary>
+        /// Stores the buttons in for the cheat panel.
+        /// </summary>
+        private Dictionary<string, Button> modbuttons = new Dictionary<string, Button>();
 
         #endregion
 
@@ -128,7 +135,7 @@ namespace Better_Craft
         /// </summary>
         private void filterTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            LoadCheats(filterTextBox.Text.Trim());
+            FilterMods(filterTextBox.Text.Trim());
         }
 
         /// <summary>
@@ -265,66 +272,138 @@ namespace Better_Craft
         /// <summary>
         /// Loads the cheats to the tile controll
         /// </summary>
-        private void LoadCheats(string filter = "")
+        private async void LoadCheats()
         {
+            filterTextBox.Text = string.Empty;
+            filterTextBox.IsEnabled = false;
+
+            modbuttons.Clear();
             cheatPanel.Children.Clear();
 
             // Add all of the cheats.
             PropertyInfo[] cheats = typeof(Minecraft_Cheats).GetProperties();
             foreach(PropertyInfo cheat in cheats)
             {
-                string cheatName = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(CultureInfo.CurrentCulture.TextInfo.ToLower(cheat.Name.Replace("_", " ")));
+                string cheatName = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(cheat.Name.Replace("_", " ").ToLower());
                 dynamic cheatValue = cheat.GetValue(null);
 
-                if (filter.Equals(string.Empty) || cheatName.ToLower().Contains(filter.ToLower()))
+                SolidColorBrush toggleStateColor = new SolidColorBrush(Colors.LightCoral);
+
+                if (cheatValue is bool && cheatValue)
+                    toggleStateColor = new SolidColorBrush(Colors.LightGreen);
+
+                else if (cheatValue is int && !cheatValue.Equals(0))
+                    toggleStateColor = new SolidColorBrush(Colors.Cyan);
+
+                Button button = new Button()
                 {
-                    SolidColorBrush toggleStateColor = new SolidColorBrush(Colors.LightCoral);
+                    Content = cheatName,
+                    Width = 180,
+                    Height = 40,
+                    FontSize = 9,
+                    Margin = new Thickness(10),
+                    Padding = new Thickness(300),
+                    Foreground = toggleStateColor
+                };
 
-                    if (cheatValue is bool && cheatValue)
-                        toggleStateColor = new SolidColorBrush(Colors.LightGreen);
-
-                    else if (cheatValue is int && !cheatValue.Equals(0))
-                        toggleStateColor = new SolidColorBrush(Colors.Cyan);
-
-                    Button button = new Button()
+                if(cheatValue is int)
+                {
+                    button.Click += (sender, e) =>
                     {
-                        Content = cheatName,
-                        Width = 180,
-                        Height = 40,
-                        FontSize = 9,
-                        Margin = new Thickness(10),
-                        Padding = new Thickness(300),
-                        Foreground = toggleStateColor
+                        clickSound.Play();
+                        Expression<Func<int>> cheatAsALambdaProperty = Expression.Lambda<Func<int>>(Expression.MakeMemberAccess(null, cheat));
+                        DoMod(button, cheatAsALambdaProperty);
                     };
+                }
 
-                    if(cheatValue is int)
+                else if(cheatValue is bool)
+                {
+                    button.Click += (sender, e) =>
                     {
-                        button.Click += (sender, e) =>
-                        {
-                            clickSound.Play();
-                            Expression<Func<int>> cheatAsALambdaProperty = Expression.Lambda<Func<int>>(Expression.MakeMemberAccess(null, cheat));
-                            DoMod(button, cheatAsALambdaProperty);
-                        };
-                    }
+                        clickSound.Play();
+                        Expression<Func<bool>> cheatAsALambdaProperty = Expression.Lambda<Func<bool>>(Expression.MakeMemberAccess(null, cheat));
+                        DoMod(button, cheatAsALambdaProperty);
+                    };
+                }
 
-                    else if(cheatValue is bool)
-                    {
-                        button.Click += (sender, e) =>
-                        {
-                            clickSound.Play();
-                            Expression<Func<bool>> cheatAsALambdaProperty = Expression.Lambda<Func<bool>>(Expression.MakeMemberAccess(null, cheat));
-                            DoMod(button, cheatAsALambdaProperty);
-                        };
-                    }
+                modbuttons.Add(cheatName, button);
+                cheatPanel.Children.Add(button);
 
-                    cheatPanel.Children.Add(button);
+                await Task.Delay(1);
+            }
+
+            AddResetButton();
+
+            filterTextBox.IsEnabled = true;
+        }
+
+        /// <summary>
+        /// Filters the mods in the cheatGrid
+        /// </summary>
+        private void FilterMods(string filter)
+        {
+            cheatPanel.Children.Clear();
+            foreach(KeyValuePair<string, Button> modOption in modbuttons)
+            {
+                if(modOption.Key.ToLower().Contains(filter.ToLower()))
+                {
+                    cheatPanel.Children.Add(modOption.Value);
                 }
             }
+
+            if (filter.Equals(string.Empty))
+                AddResetButton();
+        }
+
+        /// <summary>
+        /// Filters the mods in the cheat panel without needing to reading 100's of bytes.
+        /// </summary>
+        private async void UpdateToggleStates()
+        {
+            PropertyInfo[] cheats = typeof(Minecraft_Cheats).GetProperties();
+            foreach (PropertyInfo cheat in cheats)
+            {
+                string cheatName = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(cheat.Name.Replace("_", " ").ToLower());
+
+                // This part takes a bit for the api to respond bytes from the ps3 (Depending on the api being used.)
+                dynamic cheatValue = null;
+                await Task.Run(() =>
+                {
+                    cheatValue = cheat.GetValue(null);
+                });
+
+                SolidColorBrush toggleStateColor = new SolidColorBrush(Colors.LightCoral);
+
+                if (cheatValue is bool && cheatValue)
+                    toggleStateColor = new SolidColorBrush(Colors.LightGreen);
+
+                else if (cheatValue is int && !cheatValue.Equals(0))
+                    toggleStateColor = new SolidColorBrush(Colors.Cyan);
+
+                Button mod = modbuttons[cheatName];
+                mod.Foreground = toggleStateColor;
+            }
+
+            cheatPanel.Children.Clear();
+            string filter = filterTextBox.Text;
+            foreach (KeyValuePair<string, Button> modOption in modbuttons)
+            {
+                if (filter.Equals(string.Empty) || modOption.Key.ToLower().Contains(filter.ToLower()))
+                    cheatPanel.Children.Add(modOption.Value);
+            }
+        }
+
+        /// <summary>
+        /// Adds the reset button to the cheat panel.
+        /// </summary>
+        private void AddResetButton()
+        {
+            string resetButtonName = "Reset All Mods";
 
             // Add the reset button.
             Button resetButton = new Button()
             {
-                Content = "Reset All Mods",
+                Content = resetButtonName,
                 Width = 180,
                 Height = 40,
                 FontSize = 9,
@@ -343,17 +422,20 @@ namespace Better_Craft
                 UpdateToggleStates();
             };
 
+            if (!modbuttons.ContainsKey(resetButtonName))
+                modbuttons.Add(resetButtonName, resetButton);
+
             cheatPanel.Children.Add(resetButton);
         }
 
         /// <summary>
         /// Toggle Logic for mods.
         /// </summary>
-        private void DoMod<T>(object button, Expression<Func<T>> ModOption)
+        private async void DoMod<T>(object button, Expression<Func<T>> ModOption)
         {
             clickSound.Play();
-
-            dynamic toggleStateValue = Minecraft_Cheats.HelperFunctions.ToggleOption(ModOption);
+            dynamic toggleStateValue = null;
+            await Task.Run(() => { toggleStateValue = Minecraft_Cheats.HelperFunctions.ToggleOption(ModOption); } );
 
             SolidColorBrush toggleStateColor = new SolidColorBrush(Colors.LightCoral);
 
@@ -390,18 +472,7 @@ namespace Better_Craft
                 toggleState.Content = ""; 
             });
 
-            // Update toggle states in UI.
             UpdateToggleStates();
-        }
-
-        /// <summary>
-        /// Updates all of the buttons toggle state colors.
-        /// </summary>
-        private async void UpdateToggleStates()
-        {
-            await Task.Delay(2500);
-
-            LoadCheats();
         }
         #endregion
     }

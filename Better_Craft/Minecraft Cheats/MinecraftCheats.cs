@@ -39,7 +39,6 @@ namespace Minecraft_Cheats
         /// </summary>
         private static int WaitTime = 300;
 
-
         /// <summary>
         /// Helper class file.
         /// </summary>
@@ -372,19 +371,19 @@ namespace Minecraft_Cheats
 
                 if (value.Equals(0))
                 {
-                    Minecraft_Cheats.REMOVE_FALL_DAMAGE(false);
+                    //Minecraft_Cheats.REMOVE_FALL_DAMAGE = false;
                     PS3.SetMemory(offset, new byte[] { 0x3E, 0xD7, 0x0A, 0x3D }); ////SET to default
                 }
 
                 else if(value.Equals(1))
                 {
-                    Minecraft_Cheats.REMOVE_FALL_DAMAGE(true);
+                    //Minecraft_Cheats.REMOVE_FALL_DAMAGE = true;
                     PS3.SetMemory(offset, new byte[] { 0x3F, 0x47, 0x7F, 0x42 });
                 }
 
                 else if(value.Equals(2))
                 {
-                    Minecraft_Cheats.REMOVE_FALL_DAMAGE(true);
+                    //Minecraft_Cheats.REMOVE_FALL_DAMAGE = true;
                     PS3.SetMemory(offset, new byte[] { 0x3F, 0xD7, 0x0A, 0x3D });
                 }
 
@@ -473,7 +472,7 @@ namespace Minecraft_Cheats
                     return 4;
                 else
                 {
-                    PS3.SetMemory(0x001CC7E0, new byte[] {  });
+                    PS3.SetMemory(0x001CC7E0, new byte[] { 0x3F, 0x80 });
                     return 0;
                 }
             }
@@ -598,93 +597,102 @@ namespace Minecraft_Cheats
             // Get current state from reading memory
             get
             {
-                byte[] buffer1 = new byte[2];
-                byte[] buffer2 = new byte[2];
-                PS3.GetMemory(0x00410734, buffer1);
-                PS3.GetMemory(0x00410738, buffer2);
-
-                if (Enumerable.SequenceEqual(buffer1, new byte[] { 0x40, 0xC0 }) && Enumerable.SequenceEqual(buffer2, new byte[] { 0x3F, 0x80 }))
-                    return 0;
-                else if (Enumerable.SequenceEqual(buffer1, new byte[] { 0x40, 0x50 }) && Enumerable.SequenceEqual(buffer2, new byte[] { 0x3F, 0x80 }))
-                    return 1;
-                else if (Enumerable.SequenceEqual(buffer1, new byte[] { 0x40, 0x50 }) && Enumerable.SequenceEqual(buffer2, new byte[] { 0xBF, 0x80 }))
-                    return 2;
-                else if (Enumerable.SequenceEqual(buffer1, new byte[] { 0x49, 0xC0 }) && Enumerable.SequenceEqual(buffer2, new byte[] { 0xBF, 0x80 }))
-                    return 3;
-                else if (Enumerable.SequenceEqual(buffer1, new byte[] { 0x49, 0xC0 }) && Enumerable.SequenceEqual(buffer2, new byte[] { 0x42, 0xC0 }))
-                    return 4;
-                else if (Enumerable.SequenceEqual(buffer1, new byte[] { 0x43, 0xC0 }) && Enumerable.SequenceEqual(buffer2, new byte[] { 0x42, 0xC0 }))
-                    return 5;
-                else if (Enumerable.SequenceEqual(buffer1, new byte[] { 0x43, 0xC0 }) && Enumerable.SequenceEqual(buffer2, new byte[] { 0xF0, 0xC0 }))
-                    return 6;
-                else if (Enumerable.SequenceEqual(buffer1, new byte[] { 0x40, 0xC0 }) && Enumerable.SequenceEqual(buffer2, new byte[] { 0x3F, 0xF0 }))
-                    return 7;
-                else
+                if (bRAINBOW_SKY)
                 {
-                    //PS3.SetMemory(0x00410734, new byte[] { 0x40, 0xC0 });
-                    //PS3.SetMemory(0x00410738, new byte[] { 0x3F, 0x80 });
-                    return 0;
+                    byte[] buffer1 = new byte[2];
+                    byte[] buffer2 = new byte[2];
+                    PS3.GetMemory(0x00410734, buffer1);
+                    PS3.GetMemory(0x00410738, buffer2);
+
+                    if (Enumerable.SequenceEqual(buffer1, new byte[] { 0x40, 0xC0 }) && Enumerable.SequenceEqual(buffer2, new byte[] { 0x3F, 0x80 }))
+                        return 0;
+                    else if (Enumerable.SequenceEqual(buffer1, new byte[] { 0x40, 0x50 }) && Enumerable.SequenceEqual(buffer2, new byte[] { 0x3F, 0x80 }))
+                        return 1;
+                    else if (Enumerable.SequenceEqual(buffer1, new byte[] { 0x40, 0x50 }) && Enumerable.SequenceEqual(buffer2, new byte[] { 0xBF, 0x80 }))
+                        return 2;
+                    else if (Enumerable.SequenceEqual(buffer1, new byte[] { 0x49, 0xC0 }) && Enumerable.SequenceEqual(buffer2, new byte[] { 0xBF, 0x80 }))
+                        return 3;
+                    else if (Enumerable.SequenceEqual(buffer1, new byte[] { 0x49, 0xC0 }) && Enumerable.SequenceEqual(buffer2, new byte[] { 0x42, 0xC0 }))
+                        return 4;
+                    else if (Enumerable.SequenceEqual(buffer1, new byte[] { 0x43, 0xC0 }) && Enumerable.SequenceEqual(buffer2, new byte[] { 0x42, 0xC0 }))
+                        return 5;
+                    else if (Enumerable.SequenceEqual(buffer1, new byte[] { 0x43, 0xC0 }) && Enumerable.SequenceEqual(buffer2, new byte[] { 0xF0, 0xC0 }))
+                        return 6;
+                    else if (Enumerable.SequenceEqual(buffer1, new byte[] { 0x40, 0xC0 }) && Enumerable.SequenceEqual(buffer2, new byte[] { 0x3F, 0xF0 }))
+                        return 7;
+                    else
+                    {
+                        PS3.SetMemory(0x00410734, new byte[] { 0x40, 0xC0 });
+                        PS3.SetMemory(0x00410738, new byte[] { 0x3F, 0x80 });
+                        return 0;
+                    }
                 }
+
+                else
+                    return 0;
             }
 
             // Set memory and use a number to represent current toggle state.
             set
             {
-                uint offset1 = 0x00410734;
-                uint offset2 = 0x00410738;
-
-                if (value.Equals(0))
+                if(!bRAINBOW_SKY)
                 {
-                    // Reset
-                    PS3.SetMemory(offset1, new byte[] { 0x40, 0xC0 });
-                    PS3.SetMemory(offset2, new byte[] { 0x3F, 0x80 });
-                }
+                    uint offset1 = 0x00410734;
+                    uint offset2 = 0x00410738;
 
-                else if (value.Equals(1))
-                {
-                    //GREEN SKY COLORS
-                    PS3.SetMemory(offset1, new byte[] { 0x40, 0x50 });
-                }
+                    if (value.Equals(0))
+                    {
+                        // Reset
+                        PS3.SetMemory(offset1, new byte[] { 0x40, 0xC0 });
+                        PS3.SetMemory(offset2, new byte[] { 0x3F, 0x80 });
+                    }
 
-                else if (value.Equals(2))
-                {
-                    //BLUE SKY COLORS
-                    PS3.SetMemory(offset2, new byte[] { 0xBF, 0x80 });
-                }
+                    else if (value.Equals(1))
+                    {
+                        //GREEN SKY COLORS
+                        PS3.SetMemory(offset1, new byte[] { 0x40, 0x50 });
+                    }
 
-                else if (value.Equals(3))
-                {
-                    //Purple Sky Colors
-                    PS3.SetMemory(offset1, new byte[] { 0x49, 0xC0 });
-                }
+                    else if (value.Equals(2))
+                    {
+                        //BLUE SKY COLORS
+                        PS3.SetMemory(offset2, new byte[] { 0xBF, 0x80 });
+                    }
 
-                else if (value.Equals(4))
-                {
-                    //Pink Sky Colors
-                    PS3.SetMemory(offset2, new byte[] { 0x42, 0xC0 });
-                }
+                    else if (value.Equals(3))
+                    {
+                        //Purple Sky Colors
+                        PS3.SetMemory(offset1, new byte[] { 0x49, 0xC0 });
+                    }
 
-                else if (value.Equals(5))
-                {
-                    //Orange Sky Colors
-                    PS3.SetMemory(offset1, new byte[] { 0x43, 0xC0 });
-                }
+                    else if (value.Equals(4))
+                    {
+                        //Pink Sky Colors
+                        PS3.SetMemory(offset2, new byte[] { 0x42, 0xC0 });
+                    }
 
-                else if (value.Equals(6))
-                {
-                    //Black Sky Colors
-                    PS3.SetMemory(offset2, new byte[] { 0xF0, 0xC0 });
-                }
+                    else if (value.Equals(5))
+                    {
+                        //Orange Sky Colors
+                        PS3.SetMemory(offset1, new byte[] { 0x43, 0xC0 });
+                    }
 
-                else if (value.Equals(7))
-                {
-                    //White Sky Colors
-                    PS3.SetMemory(offset1, new byte[] { 0x40, 0xC0 });
-                    PS3.SetMemory(offset2, new byte[] { 0x3F, 0xF0 });
-                }
+                    else if (value.Equals(6))
+                    {
+                        //Black Sky Colors
+                        PS3.SetMemory(offset2, new byte[] { 0xF0, 0xC0 });
+                    }
 
-                else
-                    ToggleState.ErrorToggleState((ToggleState)MethodBase.GetCurrentMethod().GetCustomAttribute(typeof(ToggleState)));
+                    else if (value.Equals(7))
+                    {
+                        //White Sky Colors
+                        PS3.SetMemory(offset1, new byte[] { 0x40, 0xC0 });
+                        PS3.SetMemory(offset2, new byte[] { 0x3F, 0xF0 });
+                    }
+
+                    else
+                        ToggleState.ErrorToggleState((ToggleState)MethodBase.GetCurrentMethod().GetCustomAttribute(typeof(ToggleState)));
+                }
             }
         }
 
@@ -694,58 +702,66 @@ namespace Minecraft_Cheats
             // Get current state from reading memory
             get
             {
-                byte[] buffer = new byte[16];
-                PS3.GetMemory(0x30DBAD64, buffer);
-
-                if (Enumerable.SequenceEqual(buffer, new byte[] { 0x3F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00 }))
-                    return 0;
-                else if (Enumerable.SequenceEqual(buffer, new byte[] { 0x3F, 0x80, 0x00, 0x00, 0x4F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00 }))
-                    return 1;
-                else if (Enumerable.SequenceEqual(buffer, new byte[] { 0x3F, 0x80, 0x00, 0x00, 0x1F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00 }))
-                    return 2;
-                else if (Enumerable.SequenceEqual(buffer, new byte[] { 0x3F, 0xFF, 0x00, 0x00, 0x1F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00 }))
-                    return 3;
-                else if (Enumerable.SequenceEqual(buffer, new byte[] { 0X5F, 0x80, 0x00, 0x00, 0x5F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00 }))
-                    return 4;
-                else if (Enumerable.SequenceEqual(buffer, new byte[] { 0X8F, 0x80, 0x00, 0x00, 0x8F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00 }))
-                    return 5;
-                else if (Enumerable.SequenceEqual(buffer, new byte[] { 0X00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }))
-                    return 6;
-                else
+                if (bRAINBOW_HUD)
                 {
-                    //PS3.SetMemory(0x30DBAD64, new byte[] { 0x3F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00 });
-                    return 0;
+                    byte[] buffer = new byte[16];
+                    PS3.GetMemory(0x30DBAD64, buffer);
+
+                    if (Enumerable.SequenceEqual(buffer, new byte[] { 0x3F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00 }))
+                        return 0;
+                    else if (Enumerable.SequenceEqual(buffer, new byte[] { 0x3F, 0x80, 0x00, 0x00, 0x4F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00 }))
+                        return 1;
+                    else if (Enumerable.SequenceEqual(buffer, new byte[] { 0x3F, 0x80, 0x00, 0x00, 0x1F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00 }))
+                        return 2;
+                    else if (Enumerable.SequenceEqual(buffer, new byte[] { 0x3F, 0xFF, 0x00, 0x00, 0x1F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00 }))
+                        return 3;
+                    else if (Enumerable.SequenceEqual(buffer, new byte[] { 0X5F, 0x80, 0x00, 0x00, 0x5F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00 }))
+                        return 4;
+                    else if (Enumerable.SequenceEqual(buffer, new byte[] { 0X8F, 0x80, 0x00, 0x00, 0x8F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00 }))
+                        return 5;
+                    else if (Enumerable.SequenceEqual(buffer, new byte[] { 0X00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }))
+                        return 6;
+                    else
+                    {
+                        PS3.SetMemory(0x30DBAD64, new byte[] { 0x3F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00 });
+                        return 0;
+                    }
                 }
+
+                else
+                    return 0;
             }
 
             // Set memory and use a number to represent current toggle state.
             set
             {
-                uint offset = 0x30DBAD64;
+                if(!bRAINBOW_HUD)
+                {
+                    uint offset = 0x30DBAD64;
+                    if (value.Equals(0))
+                        PS3.SetMemory(offset, new byte[] { 0x3F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00 }); //RESET
 
-                if (value.Equals(0))
-                    PS3.SetMemory(offset, new byte[] { 0x3F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00 }); //RESET
+                    else if (value.Equals(1))
+                        PS3.SetMemory(offset, new byte[] { 0x3F, 0x80, 0x00, 0x00, 0x4F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00 }); //GREEN
 
-                else if (value.Equals(1))
-                    PS3.SetMemory(offset, new byte[] { 0x3F, 0x80, 0x00, 0x00, 0x4F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00 }); //GREEN
+                    else if (value.Equals(2))
+                        PS3.SetMemory(offset, new byte[] { 0x3F, 0x80, 0x00, 0x00, 0x1F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00 }); //PURPLE
 
-                else if (value.Equals(2))
-                    PS3.SetMemory(offset, new byte[] { 0x3F, 0x80, 0x00, 0x00, 0x1F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00 }); //PURPLE
+                    else if (value.Equals(3))
+                        PS3.SetMemory(offset, new byte[] { 0x3F, 0xFF, 0x00, 0x00, 0x1F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00 }); //RED
 
-                else if (value.Equals(3))
-                    PS3.SetMemory(offset, new byte[] { 0x3F, 0xFF, 0x00, 0x00, 0x1F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00 }); //RED
+                    else if (value.Equals(4))
+                        PS3.SetMemory(offset, new byte[] { 0X5F, 0x80, 0x00, 0x00, 0x5F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00 }); //YELLOW
 
-                else if (value.Equals(4))
-                    PS3.SetMemory(offset, new byte[] { 0X5F, 0x80, 0x00, 0x00, 0x5F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00 }); //YELLOW
+                    else if (value.Equals(5))
+                        PS3.SetMemory(offset, new byte[] { 0X8F, 0x80, 0x00, 0x00, 0x8F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00 }); //BLUE
 
-                else if (value.Equals(5))
-                    PS3.SetMemory(offset, new byte[] { 0X8F, 0x80, 0x00, 0x00, 0x8F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00 }); //BLUE
+                    else if (value.Equals(6))
+                        PS3.SetMemory(offset, new byte[] { 0X00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }); //INVISIBLE
 
-                else if (value.Equals(6))
-                    PS3.SetMemory(offset, new byte[] { 0X00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }); //INVISIBLE
-
-                else
-                    ToggleState.ErrorToggleState((ToggleState)MethodBase.GetCurrentMethod().GetCustomAttribute(typeof(ToggleState)));
+                    else
+                        ToggleState.ErrorToggleState((ToggleState)MethodBase.GetCurrentMethod().GetCustomAttribute(typeof(ToggleState)));
+                }
             }
         }
 
@@ -1811,6 +1827,9 @@ namespace Minecraft_Cheats
 
                             //PS3.SetMemory(offset, new byte[] { 0x40, 0xC0, 0x00, 0x00, 0x3F, 0xF0 }); // White
                             //await Task.Delay(WaitTime);
+
+                            if(!bRAINBOW_SKY)
+                                PS3.SetMemory(offset, new byte[] { 0x40, 0xC0, 0x00, 0x00, 0x3F, 0x80 }); ////Normal
                         }
                     }
 
@@ -1828,16 +1847,7 @@ namespace Minecraft_Cheats
                 }
 
                 else
-                {
-                    async void Disable()
-                    {
-                        await Task.Delay(1700);
-                        PS3.SetMemory(offset, new byte[] { 0x40, 0xC0, 0x00, 0x00, 0x3F, 0x80 }); ////Normal
-                    }
-
                     bRAINBOW_SKY = false;
-                    Disable();
-                }
             }
         }
 
@@ -1894,6 +1904,9 @@ namespace Minecraft_Cheats
 
                             //PS3.SetMemory(offset, new byte[] { 0x4F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00, 0x4F, 0x80 });
                             //await Task.Delay(WaitTime);
+
+                            if(!bRAINBOW_VISION)
+                                PS3.SetMemory(offset, new byte[] { 0x3F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00, 0x3F, 0x80 });
                         }
                     }
 
@@ -1911,16 +1924,7 @@ namespace Minecraft_Cheats
                 }
 
                 else
-                {
-                    async void Disable()
-                    {
-                        await Task.Delay(2300);
-                        PS3.SetMemory(offset, new byte[] { 0x3F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00, 0x3F, 0x80 });
-                    }
-
                     bRAINBOW_VISION = false;
-                    Disable();
-                }
             }
         }
 
@@ -1956,6 +1960,9 @@ namespace Minecraft_Cheats
 
                             PS3.SetMemory(offset, new byte[] { 0X8F, 0x80, 0x00, 0x00, 0x8F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00 });
                             await Task.Delay(WaitTime);
+
+                            if(!bRAINBOW_HUD)
+                                PS3.SetMemory(offset, new byte[] { 0x3F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00 });
                         }
                     }
 
@@ -1973,16 +1980,7 @@ namespace Minecraft_Cheats
                 }
 
                 else
-                {
-                    async void Disable()
-                    {
-                        await Task.Delay(1600);
-                        PS3.SetMemory(offset, new byte[] { 0x3F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00 });
-                    }
-
                     bRAINBOW_HUD = false;
-                    Disable();
-                }
             }
         }
 
@@ -2009,12 +2007,12 @@ namespace Minecraft_Cheats
                         Minecraft_Cheats.RAINBOW_HUD = true;
                         Minecraft_Cheats.RAINBOW_SKY = true;
                         Minecraft_Cheats.RAINBOW_VISION = true;
-                        Minecraft_Cheats.RED_ESP_ENTITYS(true);
-                        Minecraft_Cheats.FAR_REACH_ATTACK(true);
-                        Minecraft_Cheats.FROST_WALKER_WITH_DIAMOND_ORE(true);
+                        Minecraft_Cheats.RED_ESP_ENTITYS = true;
+                        Minecraft_Cheats.FAR_REACH_ATTACK = true;
+                        Minecraft_Cheats.FROST_WALKER_WITH_DIAMOND_ORE = true;
                         Minecraft_Cheats.FAST_BOW = true;
-                        Minecraft_Cheats.SPEED_CLOUDS(true);
-                        Minecraft_Cheats.BLUE_CLOUDS(true);
+                        Minecraft_Cheats.SPEED_CLOUDS = true;
+                        Minecraft_Cheats.BLUE_CLOUDS = true;
                         Minecraft_Cheats.WEIRD_SUN_MOON_STATES(2);
                         Minecraft_Cheats.TIME_CYCLE = 2;
                         Minecraft_Cheats.SELECTED_BLOCK_LINE_COLOR(3);
@@ -2031,11 +2029,11 @@ namespace Minecraft_Cheats
                     Minecraft_Cheats.RAINBOW_SKY = false;
                     Minecraft_Cheats.RAINBOW_VISION = false;
                     Minecraft_Cheats.FAST_BOW = false;
-                    Minecraft_Cheats.RED_ESP_ENTITYS(false);
-                    Minecraft_Cheats.FAR_REACH_ATTACK(false);
-                    Minecraft_Cheats.FROST_WALKER_WITH_DIAMOND_ORE(false);
-                    Minecraft_Cheats.SPEED_CLOUDS(false);
-                    Minecraft_Cheats.BLUE_CLOUDS(false);
+                    Minecraft_Cheats.RED_ESP_ENTITYS = false;
+                    Minecraft_Cheats.FAR_REACH_ATTACK = false;
+                    Minecraft_Cheats.FROST_WALKER_WITH_DIAMOND_ORE = false;
+                    Minecraft_Cheats.SPEED_CLOUDS = false;
+                    Minecraft_Cheats.BLUE_CLOUDS = false;
                     Minecraft_Cheats.WEIRD_SUN_MOON_STATES(0);
                     Minecraft_Cheats.TIME_CYCLE = 0;
                     Minecraft_Cheats.SELECTED_BLOCK_LINE_COLOR(0);
@@ -2046,420 +2044,955 @@ namespace Minecraft_Cheats
             }
         }
 
-        public static void BLUE_CLOUDS(bool toggle)
+        public static bool BLUE_CLOUDS
         {
-            uint offset = 0x0038B964;
-
-            if (toggle) 
+            get
             {
-                PS3.SetMemory(offset, new byte[] { 0xFF, 0xCC });
+                byte[] buffer = new byte[1];
+                PS3.GetMemory(0x0038B964, buffer);
+
+                if (Enumerable.SequenceEqual(buffer, new byte[] { 0xFF }))
+                    return true;
+                else if (Enumerable.SequenceEqual(buffer, new byte[] { 0x3D }))
+                    return false;
+                else
+                {
+                    // If it isn't either one of these states reset it to normal and return false.
+                    PS3.SetMemory(0x0038B964, new byte[] { 0x3D });
+                    return false;
+                }
             }
 
-            else
+            set
             {
-                PS3.SetMemory(offset, new byte[] { 0x3D, 0xCC });
+                if (value)
+                    PS3.SetMemory(0x0038B964, new byte[] { 0xFF });
+                else
+                    PS3.SetMemory(0x0038B964, new byte[] { 0x3D });
             }
         }
 
-        public static void SPEED_CLOUDS(bool toggle)
+        public static bool SPEED_CLOUDS
         {
-            uint offset = 0x00B230AD;
-
-            if (toggle)
+            get
             {
-                PS3.SetMemory(offset, new byte[] { 0x70 });
+                byte[] buffer = new byte[1];
+                PS3.GetMemory(0x00B230AD, buffer);
+
+                if (Enumerable.SequenceEqual(buffer, new byte[] { 0x70 }))
+                    return true;
+                else if (Enumerable.SequenceEqual(buffer, new byte[] { 0x80 }))
+                    return false;
+                else
+                {
+                    // If it isn't either one of these states reset it to normal and return false.
+                    PS3.SetMemory(0x00B230AD, new byte[] { 0x80 });
+                    return false;
+                }
             }
 
-            else
+            set
             {
-                PS3.SetMemory(offset, new byte[] { 0x80 });
+                if (value)
+                    PS3.SetMemory(0x00B230AD, new byte[] { 0x70 });
+                else
+                    PS3.SetMemory(0x00B230AD, new byte[] { 0x80 });
             }
         }
 
-        public static void BURN_IN_WATER(bool toggle)
+        public static bool BURN_IN_WATER
         {
-            if (toggle)  //////Burn
+            get
             {
-                PS3.SetMemory(0x00225EA8, new byte[] { 0x41 }); ////MODIFED VALUE
+                byte[] buffer = new byte[1];
+                PS3.GetMemory(0x00225EA8, buffer);
+
+                if (Enumerable.SequenceEqual(buffer, new byte[] { 0x41 }))
+                    return true;
+                else if (Enumerable.SequenceEqual(buffer, new byte[] { 0x40 }))
+                    return false;
+                else
+                {
+                    // If it isn't either one of these states reset it to normal and return false.
+                    PS3.SetMemory(0x00225EA8, new byte[] { 0x40 });
+                    return false;
+                }
             }
-            else
+
+            set
             {
-                PS3.SetMemory(0x00225EA8, new byte[] { 0x40 }); ////SET to default
+                if (value)
+                    PS3.SetMemory(0x00225EA8, new byte[] { 0x41 });
+                else
+                    PS3.SetMemory(0x00225EA8, new byte[] { 0x40 });
             }
         }
 
-        public static void MAX_PICKUP_ITEMS(bool toggle)
+        public static bool MAX_PICKUP_ITEMS
         {
-            if (toggle)  //////Max Pick Up Items
+            get
             {
-                PS3.SetMemory(0x00310AD4, new byte[] { 0x41 }); ////MODIFED VALUE
+                byte[] buffer = new byte[1];
+                PS3.GetMemory(0x00310AD4, buffer);
+
+                if (Enumerable.SequenceEqual(buffer, new byte[] { 0x41 }))
+                    return true;
+                else if (Enumerable.SequenceEqual(buffer, new byte[] { 0x40 }))
+                    return false;
+                else
+                {
+                    // If it isn't either one of these states reset it to normal and return false.
+                    PS3.SetMemory(0x00310AD4, new byte[] { 0x40 });
+                    return false;
+                }
             }
-            else
+
+            set
             {
-                PS3.SetMemory(0x00310AD4, new byte[] { 0x40 }); ////SET to default
+                if (value)
+                    PS3.SetMemory(0x00310AD4, new byte[] { 0x41 });
+                else
+                    PS3.SetMemory(0x00310AD4, new byte[] { 0x40 });
             }
         }
 
-        public static void FULL_BRIGHT(bool toggle)
+        public static bool FULL_BRIGHT
         {
-            if (toggle)  //////Night Vision
+            get
             {
-                PS3.SetMemory(0x00A9A6C8, new byte[] { 0x7F }); ////MODIFED VALUE
+                byte[] buffer = new byte[1];
+                PS3.GetMemory(0x00A9A6C8, buffer);
+
+                if (Enumerable.SequenceEqual(buffer, new byte[] { 0x7F }))
+                    return true;
+                else if (Enumerable.SequenceEqual(buffer, new byte[] { 0x3F }))
+                    return false;
+                else
+                {
+                    // If it isn't either one of these states reset it to normal and return false.
+                    PS3.SetMemory(0x00A9A6C8, new byte[] { 0x3F });
+                    return false;
+                }
             }
-            else
+
+            set
             {
-                PS3.SetMemory(0x00A9A6C8, new byte[] { 0x3F }); ////SET to default
+                if (value)
+                    PS3.SetMemory(0x00A9A6C8, new byte[] { 0x7F });
+                else
+                    PS3.SetMemory(0x00A9A6C8, new byte[] { 0x3F });
             }
         }
 
 
-        public static void KILL_AURA(bool toggle)
+        public static bool KILL_AURA
         {
-            if (toggle)  //////Kill aura
+            get
             {
-                PS3.SetMemory(0x00233290, new byte[] { 0xFF }); ////MODIFED VALUE
+                byte[] buffer = new byte[1];
+                PS3.GetMemory(0x00233290, buffer);
+
+                if (Enumerable.SequenceEqual(buffer, new byte[] { 0xFF }))
+                    return true;
+                else if (Enumerable.SequenceEqual(buffer, new byte[] { 0x00 }))
+                    return false;
+                else
+                {
+                    // If it isn't either one of these states reset it to normal and return false.
+                    PS3.SetMemory(0x00233290, new byte[] { 0x00 });
+                    return false;
+                }
             }
-            else
+
+            set
             {
-                PS3.SetMemory(0x00233290, new byte[] { 0x00 }); ////SET to default
+                if (value)
+                    PS3.SetMemory(0x00233290, new byte[] { 0xFF });
+                else
+                    PS3.SetMemory(0x00233290, new byte[] { 0x00 });
             }
         }
 
-        public static void FAST_BUILD(bool toggle)
+        public static bool FAST_BUILD
         {
-            if (toggle)  //////Fast Build
+            get
             {
-                PS3.SetMemory(0x00AECE70, new byte[] { 0x40 }); ////MODIFED VALUE
+                byte[] buffer = new byte[1];
+                PS3.GetMemory(0x00AECE70, buffer);
+
+                if (Enumerable.SequenceEqual(buffer, new byte[] { 0x40 }))
+                    return true;
+                else if (Enumerable.SequenceEqual(buffer, new byte[] { 0x41 }))
+                    return false;
+                else
+                {
+                    // If it isn't either one of these states reset it to normal and return false.
+                    PS3.SetMemory(0x00AECE70, new byte[] { 0x41 });
+                    return false;
+                }
             }
-            else
+
+            set
             {
-                PS3.SetMemory(0x00AECE70, new byte[] { 0x41 }); ////SET to default
+                if (value)
+                    PS3.SetMemory(0x00AECE70, new byte[] { 0x40 });
+                else
+                    PS3.SetMemory(0x00AECE70, new byte[] { 0x41 });
             }
         }
 
 
-        public static void CAN_FLY(bool toggle)
+        public static bool CAN_FLY
         {
-            if (toggle)  //////Can Fly
+            get
             {
-                PS3.SetMemory(0x00B02378, new byte[] { 0x40 }); ////MODIFED VALUE
+                byte[] buffer = new byte[1];
+                PS3.GetMemory(0x00B02378, buffer);
+
+                if (Enumerable.SequenceEqual(buffer, new byte[] { 0x40 }))
+                    return true;
+                else if (Enumerable.SequenceEqual(buffer, new byte[] { 0x41 }))
+                    return false;
+                else
+                {
+                    // If it isn't either one of these states reset it to normal and return false.
+                    PS3.SetMemory(0x00B02378, new byte[] { 0x41 });
+                    return false;
+                }
             }
-            else
+
+            set
             {
-                PS3.SetMemory(0x00B02378, new byte[] { 0x41 }); ////SET to default
+                if (value)
+                    PS3.SetMemory(0x00B02378, new byte[] { 0x40 });
+                else
+                    PS3.SetMemory(0x00B02378, new byte[] { 0x41 });
             }
         }
 
-        public static void REMOVE_STARS_IN_SKY(bool toggle)
+        public static bool REMOVE_STARS_IN_SKY
         {
-            if (toggle)  //////Remove Star in Sky
+            get
             {
-                PS3.SetMemory(0x0038C658, new byte[] { 0xFF }); ////MODIFED VALUE
+                byte[] buffer = new byte[1];
+                PS3.GetMemory(0x0038C658, buffer);
+
+                if (Enumerable.SequenceEqual(buffer, new byte[] { 0xFF }))
+                    return true;
+                else if (Enumerable.SequenceEqual(buffer, new byte[] { 0x3F }))
+                    return false;
+                else
+                {
+                    // If it isn't either one of these states reset it to normal and return false.
+                    PS3.SetMemory(0x0038C658, new byte[] { 0x3F });
+                    return false;
+                }
             }
-            else
+
+            set
             {
-                PS3.SetMemory(0x0038C658, new byte[] { 0x3F }); ////SET to default
+                if (value)
+                    PS3.SetMemory(0x0038C658, new byte[] { 0xFF });
+                else
+                    PS3.SetMemory(0x0038C658, new byte[] { 0x3F });
             }
         }
 
-        public static void NO_DAMAGE_HIT(bool toggle)
+        public static bool NO_DAMAGE_HIT
         {
-            if (toggle)  //////No Damage Hit
+            get
             {
-                PS3.SetMemory(0x003A3FF0, new byte[] { 0xFF, 0xFF }); ////MODIFED VALUE
+                byte[] buffer = new byte[2];
+                PS3.GetMemory(0x003A3FF0, buffer);
+
+                if (Enumerable.SequenceEqual(buffer, new byte[] { 0xFF, 0xFF }))
+                    return true;
+                else if (Enumerable.SequenceEqual(buffer, new byte[] { 0x3F, 0x00 }))
+                    return false;
+                else
+                {
+                    // If it isn't either one of these states reset it to normal and return false.
+                    PS3.SetMemory(0x003A3FF0, new byte[] { 0x3F, 0x00 });
+                    return false;
+                }
             }
-            else
+
+            set
             {
-                PS3.SetMemory(0x003A3FF0, new byte[] { 0x3F, 0x00 }); ////SET to default
+                if (value)
+                    PS3.SetMemory(0x003A3FF0, new byte[] { 0xFF, 0xFF });
+                else
+                    PS3.SetMemory(0x003A3FF0, new byte[] { 0x3F, 0x00 });
             }
         }
 
-        public static void INFINITE_BLOCK(bool toggle)
+        public static bool INFINITE_BLOCK
         {
-            if (toggle)  //////Infinity place block
+            get
             {
-                PS3.SetMemory(0x0010673F, new byte[] { 0x00 }); ////MODIFED VALUE
+                byte[] buffer = new byte[1];
+                PS3.GetMemory(0x0010673F, buffer);
+
+                if (Enumerable.SequenceEqual(buffer, new byte[] { 0x00 }))
+                    return true;
+                else if (Enumerable.SequenceEqual(buffer, new byte[] { 0x01 }))
+                    return false;
+                else
+                {
+                    // If it isn't either one of these states reset it to normal and return false.
+                    PS3.SetMemory(0x0010673F, new byte[] { 0x01 });
+                    return false;
+                }
             }
-            else
+
+            set
             {
-                PS3.SetMemory(0x0010673F, new byte[] { 0x01 }); ////SET to default
+                if (value)
+                    PS3.SetMemory(0x0010673F, new byte[] { 0x00 });
+                else
+                    PS3.SetMemory(0x0010673F, new byte[] { 0x01 });
             }
         }
 
-        public static void CRITICAL_HIT(bool toggle)
+        public static bool CRITICAL_HIT
         {
-            if (toggle)
+            get
             {
-                PS3.SetMemory(0x003ABDD1, new byte[] { 0xAF }); ////MODIFED VALUE
+                byte[] buffer = new byte[1];
+                PS3.GetMemory(0x003ABDD1, buffer);
+
+                if (Enumerable.SequenceEqual(buffer, new byte[] { 0xAF }))
+                    return true;
+                else if (Enumerable.SequenceEqual(buffer, new byte[] { 0xEF }))
+                    return false;
+                else
+                {
+                    // If it isn't either one of these states reset it to normal and return false.
+                    PS3.SetMemory(0x003ABDD1, new byte[] { 0xEF });
+                    return false;
+                }
             }
-            else
+
+            set
             {
-                PS3.SetMemory(0x003ABDD1, new byte[] { 0xEF }); ////SET to default
+                if (value)
+                    PS3.SetMemory(0x003ABDD1, new byte[] { 0xAF });
+                else
+                    PS3.SetMemory(0x003ABDD1, new byte[] { 0xEF });
             }
         }
 
-        public static void CANT_GRAB_ITEMS(bool toggle)
+        public static bool CANT_GRAB_ITEMS
         {
-            if (toggle)  //////Cant Grab Items
+            get
             {
-                PS3.SetMemory(0x00310B0C, new byte[] { 0x41 }); ////MODIFED VALUE
+                byte[] buffer = new byte[1];
+                PS3.GetMemory(0x00310B0C, buffer);
+
+                if (Enumerable.SequenceEqual(buffer, new byte[] { 0x41 }))
+                    return true;
+                else if (Enumerable.SequenceEqual(buffer, new byte[] { 0x40 }))
+                    return false;
+                else
+                {
+                    // If it isn't either one of these states reset it to normal and return false.
+                    PS3.SetMemory(0x00310B0C, new byte[] { 0x40 });
+                    return false;
+                }
             }
-            else
+
+            set
             {
-                PS3.SetMemory(0x00310B0C, new byte[] { 0x40 }); ////SET to default
+                if (value)
+                    PS3.SetMemory(0x00310B0C, new byte[] { 0x41 });
+                else
+                    PS3.SetMemory(0x00310B0C, new byte[] { 0x40 });
             }
         }
 
-        public static void DISABLE_CHANGING_WEATHER(bool toggle)
+        public static bool DISABLE_CHANGING_WEATHER
         {
-            if (toggle)  //////Block Changing Weather
+            get
             {
-                PS3.SetMemory(0x00393E84, new byte[] { 0x41 }); ////MODIFED VALUE
+                byte[] buffer = new byte[1];
+                PS3.GetMemory(0x00393E84, buffer);
+
+                if (Enumerable.SequenceEqual(buffer, new byte[] { 0x41 }))
+                    return true;
+                else if (Enumerable.SequenceEqual(buffer, new byte[] { 0x40 }))
+                    return false;
+                else
+                {
+                    // If it isn't either one of these states reset it to normal and return false.
+                    PS3.SetMemory(0x00393E84, new byte[] { 0x40 });
+                    return false;
+                }
             }
-            else
+
+            set
             {
-                PS3.SetMemory(0x00393E84, new byte[] { 0x40 }); ////SET to default
+                if (value)
+                    PS3.SetMemory(0x00393E84, new byte[] { 0x41 });
+                else
+                    PS3.SetMemory(0x00393E84, new byte[] { 0x40 });
             }
         }
 
-        public static void ROBLOX_WALK(bool toggle)
+        public static bool ROBLOX_WALK
         {
-            if (toggle)  //////Fun Arms/legs
+            get
             {
-                PS3.SetMemory(0x00A857D1, new byte[] { 0x00 }); ////MODIFED VALUE
+                byte[] buffer = new byte[1];
+                PS3.GetMemory(0x00A857D1, buffer);
+
+                if (Enumerable.SequenceEqual(buffer, new byte[] { 0x00 }))
+                    return true;
+                else if (Enumerable.SequenceEqual(buffer, new byte[] { 0x80 }))
+                    return false;
+                else
+                {
+                    // If it isn't either one of these states reset it to normal and return false.
+                    PS3.SetMemory(0x00A857D1, new byte[] { 0x80 });
+                    return false;
+                }
             }
-            else
+
+            set
             {
-                PS3.SetMemory(0x00A857D1, new byte[] { 0x80 }); ////SET to default
+                if (value)
+                    PS3.SetMemory(0x00A857D1, new byte[] { 0x00 });
+                else
+                    PS3.SetMemory(0x00A857D1, new byte[] { 0x80 });
             }
         }
 
-        public static void CREEPER_INSTANT_EXPLODE(bool toggle)
+        public static bool CREEPER_INSTANT_EXPLODE
         {
-            if (toggle)  //////Creeper instant explode
+            get
             {
-                PS3.SetMemory(0x001CCC2C, new byte[] { 0x40 }); ////MODIFED VALUE
+                byte[] buffer = new byte[1];
+                PS3.GetMemory(0x001CCC2C, buffer);
+
+                if (Enumerable.SequenceEqual(buffer, new byte[] { 0x40 }))
+                    return true;
+                else if (Enumerable.SequenceEqual(buffer, new byte[] { 0x41 }))
+                    return false;
+                else
+                {
+                    // If it isn't either one of these states reset it to normal and return false.
+                    PS3.SetMemory(0x001CCC2C, new byte[] { 0x41 });
+                    return false;
+                }
             }
-            else
+
+            set
             {
-                PS3.SetMemory(0x001CCC2C, new byte[] { 0x41 }); ////SET to default
+                if (value)
+                    PS3.SetMemory(0x001CCC2C, new byte[] { 0x40 });
+                else
+                    PS3.SetMemory(0x001CCC2C, new byte[] { 0x41 });
             }
         }
 
-        public static void TNT_INSTANT_EXPLODE(bool toggle)
+        public static bool TNT_INSTANT_EXPLODE
         {
-            if (toggle)  //////TNT INSTANT EXPLODE
+            get
             {
-                PS3.SetMemory(0x0051E6A0, new byte[] { 0x40 }); ////MODIFED VALUE
+                byte[] buffer = new byte[1];
+                PS3.GetMemory(0x0051E6A0, buffer);
+
+                if (Enumerable.SequenceEqual(buffer, new byte[] { 0x40 }))
+                    return true;
+                else if (Enumerable.SequenceEqual(buffer, new byte[] { 0x41 }))
+                    return false;
+                else
+                {
+                    // If it isn't either one of these states reset it to normal and return false.
+                    PS3.SetMemory(0x0051E6A0, new byte[] { 0x41 });
+                    return false;
+                }
             }
-            else
+
+            set
             {
-                PS3.SetMemory(0x0051E6A0, new byte[] { 0x41 }); ////SET to default
+                if (value)
+                    PS3.SetMemory(0x0051E6A0, new byte[] { 0x40 });
+                else
+                    PS3.SetMemory(0x0051E6A0, new byte[] { 0x41 });
             }
         }
 
-        public static void REMOVE_FALL_DAMAGE(bool toggle)
+        public static bool REMOVE_FALL_DAMAGE
         {
-            if (toggle)  //////No FALL Damage
+            get
             {
-                PS3.SetMemory(0x003A409C, new byte[] { 0x40 }); ////MODIFED VALUE
+                byte[] buffer = new byte[1];
+                PS3.GetMemory(0x003A409C, buffer);
+
+                if (Enumerable.SequenceEqual(buffer, new byte[] { 0x40 }))
+                    return true;
+                else if (Enumerable.SequenceEqual(buffer, new byte[] { 0x41 }))
+                    return false;
+                else
+                {
+                    // If it isn't either one of these states reset it to normal and return false.
+                    PS3.SetMemory(0x003A409C, new byte[] { 0x41 });
+                    return false;
+                }
             }
-            else
+
+            set
             {
-                PS3.SetMemory(0x003A409C, new byte[] { 0x41 }); ////SET to default
+                if (value)
+                    PS3.SetMemory(0x003A409C, new byte[] { 0x40 });
+                else
+                    PS3.SetMemory(0x003A409C, new byte[] { 0x41 });
             }
         }
 
-        public static void ALL_PLAYERS_FAST_MINE(bool toggle)
+        public static bool ALL_PLAYERS_FAST_MINE
         {
-            if (toggle)  //////All Players Fast Mine V2
+            get
             {
-                PS3.SetMemory(0x0010E0C6, new byte[] { 0x18 }); ////MODIFED VALUE
+                byte[] buffer = new byte[1];
+                PS3.GetMemory(0x0010E0C6, buffer);
+
+                if (Enumerable.SequenceEqual(buffer, new byte[] { 0x18 }))
+                    return true;
+                else if (Enumerable.SequenceEqual(buffer, new byte[] { 0x08 }))
+                    return false;
+                else
+                {
+                    // If it isn't either one of these states reset it to normal and return false.
+                    PS3.SetMemory(0x0010E0C6, new byte[] { 0x08 });
+                    return false;
+                }
             }
-            else
+
+            set
             {
-                PS3.SetMemory(0x0010E0C6, new byte[] { 0x08 }); ////SET to default
+                if (value)
+                    PS3.SetMemory(0x0010E0C6, new byte[] { 0x18 });
+                else
+                    PS3.SetMemory(0x0010E0C6, new byte[] { 0x08 });
             }
         }
 
-        public static void WALL_HACK(bool toggle)
+        public static bool WALL_HACK
         {
-            if (toggle)  //////Wall Hack
+            get
             {
-                PS3.SetMemory(0x00A98F50, new byte[] { 0x3F }); ////MODIFED VALUE
+                byte[] buffer = new byte[1];
+                PS3.GetMemory(0x00A98F50, buffer);
+
+                if (Enumerable.SequenceEqual(buffer, new byte[] { 0x3F }))
+                    return true;
+                else if (Enumerable.SequenceEqual(buffer, new byte[] { 0x3D }))
+                    return false;
+                else
+                {
+                    // If it isn't either one of these states reset it to normal and return false.
+                    PS3.SetMemory(0x00A98F50, new byte[] { 0x3D });
+                    return false;
+                }
             }
-            else
+
+            set
             {
-                PS3.SetMemory(0x00A98F50, new byte[] { 0x3D }); ////SET to default
+                if (value)
+                    PS3.SetMemory(0x00A98F50, new byte[] { 0x3F });
+                else
+                    PS3.SetMemory(0x00A98F50, new byte[] { 0x3D });
             }
         }
 
-        public static void PLAYERS_SLIDE(bool toggle)
+        public static bool PLAYERS_SLIDE
         {
-            if (toggle)  //////Player Slide
+            get
             {
-                PS3.SetMemory(0x003AAA98, new byte[] { 0x40 }); ////MODIFED VALUE
+                byte[] buffer = new byte[1];
+                PS3.GetMemory(0x003AAA98, buffer);
+
+                if (Enumerable.SequenceEqual(buffer, new byte[] { 0x40 }))
+                    return true;
+                else if (Enumerable.SequenceEqual(buffer, new byte[] { 0x41 }))
+                    return false;
+                else
+                {
+                    // If it isn't either one of these states reset it to normal and return false.
+                    PS3.SetMemory(0x003AAA98, new byte[] { 0x41 });
+                    return false;
+                }
             }
-            else
+
+            set
             {
-                PS3.SetMemory(0x003AAA98, new byte[] { 0x41 }); ////SET to default
+                if (value)
+                    PS3.SetMemory(0x003AAA98, new byte[] { 0x40 });
+                else
+                    PS3.SetMemory(0x003AAA98, new byte[] { 0x41 });
             }
         }
 
         private static bool bMOVE_WITH_INV = false;
-        public static async void MOVE_WITH_INVENTORY_OPENED(bool toggle)
+        public static bool MOVE_WITH_INVENTORY_OPENED
         {
-            if (toggle)  //////Walk with inventory open
+            get
             {
-                bMOVE_WITH_INV = true;
-                while (bMOVE_WITH_INV)
+                return bMOVE_WITH_INV;
+            }
+
+            set
+            {
+                if (value)
                 {
-                    PS3.SetMemory(0x3000CF68, new byte[] { 0x00 }); ////For inventory open anytime
-                    await Task.Delay(2000);
+                    bMOVE_WITH_INV = true;
+                    async void Loop()
+                    {
+                        while (bMOVE_WITH_INV)
+                        {
+                            PS3.SetMemory(0x3000CF68, new byte[] { 0x00 }); ////For inventory open anytime
+                            await Task.Delay(2000);
+                        }
+                    }
+                    Loop();
+                }
+
+                else
+                {
+                    bMOVE_WITH_INV = false;
                 }
             }
-            else
+        }
+
+        public static bool ENTITY_INVISIBLE
+        {
+            get
             {
-                bMOVE_WITH_INV = false;
+                byte[] buffer1 = new byte[1];
+                byte[] buffer2 = new byte[1];
+                PS3.GetMemory(0x00011ADC, buffer1);
+                PS3.GetMemory(0x003ABDD1, buffer1);
+
+                if (Enumerable.SequenceEqual(buffer1, new byte[] { 0x40 }) && Enumerable.SequenceEqual(buffer2, new byte[] { 0xFF }))
+                    return true;
+                else if (Enumerable.SequenceEqual(buffer1, new byte[] { 0x41 }) && Enumerable.SequenceEqual(buffer2, new byte[] { 0xEF }))
+                    return false;
+                else
+                {
+                    // If it isn't either one of these states reset it to normal and return false.
+                    PS3.SetMemory(0x00011ADC, new byte[] { 0x41 });
+                    PS3.SetMemory(0x003ABDD1, new byte[] { 0xEF });
+                    return false;
+                }
+            }
+
+            set
+            {
+                if (value)
+                {
+                    PS3.SetMemory(0x00011ADC, new byte[] { 0x40 });
+                    PS3.SetMemory(0x003ABDD1, new byte[] { 0xFF });
+                }
+
+                else
+                {
+                    PS3.SetMemory(0x00011ADC, new byte[] { 0x41 });
+                    PS3.SetMemory(0x003ABDD1, new byte[] { 0xEF });
+                }
             }
         }
 
-        public static void ENTITY_INVISIBLE(bool toggle)
+        public static bool REVERSE_KNOCKBACK
         {
-            if (toggle)  //////Invisible players
+            get
             {
-                PS3.SetMemory(0x00011ADC, new byte[] { 0x40 });
-                PS3.SetMemory(0x003ABDD1, new byte[] { 0xFF });
+                byte[] buffer = new byte[2];
+                PS3.GetMemory(0x003A4018, buffer);
+
+                if (Enumerable.SequenceEqual(buffer, new byte[] { 0xBF, 0x80 }))
+                    return true;
+                else if (Enumerable.SequenceEqual(buffer, new byte[] { 0x3E, 0xCC }))
+                    return false;
+                else
+                {
+                    // If it isn't either one of these states reset it to normal and return false.
+                    PS3.SetMemory(0x003A4018, new byte[] { 0x3E, 0xCC });
+                    return false;
+                }
             }
-            else
+
+            set
             {
-                PS3.SetMemory(0x00011ADC, new byte[] { 0x41 });
-                PS3.SetMemory(0x003ABDD1, new byte[] { 0xEF });
+                if (value)
+                    PS3.SetMemory(0x003A4018, new byte[] { 0xBF, 0x80 });
+                else
+                    PS3.SetMemory(0x003A4018, new byte[] { 0x3E, 0xCC });
             }
         }
 
-        public static void REVERSE_KNOCKBACK(bool toggle)
+        public static bool ESP_CHESTS
         {
-            if (toggle)  //////Reverse Knockback
+            get
             {
-                PS3.SetMemory(0x003A4018, new byte[] { 0xBF, 0x80 }); ////Knocback enabled
+                byte[] buffer = new byte[2];
+                PS3.GetMemory(0x00A9C2B4, buffer);
+
+                if (Enumerable.SequenceEqual(buffer, new byte[] { 0x3E, 0xFF }))
+                    return true;
+                else if (Enumerable.SequenceEqual(buffer, new byte[] { 0x3F, 0x80 }))
+                    return false;
+                else
+                {
+                    // If it isn't either one of these states reset it to normal and return false.
+                    PS3.SetMemory(0x00A9C2B4, new byte[] { 0x3F, 0x80 });
+                    return false;
+                }
             }
-            else
+
+            set
             {
-                PS3.SetMemory(0x003A4018, new byte[] { 0x3E, 0xCC }); ////Knockback disabled
+                if (value)
+                {
+                    Minecraft_Cheats.FULL_BRIGHT = true;
+                    PS3.SetMemory(0x00A9C2B4, new byte[] { 0x3E, 0xFF });
+                }
+                else
+                {
+                    Minecraft_Cheats.FULL_BRIGHT = false;
+                    PS3.SetMemory(0x00A9C2B4, new byte[] { 0x3F, 0x80 });
+                }
             }
         }
 
-        public static void ESP_CHESTS(bool toggle)
+        public static bool TNT_CANT_EXPLODE_BLOCKS
         {
-            if (toggle)  //////ESP Chests V2
+            get
             {
-                Minecraft_Cheats.FULL_BRIGHT(true);
-                PS3.SetMemory(0x00A9C2B4, new byte[] { 0x3E, 0xFF }); ////MODIFED VALUE
+                byte[] buffer = new byte[1];
+                PS3.GetMemory(0x00245DF0, buffer);
+
+                if (Enumerable.SequenceEqual(buffer, new byte[] { 0x40 }))
+                    return true;
+                else if (Enumerable.SequenceEqual(buffer, new byte[] { 0x41 }))
+                    return false;
+                else
+                {
+                    // If it isn't either one of these states reset it to normal and return false.
+                    PS3.SetMemory(0x00245DF0, new byte[] { 0x41 });
+                    return false;
+                }
             }
-            else
+
+            set
             {
-                Minecraft_Cheats.FULL_BRIGHT(false);
-                PS3.SetMemory(0x00A9C2B4, new byte[] { 0x3F, 0x80 }); ////SET to default
+                if (value)
+                    PS3.SetMemory(0x00245DF0, new byte[] { 0x40 });
+                else
+                    PS3.SetMemory(0x00245DF0, new byte[] { 0x41 });
             }
         }
 
-        public static void TNT_CANT_EXPLODE_BLOCKS(bool toggle)
+        public static bool DEMI_GOD
         {
-            if (toggle)  //////TNT Can't explode blocks
+            get
             {
-                PS3.SetMemory(0x00245DF0, new byte[] { 0x40 }); ////MODIFED VALUE
+                byte[] buffer = new byte[1];
+                PS3.GetMemory(0x003A4066, buffer);
+
+                if (Enumerable.SequenceEqual(buffer, new byte[] { 0x88 }))
+                    return true;
+                else if (Enumerable.SequenceEqual(buffer, new byte[] { 0x08 }))
+                    return false;
+                else
+                {
+                    // If it isn't either one of these states reset it to normal and return false.
+                    PS3.SetMemory(0x003A4066, new byte[] { 0x08 });
+                    return false;
+                }
             }
-            else
+
+            set
             {
-                PS3.SetMemory(0x00245DF0, new byte[] { 0x41 }); ////SET to default
+                if (value)
+                    PS3.SetMemory(0x003A4066, new byte[] { 0x88 });
+                else
+                    PS3.SetMemory(0x003A4066, new byte[] { 0x08 });
             }
         }
 
-        public static void DEMI_GOD(bool toggle)
+
+        public static bool GRAVITY_MOON
         {
-            if (toggle)  /////Demi God
+            get
             {
-                PS3.SetMemory(0x003A4066, new byte[] { 0x88 }); ////MODIFED VALUE
+                byte[] buffer = new byte[1];
+                PS3.GetMemory(0x003ABF88, buffer);
+
+                if (Enumerable.SequenceEqual(buffer, new byte[] { 0x40 }))
+                    return true;
+                else if (Enumerable.SequenceEqual(buffer, new byte[] { 0x41 }))
+                    return false;
+                else
+                {
+                    // If it isn't either one of these states reset it to normal and return false.
+                    PS3.SetMemory(0x003ABF88, new byte[] { 0x41 });
+                    return false;
+                }
             }
-            else
+
+            set
             {
-                PS3.SetMemory(0x003A4066, new byte[] { 0x08 }); ////SET to default
+                if (value)
+                    PS3.SetMemory(0x003ABF88, new byte[] { 0x40 });
+                else
+                    PS3.SetMemory(0x003ABF88, new byte[] { 0x41 });
             }
         }
 
-
-        public static void GRAVITY_MOON(bool toggle)
+        public static bool FLAT_BLOCKS
         {
-            if (toggle)  //////Gravity Moon
+            get
             {
-                PS3.SetMemory(0x003ABF88, new byte[] { 0x40 }); ////MODIFED VALUE
+                byte[] buffer = new byte[1];
+                PS3.GetMemory(0x000924FF, buffer);
+
+                if (Enumerable.SequenceEqual(buffer, new byte[] { 0x01 }))
+                    return true;
+                else if (Enumerable.SequenceEqual(buffer, new byte[] { 0x00 }))
+                    return false;
+                else
+                {
+                    // If it isn't either one of these states reset it to normal and return false.
+                    PS3.SetMemory(0x000924FF, new byte[] { 0x00 });
+                    return false;
+                }
             }
-            else
+
+            set
             {
-                PS3.SetMemory(0x003ABF88, new byte[] { 0x41 }); ////SET to default
+                if (value)
+                    PS3.SetMemory(0x000924FF, new byte[] { 0x01 });
+                else
+                    PS3.SetMemory(0x000924FF, new byte[] { 0x00 });
             }
         }
 
-        public static void FLAT_BLOCKS(bool toggle)
+        public static bool AUTO_SPRINT
         {
-            if (toggle)  //////Flat Block
+            get
             {
-                PS3.SetMemory(0x000924FF, new byte[] { 0x01 }); ////MODIFED VALUE
+                byte[] buffer = new byte[1];
+                PS3.GetMemory(0x00B01EEF, buffer);
+
+                if (Enumerable.SequenceEqual(buffer, new byte[] { 0x00 }))
+                    return true;
+                else if (Enumerable.SequenceEqual(buffer, new byte[] { 0x01 }))
+                    return false;
+                else
+                {
+                    // If it isn't either one of these states reset it to normal and return false.
+                    PS3.SetMemory(0x00B01EEF, new byte[] { 0x01 });
+                    return false;
+                }
             }
-            else
+
+            set
             {
-                PS3.SetMemory(0x000924FF, new byte[] { 0x00 }); ////SET to default
+                if (value)
+                    PS3.SetMemory(0x00B01EEF, new byte[] { 0x00 });
+                else
+                    PS3.SetMemory(0x00B01EEF, new byte[] { 0x01 });
             }
         }
 
-        public static void TOGGLE_SPRINT(bool toggle)
+        public static bool FORCE_SNOW
         {
-            if (toggle)  //////Toogle Sprint V2
+            get
             {
-                PS3.SetMemory(0x00B01EEF, new byte[] { 0x00 }); ////MODIFED VALUE
+                byte[] buffer = new byte[1];
+                PS3.GetMemory(0x00A9B986, buffer);
+
+                if (Enumerable.SequenceEqual(buffer, new byte[] { 0x58 }))
+                    return true;
+                else if (Enumerable.SequenceEqual(buffer, new byte[] { 0x08 }))
+                    return false;
+                else
+                {
+                    // If it isn't either one of these states reset it to normal and return false.
+                    PS3.SetMemory(0x00A9B986, new byte[] { 0x08 });
+                    return false;
+                }
             }
-            else
+
+            set
             {
-                PS3.SetMemory(0x00B01EEF, new byte[] { 0x01 }); ////SET to default
+                if (value)
+                {
+                    Minecraft_Cheats.FORCE_RAIN = true;
+                    PS3.SetMemory(0x00A9B986, new byte[] { 0x58 });
+                }
+                else
+                {
+                    Minecraft_Cheats.FORCE_RAIN = false;
+                    PS3.SetMemory(0x00A9B986, new byte[] { 0x08 });
+                }
             }
         }
 
-        public static void FORCE_SNOW(bool toggle)
+        public static bool FORCE_RAIN
         {
-            if (toggle)  ////Make Snow !
+            get
             {
-                PS3.SetMemory(0x00A9B23E, new byte[] { 0x48 }); ////MODIFED VALUE
-                PS3.SetMemory(0x00A9B986, new byte[] { 0x58 }); ////MODIFED VALUE
+                byte[] buffer = new byte[1];
+                PS3.GetMemory(0x00A9B23E, buffer);
+
+                if (Enumerable.SequenceEqual(buffer, new byte[] { 0x48 }))
+                    return true;
+                else if (Enumerable.SequenceEqual(buffer, new byte[] { 0x08 }))
+                    return false;
+                else
+                {
+                    // If it isn't either one of these states reset it to normal and return false.
+                    PS3.SetMemory(0x00A9B23E, new byte[] { 0x08 });
+                    return false;
+                }
             }
-            else
+
+            set
             {
-                PS3.SetMemory(0x00A9B23E, new byte[] { 0x08 }); ////SET to default
-                PS3.SetMemory(0x00A9B986, new byte[] { 0x08 }); ////SET to default
+                if (value)
+                    PS3.SetMemory(0x00A9B23E, new byte[] { 0x48 });
+                else
+                    PS3.SetMemory(0x00A9B23E, new byte[] { 0x08 });
             }
         }
 
-        public static void FORCE_RAIN(bool toggle)
+        public static bool SKY_TO_NETHER
         {
-            if (toggle)  ////Make Rain !
+            get
             {
-                PS3.SetMemory(0x00A9B23E, new byte[] { 0x48 }); ////MODIFED VALUE
-            }
-            else
-            {
-                PS3.SetMemory(0x00A9B23E, new byte[] { 0x08 }); ////SET to default
-            }
-        }
+                byte[] buffer = new byte[1];
+                PS3.GetMemory(0x00B22050, buffer);
 
-        public static void SKY_TO_NETHER(bool toggle)
-        {
-            if (toggle)  //////Sky Nether
-            {
-                PS3.SetMemory(0x00B22050, new byte[] { 0x41 }); ////MODIFED VALUE
+                if (Enumerable.SequenceEqual(buffer, new byte[] { 0x41 }))
+                    return true;
+                else if (Enumerable.SequenceEqual(buffer, new byte[] { 0x40 }))
+                    return false;
+                else
+                {
+                    // If it isn't either one of these states reset it to normal and return false.
+                    PS3.SetMemory(0x00B22050, new byte[] { 0x40 });
+                    return false;
+                }
             }
-            else
+
+            set
             {
-                PS3.SetMemory(0x00B22050, new byte[] { 0x40 }); ////SET to default
+                if (value)
+                    PS3.SetMemory(0x00B22050, new byte[] { 0x41 });
+                else
+                    PS3.SetMemory(0x00B22050, new byte[] { 0x40 });
             }
         }
 
@@ -2467,302 +3000,739 @@ namespace Minecraft_Cheats
         /// <summary>
         /// Snoop Dogg was here...
         /// </summary>
-        /// <param name="toggle">If you can't figure out what a toggle does you're in the wrong place.</param>
-        public static void SMOKE_LOBBY(bool toggle)
+        public static bool SMOKE_LOBBY
         {
-            if (toggle)  //////Smoke Lobby
+            get
             {
-                PS3.SetMemory(0x00B24177, new byte[] { 0x01 }); ////MODIFED VALUE
+                byte[] buffer = new byte[1];
+                PS3.GetMemory(0x00B24177, buffer);
+
+                if (Enumerable.SequenceEqual(buffer, new byte[] { 0x01 }))
+                    return true;
+                else if (Enumerable.SequenceEqual(buffer, new byte[] { 0x00 }))
+                    return false;
+                else
+                {
+                    // If it isn't either one of these states reset it to normal and return false.
+                    PS3.SetMemory(0x00B24177, new byte[] { 0x00 });
+                    return false;
+                }
             }
-            else
+
+            set
             {
-                PS3.SetMemory(0x00B24177, new byte[] { 0x00 }); ////SET to default
+                if (value)
+                    PS3.SetMemory(0x00B24177, new byte[] { 0x01 });
+                else
+                    PS3.SetMemory(0x00B24177, new byte[] { 0x00 });
             }
         }
 
-        public static void REMOVE_HANDS(bool toggle)
+        public static bool REMOVE_HANDS
         {
-            if (toggle)  //////Remove Hand
+            get
             {
-                PS3.SetMemory(0x00AF10AB, new byte[] { 0x01 }); ////MODIFED VALUE
+                byte[] buffer = new byte[1];
+                PS3.GetMemory(0x00AF10AB, buffer);
+
+                if (Enumerable.SequenceEqual(buffer, new byte[] { 0x01 }))
+                    return true;
+                else if (Enumerable.SequenceEqual(buffer, new byte[] { 0x00 }))
+                    return false;
+                else
+                {
+                    // If it isn't either one of these states reset it to normal and return false.
+                    PS3.SetMemory(0x00AF10AB, new byte[] { 0x00 });
+                    return false;
+                }
             }
-            else
+
+            set
             {
-                PS3.SetMemory(0x00AF10AB, new byte[] { 0x00 }); ////SET to default
+                if (value)
+                    PS3.SetMemory(0x00AF10AB, new byte[] { 0x01 });
+                else
+                    PS3.SetMemory(0x00AF10AB, new byte[] { 0x00 });
             }
         }
 
-        public static void BATTLE_MOD(bool toggle)
+        public static bool SHOW_ARMOR
         {
-            if (toggle)
+            get
             {
-                Minecraft_Cheats.KILL_AURA(true);
-                //Minecraft_Cheats.INSTANT_HIT(true);
-                Minecraft_Cheats.RED_ESP_ENTITYS(true);
-                Minecraft_Cheats.FAR_REACH_ATTACK(true);
-                PS3.SetMemory(0x00AD8158, new byte[] { 0x4C }); ////Name Over Head
-                PS3.SetMemory(0x00B01DEC, new byte[] { 0x40 }); ////AutoSprint
-                PS3.SetMemory(0x003097C8, new byte[] { 0x40 }); ////ID Items
-                PS3.SetMemory(0x003097B8, new byte[] { 0x40 }); ////ID Items
-                PS3.SetMemory(0x0090B5F3, new byte[] { 0x01 }); ////Show Armor
-                PS3.SetMemory(0x00AD5A5D, new byte[] { 0xFF }); ////Damage Indicator
-                PS3.SetMemory(0x00227BDC, new byte[] { 0x40 }); ////Remove Run Anim
+                byte[] buffer = new byte[1];
+                PS3.GetMemory(0x0090B5F3, buffer);
+
+                if (Enumerable.SequenceEqual(buffer, new byte[] { 0x01 }))
+                    return true;
+                else if (Enumerable.SequenceEqual(buffer, new byte[] { 0x00 }))
+                    return false;
+                else
+                {
+                    // If it isn't either one of these states reset it to normal and return false.
+                    PS3.SetMemory(0x0090B5F3, new byte[] { 0x00 });
+                    return false;
+                }
             }
-            else
+
+            set
             {
-                Minecraft_Cheats.KILL_AURA(false);
-                //Minecraft_Cheats.INSTANT_HIT(false);
-                Minecraft_Cheats.RED_ESP_ENTITYS(false);
-                Minecraft_Cheats.FAR_REACH_ATTACK(false);
-                PS3.SetMemory(0x00AD8158, new byte[] { 0x2C }); ////Name Over Head
-                PS3.SetMemory(0x00B01DEC, new byte[] { 0x41 }); ////AutoSprint
-                PS3.SetMemory(0x003097C8, new byte[] { 0x41 }); ////ID Items
-                PS3.SetMemory(0x003097B8, new byte[] { 0x41 }); ////ID Items
-                PS3.SetMemory(0x0090B5F3, new byte[] { 0x00 }); ////Show Armor
-                PS3.SetMemory(0x00AD5A5D, new byte[] { 0x80 }); ////Damage Indicator
-                PS3.SetMemory(0x00227BDC, new byte[] { 0x41 }); ////Remove Run Anim
+                if (value)
+                    PS3.SetMemory(0x0090B5F3, new byte[] { 0x01 });
+                else
+                    PS3.SetMemory(0x0090B5F3, new byte[] { 0x00 });
             }
         }
 
-        public static void ALL_PLAYERS_TAKE_DAMAGE(bool toggle)
+        public static bool REMOVE_RUN_ANIMATION
         {
-            if (toggle)  //////All Players Take Damage
+            get
             {
-                PS3.SetMemory(0x0039E2D4, new byte[] { 0x40 }); ////MODIFED VALUE
+                byte[] buffer = new byte[1];
+                PS3.GetMemory(0x00227BDC, buffer);
+
+                if (Enumerable.SequenceEqual(buffer, new byte[] { 0x40 }))
+                    return true;
+                else if (Enumerable.SequenceEqual(buffer, new byte[] { 0x41 }))
+                    return false;
+                else
+                {
+                    // If it isn't either one of these states reset it to normal and return false.
+                    PS3.SetMemory(0x00227BDC, new byte[] { 0x41 });
+                    return false;
+                }
             }
-            else
+
+            set
             {
-                PS3.SetMemory(0x0039E2D4, new byte[] { 0x41 }); ////SET to default
+                if (value)
+                    PS3.SetMemory(0x00227BDC, new byte[] { 0x40 });
+                else
+                    PS3.SetMemory(0x00227BDC, new byte[] { 0x41 });
             }
         }
 
-        public static void FAR_REACH_ATTACK(bool toggle)
+        private static bool bBattle_Mod = false;
+        public static bool BATTLE_MOD
         {
-            if (toggle)  //////Reach/Attack
+            get
             {
-                PS3.SetMemory(0x00A95FB9, new byte[] { 0x80 }); ////reach creative ENTITY MOB
-                PS3.SetMemory(0x00A95FC1, new byte[] { 0x80 }); ////reach survival ENTITY MOB
-                PS3.SetMemory(0x00B351D8, new byte[] { 0x43, 0xA0 });////creative
-                PS3.SetMemory(0x00B351DC, new byte[] { 0x43, 0xA0 });/////survival
+                return bBattle_Mod;
             }
-            else
+
+            set
             {
-                PS3.SetMemory(0x00A95FB9, new byte[] { 0x18 }); ////reach creative ENTITY MOB
-                PS3.SetMemory(0x00A95FC1, new byte[] { 0x08 }); ////reach survival ENTITY MOB
-                PS3.SetMemory(0x00B351D8, new byte[] { 0x40, 0xA0 });/////creative
-                PS3.SetMemory(0x00B351DC, new byte[] { 0x40, 0x90 });/////survival
+                if (value)
+                {
+                    bBattle_Mod = true;
+                    Minecraft_Cheats.KILL_AURA = true;
+                    Minecraft_Cheats.INSTANT_HIT = true;
+                    Minecraft_Cheats.SHOW_ARMOR = true;
+                    Minecraft_Cheats.AUTO_SPRINT = true;
+                    Minecraft_Cheats.FAST_BOW = true;
+                    Minecraft_Cheats.ANTI_KNOCKBACK = true;
+                    Minecraft_Cheats.RED_ESP_ENTITYS = true;
+                    Minecraft_Cheats.FAR_REACH_ATTACK = true;
+                }
+                else
+                {
+                    bBattle_Mod = false;
+                    Minecraft_Cheats.KILL_AURA = false;
+                    Minecraft_Cheats.INSTANT_HIT = false;
+                    Minecraft_Cheats.SHOW_ARMOR = false;
+                    Minecraft_Cheats.AUTO_SPRINT = false;
+                    Minecraft_Cheats.FAST_BOW = false;
+                    Minecraft_Cheats.ANTI_KNOCKBACK = false;
+                    Minecraft_Cheats.RED_ESP_ENTITYS = false;
+                    Minecraft_Cheats.FAR_REACH_ATTACK = false;
+                }
             }
         }
 
-        public static void RED_ESP_ENTITYS(bool toggle)
+        public static bool ALL_PLAYERS_TAKE_DAMAGE
         {
-            if (toggle)  //////ESP Players
+            get
             {
-                PS3.SetMemory(0x00AD5B60, new byte[] { 0x41 }); ////MODIFED VALUE ESP RED
-                PS3.SetMemory(0x00AD5A5C, new byte[] { 0x6F, 0xFF }); ////MODIFED VALUE
+                byte[] buffer = new byte[1];
+                PS3.GetMemory(0x0039E2D4, buffer);
+
+                if (Enumerable.SequenceEqual(buffer, new byte[] { 0x40 }))
+                    return true;
+                else if (Enumerable.SequenceEqual(buffer, new byte[] { 0x41 }))
+                    return false;
+                else
+                {
+                    // If it isn't either one of these states reset it to normal and return false.
+                    PS3.SetMemory(0x0039E2D4, new byte[] { 0x41 });
+                    return false;
+                }
             }
-            else
+
+            set
             {
-                PS3.SetMemory(0x00AD5B60, new byte[] { 0x40 }); ////SET to default ESP RED
-                PS3.SetMemory(0x00AD5A5C, new byte[] { 0x3F, 0x80 }); ////SET to default
+                if (value)
+                    PS3.SetMemory(0x0039E2D4, new byte[] { 0x40 });
+                else
+                    PS3.SetMemory(0x0039E2D4, new byte[] { 0x41 });
             }
         }
 
-        public static void DISABLE_HUD_TEXT(bool toggle)
+        public static bool FAR_REACH_ATTACK
         {
-            if (toggle)  //////Disable Text HUD
+            get
             {
-                PS3.SetMemory(0x008FC4B4, new byte[] { 0x40 }); ////MODIFED VALUE
+                byte[] buffer1 = new byte[1];
+                byte[] buffer2 = new byte[1];
+                byte[] buffer3 = new byte[1];
+                byte[] buffer4 = new byte[2];
+                PS3.GetMemory(0x00A95FB9, buffer1);
+                PS3.GetMemory(0x00A95FC1, buffer2);
+                PS3.GetMemory(0x00B351D8, buffer3);
+                PS3.GetMemory(0x00B351DC, buffer4);
+
+                if (Enumerable.SequenceEqual(buffer1, new byte[] { 0x80 }) &&
+                    Enumerable.SequenceEqual(buffer2, new byte[] { 0x80 }) &&
+                    Enumerable.SequenceEqual(buffer3, new byte[] { 0x43 }) &&
+                    Enumerable.SequenceEqual(buffer4, new byte[] { 0x43, 0xA0 }))
+                    return true;
+                else if (Enumerable.SequenceEqual(buffer1, new byte[] { 0x18 }) &&
+                         Enumerable.SequenceEqual(buffer2, new byte[] { 0x08 }) &&
+                         Enumerable.SequenceEqual(buffer3, new byte[] { 0x40 }) &&
+                         Enumerable.SequenceEqual(buffer4, new byte[] { 0x40, 0x90 }))
+                    return false;
+                else
+                {
+                    // If it isn't either one of these states reset it to normal and return false.
+                    PS3.SetMemory(0x00A95FB9, new byte[] { 0x18 }); ////reach creative ENTITY MOB
+                    PS3.SetMemory(0x00A95FC1, new byte[] { 0x08 }); ////reach survival ENTITY MOB
+                    PS3.SetMemory(0x00B351D8, new byte[] { 0x40 });/////creative
+                    PS3.SetMemory(0x00B351DC, new byte[] { 0x40, 0x90 });/////survival
+                    return false;
+                }
             }
-            else
+
+            set
             {
-                PS3.SetMemory(0x008FC4B4, new byte[] { 0x41 }); ////MODIFED VALUE
+                if (value)  //////Reach/Attack
+                {
+                    PS3.SetMemory(0x00A95FB9, new byte[] { 0x80 }); ////reach creative ENTITY MOB
+                    PS3.SetMemory(0x00A95FC1, new byte[] { 0x80 }); ////reach survival ENTITY MOB
+                    PS3.SetMemory(0x00B351D8, new byte[] { 0x43 });////creative
+                    PS3.SetMemory(0x00B351DC, new byte[] { 0x43, 0xA0 });/////survival
+                }
+                else
+                {
+                    PS3.SetMemory(0x00A95FB9, new byte[] { 0x18 }); ////reach creative ENTITY MOB
+                    PS3.SetMemory(0x00A95FC1, new byte[] { 0x08 }); ////reach survival ENTITY MOB
+                    PS3.SetMemory(0x00B351D8, new byte[] { 0x40 });/////creative
+                    PS3.SetMemory(0x00B351DC, new byte[] { 0x40, 0x90 });/////survival
+                }
+            }
+        }
+
+        public static bool RED_ESP_ENTITYS
+        {
+            get
+            {
+                byte[] buffer1 = new byte[1];
+                byte[] buffer2 = new byte[2];
+                PS3.GetMemory(0x00AD5B60, buffer1);
+                PS3.GetMemory(0x00AD5A5C, buffer2);
+
+
+                if (Enumerable.SequenceEqual(buffer1, new byte[] { 0x41 }) &&
+                    Enumerable.SequenceEqual(buffer2, new byte[] { 0x6F, 0xFF }))
+                    return true;
+                else if (Enumerable.SequenceEqual(buffer1, new byte[] { 0x40 }) &&
+                         Enumerable.SequenceEqual(buffer2, new byte[] { 0x3F, 0x80 }))
+                    return false;
+                else
+                {
+                    // If it isn't either one of these states reset it to normal and return false.
+                    PS3.SetMemory(0x00AD5B60, new byte[] { 0x40 }); ////SET to default ESP RED
+                    PS3.SetMemory(0x00AD5A5C, new byte[] { 0x3F, 0x80 }); ////SET to default
+                    return false;
+                }
+            }
+
+            set
+            {
+                if (value)  //////ESP Players
+                {
+                    PS3.SetMemory(0x00AD5B60, new byte[] { 0x41 }); ////MODIFED VALUE ESP RED
+                    PS3.SetMemory(0x00AD5A5C, new byte[] { 0x6F, 0xFF }); ////MODIFED VALUE
+                }
+                else
+                {
+                    PS3.SetMemory(0x00AD5B60, new byte[] { 0x40 }); ////SET to default ESP RED
+                    PS3.SetMemory(0x00AD5A5C, new byte[] { 0x3F, 0x80 }); ////SET to default
+                }
+            }
+        }
+
+        public static bool DISABLE_HUD_TEXT
+        {
+            get
+            {
+                byte[] buffer = new byte[1];
+                PS3.GetMemory(0x008FC4B4, buffer);
+
+                if (Enumerable.SequenceEqual(buffer, new byte[] { 0x40 }))
+                    return true;
+                else if (Enumerable.SequenceEqual(buffer, new byte[] { 0x41 }))
+                    return false;
+                else
+                {
+                    // If it isn't either one of these states reset it to normal and return false.
+                    PS3.SetMemory(0x008FC4B4, new byte[] { 0x41 });
+                    return false;
+                }
+            }
+
+            set
+            {
+                if (value)  //////Disable Text HUD
+                    PS3.SetMemory(0x008FC4B4, new byte[] { 0x40 }); ////MODIFED VALUE
+                else
+                    PS3.SetMemory(0x008FC4B4, new byte[] { 0x41 }); ////MODIFED VALUE
             }
         }
 
 
-        public static void MINE_IN_ADVENTURE(bool toggle)
+        public static bool MINE_IN_ADVENTURE
         {
-            if (toggle) 
+            get
             {
-                PS3.SetMemory(0x002F0273, new byte[] { 0x00 }); ////MODIFED VALUE
+                byte[] buffer = new byte[1];
+                PS3.GetMemory(0x002F0273, buffer);
+
+                if (Enumerable.SequenceEqual(buffer, new byte[] { 0x00 }))
+                    return true;
+                else if (Enumerable.SequenceEqual(buffer, new byte[] { 0x01 }))
+                    return false;
+                else
+                {
+                    // If it isn't either one of these states reset it to normal and return false.
+                    PS3.SetMemory(0x002F0273, new byte[] { 0x01 });
+                    return false;
+                }
             }
-            else
+
+            set
             {
-                PS3.SetMemory(0x002F0273, new byte[] { 0x01 }); ////SET to default
+                if (value)  //////Disable Text HUD
+                    PS3.SetMemory(0x002F0273, new byte[] { 0x00 });
+                else
+                    PS3.SetMemory(0x002F0273, new byte[] { 0x01 });
             }
         }
 
-        public static void BOAT_STOP_WORKING(bool toggle)
+        public static bool BOAT_STOP_WORKING
         {
-            if (toggle)  /////Stop Boat
+            get
             {
-                PS3.SetMemory(0x000E0F90, new byte[] { 0x41 }); ////MODIFED VALUE
+                byte[] buffer = new byte[1];
+                PS3.GetMemory(0x000E0F90, buffer);
+
+                if (Enumerable.SequenceEqual(buffer, new byte[] { 0x41 }))
+                    return true;
+                else if (Enumerable.SequenceEqual(buffer, new byte[] { 0x40 }))
+                    return false;
+                else
+                {
+                    // If it isn't either one of these states reset it to normal and return false.
+                    PS3.SetMemory(0x000E0F90, new byte[] { 0x40 });
+                    return false;
+                }
             }
-            else
+
+            set
             {
-                PS3.SetMemory(0x000E0F90, new byte[] { 0x40 }); ////SET to default
+                if (value)
+                    PS3.SetMemory(0x000E0F90, new byte[] { 0x41 }); ////MODIFED VALUE
+                else
+                    PS3.SetMemory(0x000E0F90, new byte[] { 0x40 }); ////SET to default
             }
         }
 
-        public static void GAMMA_TO_MAX(bool toggle)
+        public static bool GAMMA_TO_MAX
         {
-            if (toggle)  /////Max Gamma
+            get
             {
-                PS3.SetMemory(0x00A9C2B5, new byte[] { 0xFF }); ////MODIFED VALUE
+                byte[] buffer = new byte[1];
+                PS3.GetMemory(0x00A9C2B5, buffer);
+
+                if (Enumerable.SequenceEqual(buffer, new byte[] { 0xFF }))
+                    return true;
+                else if (Enumerable.SequenceEqual(buffer, new byte[] { 0x80 }))
+                    return false;
+                else
+                {
+                    // If it isn't either one of these states reset it to normal and return false.
+                    PS3.SetMemory(0x00A9C2B5, new byte[] { 0x80 });
+                    return false;
+                }
             }
-            else
+
+            set
             {
-                PS3.SetMemory(0x00A9C2B5, new byte[] { 0x80 }); ////SET to default
+                if (value)
+                    PS3.SetMemory(0x00A9C2B5, new byte[] { 0xFF }); ////MODIFED VALUE
+                else
+                    PS3.SetMemory(0x00A9C2B5, new byte[] { 0x80 }); ////SET to default
             }
         }
 
-        public static void TRIDENT_RIPTIDE_TO_MAX(bool toggle)
+        public static bool TRIDENT_RIPTIDE_TO_MAX
         {
-            if (toggle)  /////Trident Riptide Max
+            get
             {
-                PS3.SetMemory(0x00217DCF, new byte[] { 0x08 }); ////MODIFED VALUE
+                byte[] buffer = new byte[1];
+                PS3.GetMemory(0x00217DCF, buffer);
+
+                if (Enumerable.SequenceEqual(buffer, new byte[] { 0x08 }))
+                    return true;
+                else if (Enumerable.SequenceEqual(buffer, new byte[] { 0x00 }))
+                    return false;
+                else
+                {
+                    // If it isn't either one of these states reset it to normal and return false.
+                    PS3.SetMemory(0x00217DCF, new byte[] { 0x00 });
+                    return false;
+                }
             }
-            else
+
+            set
             {
-                PS3.SetMemory(0x00217DCF, new byte[] { 0x00 }); ////SET to default
+                if (value)
+                    PS3.SetMemory(0x00217DCF, new byte[] { 0x08 }); ////MODIFED VALUE
+                else
+                    PS3.SetMemory(0x00217DCF, new byte[] { 0x00 }); ////SET to default
             }
         }
 
-        public static void NO_BLOCK_COLISSION(bool toggle)
+        public static bool NO_BLOCK_COLISSION
         {
-            if (toggle)  /////No Colission Entity
+            get
             {
-                PS3.SetMemory(0x000108AC, new byte[] { 0x41 }); ////MODIFED VALUE
+                byte[] buffer = new byte[1];
+                PS3.GetMemory(0x000108AC, buffer);
+
+                if (Enumerable.SequenceEqual(buffer, new byte[] { 0x41 }))
+                    return true;
+                else if (Enumerable.SequenceEqual(buffer, new byte[] { 0x40 }))
+                    return false;
+                else
+                {
+                    // If it isn't either one of these states reset it to normal and return false.
+                    PS3.SetMemory(0x000108AC, new byte[] { 0x40 });
+                    return false;
+                }
             }
-            else
+
+            set
             {
-                PS3.SetMemory(0x000108AC, new byte[] { 0x40 }); ////SET to default
+                if (value)
+                    PS3.SetMemory(0x000108AC, new byte[] { 0x41 }); ////MODIFED VALUE
+                else
+                    PS3.SetMemory(0x000108AC, new byte[] { 0x40 }); ////SET to default
             }
         }
 
-        public static void FROST_WALKER(bool toggle)
+        public static bool FROST_WALKER
         {
-            if (toggle)  /////Frost Walk
+            get
             {
-                PS3.SetMemory(0x00218A4F, new byte[] { 0x01 }); ////MODIFED VALUE
+                byte[] buffer = new byte[1];
+                PS3.GetMemory(0x00218A4F, buffer);
+
+                if (Enumerable.SequenceEqual(buffer, new byte[] { 0x01 }))
+                    return true;
+                else if (Enumerable.SequenceEqual(buffer, new byte[] { 0x00 }))
+                    return false;
+                else
+                {
+                    // If it isn't either one of these states reset it to normal and return false.
+                    PS3.SetMemory(0x00218A4F, new byte[] { 0x00 });
+                    return false;
+                }
             }
-            else
+
+            set
             {
-                PS3.SetMemory(0x00218A4F, new byte[] { 0x00 }); ////SET to default
+                if (value)
+                    PS3.SetMemory(0x00218A4F, new byte[] { 0x01 }); ////MODIFED VALUE
+                else
+                    PS3.SetMemory(0x00218A4F, new byte[] { 0x00 }); ////SET to default
             }
         }
 
-        public static void FROST_WALKER_WITH_DIAMOND_ORE(bool toggle)
+        public static bool FROST_WALKER_WITH_DIAMOND_ORE
         {
-            // 32 19 F1 E0 change these 4 bytes for different block values.
-            if (toggle)  // Pimp walker
+            get
             {
-                PS3.SetMemory(0x014C8C84, new byte[] { 0x32, 0x18, 0xB4, 0x60 }); ////Diamond ore
-                Minecraft_Cheats.FROST_WALKER(true);
+                byte[] buffer = new byte[4];
+                PS3.GetMemory(0x014C8C84, buffer);
+
+                if (Enumerable.SequenceEqual(buffer, new byte[] { 0x32, 0x18, 0xB4, 0x60 }))
+                    return true;
+                else if (Enumerable.SequenceEqual(buffer, new byte[] { 0x32, 0x19, 0xF1, 0xE0 }))
+                    return false;
+                else
+                {
+                    // If it isn't either one of these states reset it to normal and return false.
+                    PS3.SetMemory(0x014C8C84, new byte[] { 0x32, 0x19, 0xF1, 0xE0 });
+                    return false;
+                }
             }
-            else
+
+            set
             {
-                PS3.SetMemory(0x014C8C84, new byte[] { 0x32, 0x19, 0xF1, 0xE0 });
-                Minecraft_Cheats.FROST_WALKER(false);
+                if (value)// 32 19 F1 E0 change these 4 bytes for different block values.
+                {
+                    PS3.SetMemory(0x014C8C84, new byte[] { 0x32, 0x18, 0xB4, 0x60 }); ////Diamond ore
+                    Minecraft_Cheats.FROST_WALKER = true;
+                }
+                else
+                {
+                    PS3.SetMemory(0x014C8C84, new byte[] { 0x32, 0x19, 0xF1, 0xE0 });
+                    Minecraft_Cheats.FROST_WALKER = false;
+                }
             }
         }
 
-        public static void NO_WEB_HAX(bool toggle)
+        public static bool NO_WEB_HAX
         {
-            if (toggle)  /////No Web
+            get
             {
-                PS3.SetMemory(0x00234F9F, new byte[] { 0x00 }); ////MODIFED VALUE
+                byte[] buffer = new byte[1];
+                PS3.GetMemory(0x00234F9F, buffer);
+
+                if (Enumerable.SequenceEqual(buffer, new byte[] { 0x00 }))
+                    return true;
+                else if (Enumerable.SequenceEqual(buffer, new byte[] { 0x01 }))
+                    return false;
+                else
+                {
+                    // If it isn't either one of these states reset it to normal and return false.
+                    PS3.SetMemory(0x00234F9F, new byte[] { 0x01 });
+                    return false;
+                }
             }
-            else
+
+            set
             {
-                PS3.SetMemory(0x00234F9F, new byte[] { 0x01 }); ////SET to default
+                if (value)
+                    PS3.SetMemory(0x00234F9F, new byte[] { 0x00 }); ////MODIFED VALUE
+                else
+                    PS3.SetMemory(0x00234F9F, new byte[] { 0x01 }); ////SET to default
             }
         }
 
-        public static void ENTITY_GOD_MODE(bool toggle)
+        public static bool ENTITY_GOD_MODE
         {
-            if (toggle)  ////Entity God Mode
+            get
             {
-                PS3.SetMemory(0x003A3F6C, new byte[] { 0x40 }); ////MODIFED VALUE
+                byte[] buffer = new byte[1];
+                PS3.GetMemory(0x003A3F6C, buffer);
+
+                if (Enumerable.SequenceEqual(buffer, new byte[] { 0x40 }))
+                    return true;
+                else if (Enumerable.SequenceEqual(buffer, new byte[] { 0x41 }))
+                    return false;
+                else
+                {
+                    // If it isn't either one of these states reset it to normal and return false.
+                    PS3.SetMemory(0x003A3F6C, new byte[] { 0x41 });
+                    return false;
+                }
             }
-            else
+
+            set
             {
-                PS3.SetMemory(0x003A3F6C, new byte[] { 0x41 }); ////SET to default
+                if (value)
+                    PS3.SetMemory(0x003A3F6C, new byte[] { 0x40 }); ////MODIFED VALUE
+                else
+                    PS3.SetMemory(0x003A3F6C, new byte[] { 0x41 }); ////SET to default
             }
         }
 
-        public static void DISABLE_RESPAWN(bool toggle)
+        public static bool DISABLE_RESPAWN
         {
-            if (toggle)  ///////Lock Respawn
+            get
             {
-                PS3.SetMemory(0x00AF1EE0, new byte[] { 0x4E, 0x80, 0x00, 0x20 }); ////MODIFED VALUE
+                byte[] buffer = new byte[4];
+                PS3.GetMemory(0x00AF1EE0, buffer);
+
+                if (Enumerable.SequenceEqual(buffer, new byte[] { 0x4E, 0x80, 0x00, 0x20 }))
+                    return true;
+                else if (Enumerable.SequenceEqual(buffer, new byte[] { 0xF8, 0x21, 0xFD, 0x21 }))
+                    return false;
+                else
+                {
+                    // If it isn't either one of these states reset it to normal and return false.
+                    PS3.SetMemory(0x00AF1EE0, new byte[] { 0xF8, 0x21, 0xFD, 0x21 });
+                    return false;
+                }
             }
-            else
+
+            set
             {
-                PS3.SetMemory(0x00AF1EE0, new byte[] { 0xF8, 0x21, 0xFD, 0x21 }); ////MODIFED VALUE
+                if (value)
+                    PS3.SetMemory(0x00AF1EE0, new byte[] { 0x4E, 0x80, 0x00, 0x20 }); ////MODIFED VALUE
+                else
+                    PS3.SetMemory(0x00AF1EE0, new byte[] { 0xF8, 0x21, 0xFD, 0x21 }); ////SET to default
             }
         }
 
-        public static void WITHER_MONSTER_SPAWNER(bool toogle)
+        public static bool WITHER_MONSTER_SPAWNER
         {
-            if (toogle)
+            get
             {
-                MessageBox.Show("Eggs of Shulker has been changed to the Wither eggs, you can spawn it by using the egg on a empty Monster Spawner", "Notice!", MessageBoxButton.OK, MessageBoxImage.Information);
-                PS3.SetMemory(0x32418A79, new byte[] { 0x77, 0x00, 0x69, 0x00, 0x74, 0x00, 0x68, 0x00, 0x65, 0x00, 0x72, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x06 }); ////MODIFED VALUE
+                byte[] buffer = new byte[19];
+                PS3.GetMemory(0x32418A79, buffer);
+
+                if (Enumerable.SequenceEqual(buffer, new byte[] { 0x77, 0x00, 0x69, 0x00, 0x74, 0x00, 0x68, 0x00, 0x65, 0x00, 0x72, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x06 }))
+                    return true;
+                else if (Enumerable.SequenceEqual(buffer, new byte[] { 0x73, 0x00, 0x68, 0x00, 0x75, 0x00, 0x6C, 0x00, 0x6B, 0x00, 0x65, 0x00, 0x72, 0x00, 0x00, 0x00, 0x00, 0x00, 0x07 }))
+                    return false;
+                else
+                {
+                    // If it isn't either one of these states reset it to normal and return false.
+                    PS3.SetMemory(0x32418A79, new byte[] { 0x73, 0x00, 0x68, 0x00, 0x75, 0x00, 0x6C, 0x00, 0x6B, 0x00, 0x65, 0x00, 0x72, 0x00, 0x00, 0x00, 0x00, 0x00, 0x07 });
+                    return false;
+                }
             }
-            else
+
+            set
             {
-                PS3.SetMemory(0x32418A79, new byte[] { 0x73, 0x00, 0x68, 0x00, 0x75, 0x00, 0x6C, 0x00, 0x6B, 0x00, 0x65, 0x00, 0x72, 0x00, 0x00, 0x00, 0x00, 0x00, 0x07 }); ////DEFAULT VALUE
+                if (value)
+                {
+                    MessageBox.Show("Eggs of Shulker has been changed to the Wither eggs, you can spawn it by using the egg on a empty Monster Spawner", "Notice!", MessageBoxButton.OK, MessageBoxImage.Information);
+                    PS3.SetMemory(0x32418A79, new byte[] { 0x77, 0x00, 0x69, 0x00, 0x74, 0x00, 0x68, 0x00, 0x65, 0x00, 0x72, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x06 }); ////MODIFED VALUE
+                }
+
+                else
+                {
+                    PS3.SetMemory(0x32418A79, new byte[] { 0x73, 0x00, 0x68, 0x00, 0x75, 0x00, 0x6C, 0x00, 0x6B, 0x00, 0x65, 0x00, 0x72, 0x00, 0x00, 0x00, 0x00, 0x00, 0x07 }); ////DEFAULT VALUE
+                }
             }
         }
 
-        public static void SPAWN_IRON_GOLEM_EGGS(bool toogle)
+        public static bool SPAWN_IRON_GOLEM_EGGS
         {
-            if (toogle)
+            get
             {
-                MessageBox.Show("Elder Guardian has been changed to the Iron Golem eggs, you can spawn it by using the egg on a empty Monster Spawner", "Notice!", MessageBoxButton.OK, MessageBoxImage.Information);
-                PS3.SetMemory(0x32418D18, new byte[] { 0x30, 0x99, 0xF6, 0xA0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0E }); ////MODIFED VALUE
+                byte[] buffer = new byte[20];
+                PS3.GetMemory(0x32418D18, buffer);
+
+                if (Enumerable.SequenceEqual(buffer, new byte[] { 0x30, 0x99, 0xF6, 0xA0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0E }))
+                    return true;
+                else if (Enumerable.SequenceEqual(buffer, new byte[] { 0x30, 0x99, 0xD3, 0xE0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0E }))
+                    return false;
+                else
+                {
+                    // If it isn't either one of these states reset it to normal and return false.
+                    PS3.SetMemory(0x32418D18, new byte[] { 0x30, 0x99, 0xD3, 0xE0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0E });
+                    return false;
+                }
             }
-            else
+
+            set
             {
-                PS3.SetMemory(0x32418D18, new byte[] { 0x30, 0x99, 0xD3, 0xE0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0E }); ////DEFAULT VALUE
+                if (value)
+                {
+                    MessageBox.Show("Elder Guardian has been changed to the Iron Golem eggs, you can spawn it by using the egg on a empty Monster Spawner", "Notice!", MessageBoxButton.OK, MessageBoxImage.Information);
+                    PS3.SetMemory(0x32418D18, new byte[] { 0x30, 0x99, 0xF6, 0xA0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0E }); ////MODIFED VALUE
+                }
+                else
+                {
+                    PS3.SetMemory(0x32418D18, new byte[] { 0x30, 0x99, 0xD3, 0xE0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0E }); ////DEFAULT VALUE
+                }
             }
         }
 
-        public static void SPECTRAL_ARROWS_WITH_BOW(bool toggle)
+        public static bool SPECTRAL_ARROWS_WITH_BOW
         {
-            if (toggle)  //////Arrows To Spectral Arrows
+            get
             {
-                PS3.SetMemory(0x014C90D5, new byte[] { 0x20, 0x8D }); ////MODIFED VALUE
+                byte[] buffer = new byte[2];
+                PS3.GetMemory(0x014C90D5, buffer);
+
+                if (Enumerable.SequenceEqual(buffer, new byte[] { 0x20, 0x8D }))
+                    return true;
+                else if (Enumerable.SequenceEqual(buffer, new byte[] { 0x1E, 0xAD }))
+                    return false;
+                else
+                {
+                    // If it isn't either one of these states reset it to normal and return false.
+                    PS3.SetMemory(0x014C90D5, new byte[] { 0x1E, 0xAD });
+                    return false;
+                }
             }
-            else
+
+            set
             {
-                PS3.SetMemory(0x014C90D5, new byte[] { 0x1E, 0xAD }); ////SET to default
+                if (value)
+                    PS3.SetMemory(0x014C90D5, new byte[] { 0x20, 0x8D }); ////MODIFED VALUE
+                else
+                    PS3.SetMemory(0x014C90D5, new byte[] { 0x1E, 0xAD }); ////SET to default
             }
         }
 
-        public static void CHANGE_AIR_TO_WATER(bool toggle)
+        public static bool CHANGE_AIR_TO_WATER
         {
-            if (toggle)  //////Air To Water
+            get
             {
-                PS3.SetMemory(0x001D7FCC, new byte[] { 0x40 }); ////MODIFED VALUE
+                byte[] buffer = new byte[1];
+                PS3.GetMemory(0x001D7FCC, buffer);
+
+                if (Enumerable.SequenceEqual(buffer, new byte[] { 0x40 }))
+                    return true;
+                else if (Enumerable.SequenceEqual(buffer, new byte[] { 0x41 }))
+                    return false;
+                else
+                {
+                    // If it isn't either one of these states reset it to normal and return false.
+                    PS3.SetMemory(0x001D7FCC, new byte[] { 0x41 });
+                    return false;
+                }
             }
-            else
+
+            set
             {
-                PS3.SetMemory(0x001D7FCC, new byte[] { 0x41 }); ////SET to default
+                if (value)
+                    PS3.SetMemory(0x001D7FCC, new byte[] { 0x40 }); ////MODIFED VALUE
+                else
+                    PS3.SetMemory(0x001D7FCC, new byte[] { 0x41 }); ////SET to default
             }
         }
 
-        public static void ALL_PLAYERS_LEFT_HAND(bool toggle)
+        public static bool ALL_PLAYERS_LEFT_HAND
         {
-            if (toggle)  /////All Players Hand To Left
+            get
             {
-                PS3.SetMemory(0x0151F2F3, new byte[] { 0xF0 }); ////MODIFED VALUE
+                byte[] buffer = new byte[1];
+                PS3.GetMemory(0x0151F2F3, buffer);
+
+                if (Enumerable.SequenceEqual(buffer, new byte[] { 0xF0 }))
+                    return true;
+                else if (Enumerable.SequenceEqual(buffer, new byte[] { 0xF8 }))
+                    return false;
+                else
+                {
+                    // If it isn't either one of these states reset it to normal and return false.
+                    PS3.SetMemory(0x0151F2F3, new byte[] { 0xF8 });
+                    return false;
+                }
             }
-            else
+
+            set
             {
-                PS3.SetMemory(0x0151F2F3, new byte[] { 0xF8 }); ////SET to default
+                if (value)
+                    PS3.SetMemory(0x0151F2F3, new byte[] { 0xF0 }); ////MODIFED VALUE
+                else
+                    PS3.SetMemory(0x0151F2F3, new byte[] { 0xF8 }); ////SET to default
             }
         }
 
