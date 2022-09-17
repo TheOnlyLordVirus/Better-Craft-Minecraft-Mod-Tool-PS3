@@ -338,24 +338,6 @@ namespace Better_Craft
         }
 
         /// <summary>
-        /// Filters the mods in the cheatGrid
-        /// </summary>
-        private void FilterMods(string filter)
-        {
-            cheatPanel.Children.Clear();
-            foreach(KeyValuePair<string, Button> modOption in modbuttons)
-            {
-                if(modOption.Key.ToLower().Contains(filter.ToLower()))
-                {
-                    cheatPanel.Children.Add(modOption.Value);
-                }
-            }
-
-            if (filter.Equals(string.Empty))
-                AddResetButton();
-        }
-
-        /// <summary>
         /// Filters the mods in the cheat panel without needing to reading 100's of bytes.
         /// </summary>
         private async void UpdateToggleStates()
@@ -394,6 +376,21 @@ namespace Better_Craft
         }
 
         /// <summary>
+        /// Filters the mods in the cheatGrid
+        /// </summary>
+        private void FilterMods(string filter)
+        {
+            cheatPanel.Children.Clear();
+            foreach (KeyValuePair<string, Button> modOption in modbuttons)
+            {
+                if (modOption.Key.ToLower().Contains(filter.ToLower()))
+                {
+                    cheatPanel.Children.Add(modOption.Value);
+                }
+            }
+        }
+
+        /// <summary>
         /// Adds the reset button to the cheat panel.
         /// </summary>
         private void AddResetButton()
@@ -416,10 +413,20 @@ namespace Better_Craft
             {
                 clickSound.Play();
 
-                Minecraft_Cheats.HelperFunctions.Reset_All_Mods();
-
                 // Update toggle states in UI.
-                UpdateToggleStates();
+                if(currentAPI.Equals(SelectAPI.PS3Manager))
+                {
+                    MessageBoxResult YesNo = MessageBox.Show("This may take quite a while!\nDo you wish to continue?", "PS3MAPI is slow...", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+
+                    if(YesNo.Equals(MessageBoxResult.Yes))
+                    {
+                        Minecraft_Cheats.HelperFunctions.Reset_All_Mods();
+                        UpdateToggleStates();
+                    }
+                }
+
+                else
+                    Minecraft_Cheats.HelperFunctions.Reset_All_Mods();
             };
 
             if (!modbuttons.ContainsKey(resetButtonName))
@@ -431,11 +438,10 @@ namespace Better_Craft
         /// <summary>
         /// Toggle Logic for mods.
         /// </summary>
-        private async void DoMod<T>(object button, Expression<Func<T>> ModOption)
+        private void DoMod<T>(object button, Expression<Func<T>> ModOption)
         {
             clickSound.Play();
-            dynamic toggleStateValue = null;
-            await Task.Run(() => { toggleStateValue = Minecraft_Cheats.HelperFunctions.ToggleOption(ModOption); } );
+            dynamic toggleStateValue = Minecraft_Cheats.HelperFunctions.ToggleOption(ModOption);
 
             SolidColorBrush toggleStateColor = new SolidColorBrush(Colors.LightCoral);
 
@@ -472,7 +478,8 @@ namespace Better_Craft
                 toggleState.Content = ""; 
             });
 
-            UpdateToggleStates();
+            if(!currentAPI.Equals(SelectAPI.PS3Manager))
+                UpdateToggleStates();
         }
         #endregion
     }
