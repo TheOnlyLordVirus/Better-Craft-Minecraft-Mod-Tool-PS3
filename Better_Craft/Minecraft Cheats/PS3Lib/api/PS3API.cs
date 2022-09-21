@@ -827,6 +827,7 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using PS3ManagerAPI;
 
+[assembly: System.Windows.Media.DisableDpiAwareness]
 namespace PS3Lib
 {
     public enum SelectAPI

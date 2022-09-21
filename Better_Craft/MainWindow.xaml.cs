@@ -10,15 +10,15 @@ namespace Better_Craft
     using System.Threading.Tasks;
     using System.Windows.Media;
     using System.Windows.Controls;
-    using PS3Lib;
-    using Minecraft_Cheats;
     using System.Windows.Input;
     using System.Reflection;
     using System.Linq.Expressions;
-    using Expression = System.Linq.Expressions.Expression;
     using System.Globalization;
     using System.Collections.Generic;
-    using System.Data;
+    using Expression = System.Linq.Expressions.Expression;
+
+    using PS3Lib;
+    using Minecraft_Cheats;
 
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -329,7 +329,7 @@ namespace Better_Craft
                 modbuttons.Add(cheatName, button);
                 cheatPanel.Children.Add(button);
 
-                await Task.Delay(1);
+                await Task.Delay(currentAPI.Equals(SelectAPI.PS3Manager) ? 500 : 1);
             }
 
             AddResetButton();
@@ -416,7 +416,7 @@ namespace Better_Craft
                 // Update toggle states in UI.
                 if(currentAPI.Equals(SelectAPI.PS3Manager))
                 {
-                    MessageBoxResult YesNo = MessageBox.Show("This may take quite a while!\nDo you wish to continue?", "PS3MAPI is slow...", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                    MessageBoxResult YesNo = MessageBox.Show("This will take quite a while!\nDo you wish to continue?", "PS3MAPI is slow...", MessageBoxButton.YesNo, MessageBoxImage.Warning);
 
                     if(YesNo.Equals(MessageBoxResult.Yes))
                     {
@@ -429,10 +429,39 @@ namespace Better_Craft
                     Minecraft_Cheats.HelperFunctions.Reset_All_Mods();
             };
 
-            if (!modbuttons.ContainsKey(resetButtonName))
-                modbuttons.Add(resetButtonName, resetButton);
-
+            modbuttons.Add(resetButtonName, resetButton);
             cheatPanel.Children.Add(resetButton);
+
+            if(currentAPI.Equals(SelectAPI.PS3Manager))
+            {
+                string updateToggleStatesButtonName = "Update Button Toggles";
+
+                // Add the reset button.
+                Button updateToggleStatesButton = new Button()
+                {
+                    Content = updateToggleStatesButtonName,
+                    Width = 180,
+                    Height = 40,
+                    FontSize = 9,
+                    Margin = new Thickness(10),
+                    Padding = new Thickness(300),
+                    Foreground = new SolidColorBrush(Colors.LightCoral)
+                };
+
+                updateToggleStatesButton.Click += (sender, e) =>
+                {
+                    clickSound.Play();
+                    MessageBoxResult YesNo = MessageBox.Show("This will take quite a while!\nDo you wish to continue?", "PS3MAPI is slow...", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+
+                    if (YesNo.Equals(MessageBoxResult.Yes))
+                    {
+                        LoadCheats();
+                    }
+                };
+
+                modbuttons.Add(updateToggleStatesButtonName, updateToggleStatesButton);
+                cheatPanel.Children.Add(updateToggleStatesButton);
+            }
         }
 
         /// <summary>
