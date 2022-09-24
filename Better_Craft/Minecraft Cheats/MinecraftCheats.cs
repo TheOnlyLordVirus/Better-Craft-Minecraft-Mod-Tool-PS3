@@ -67,6 +67,7 @@ namespace Minecraft_Cheats
             {
                 try
                 {
+                    Connected = false;
                     Minecraft_Cheats.PS3 = new PS3API();
                     Minecraft_Cheats.PS3.ChangeAPI(Api);
                     if (PS3.ConnectTarget())

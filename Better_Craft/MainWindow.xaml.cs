@@ -47,6 +47,11 @@ namespace Better_Craft
         /// </summary>
         private Dictionary<string, Button> modbuttons = new Dictionary<string, Button>();
 
+        /// <summary>
+        /// Store all of the grids in this array.
+        /// </summary>
+        private Grid[] grids;
+
         #endregion
 
         /// <summary>
@@ -59,6 +64,8 @@ namespace Better_Craft
             // This is just here so the XAML view isn't so annoying to look at while coding...
             scrollImageOne.Visibility = Visibility.Visible;
             scrollImageTwo.Visibility = Visibility.Visible;
+
+            grids = new Grid[] { connectAndAttachGrid, modsGrid, optionsGrid };
         }
 
         /// <summary>
@@ -108,7 +115,7 @@ namespace Better_Craft
             if (Minecraft_Cheats.HelperFunctions.isConnected)
             {
                 LoadCheats();
-                ToggleModsScreen(true);
+                ToggleGrids(modsGrid);
             }
 
             else
@@ -123,7 +130,7 @@ namespace Better_Craft
         private void OptionsButton_Click(object sender, RoutedEventArgs e)
         {
             clickSound.Play();
-            ToggleOptionScreen(true);
+            ToggleGrids(optionsGrid);
         }
 
         #endregion
@@ -144,7 +151,7 @@ namespace Better_Craft
         private void ModsReturnToConnectButton_Click(object sender, RoutedEventArgs e)
         {
             clickSound.Play();
-            ToggleModsScreen(false);
+            ToggleGrids(connectAndAttachGrid);
         }
 
         #endregion
@@ -157,7 +164,7 @@ namespace Better_Craft
         private void OptionsReturnToConnectButton_Click(object sender, RoutedEventArgs e)
         {
             clickSound.Play();
-            ToggleOptionScreen(false);
+            ToggleGrids(connectAndAttachGrid);
         }
 
         /// <summary>
@@ -192,38 +199,16 @@ namespace Better_Craft
         #region Core Methods
 
         /// <summary>
-        /// Toggles the Mods screen.
+        /// Opens a grid.
         /// </summary>
-        private void ToggleModsScreen(bool visible)
+        private void ToggleGrids(Grid openThisGrid)
         {
-            if (visible)
-            {
-                connectAndAttachGrid.Visibility = Visibility.Hidden;
-                modsGrid.Visibility = Visibility.Visible;
-            }
+            openThisGrid.Visibility = Visibility.Visible;
 
-            else
+            foreach(Grid grid in grids)
             {
-                modsGrid.Visibility = Visibility.Hidden;
-                connectAndAttachGrid.Visibility = Visibility.Visible;
-            }
-        }
-
-        /// <summary>
-        /// Toggles the Options screen.
-        /// </summary>
-        private void ToggleOptionScreen(bool visible)
-        {
-            if (visible)
-            {
-                connectAndAttachGrid.Visibility = Visibility.Hidden;
-                optionsGrid.Visibility = Visibility.Visible;
-            }
-
-            else
-            {
-                optionsGrid.Visibility = Visibility.Hidden;
-                connectAndAttachGrid.Visibility = Visibility.Visible;
+                if(!grid.Equals(openThisGrid))
+                    grid.Visibility = Visibility.Hidden;
             }
         }
 
@@ -272,28 +257,42 @@ namespace Better_Craft
         /// <summary>
         /// Loads the cheats to the tile controll
         /// </summary>
+        private bool stopLoading;
         private async void LoadCheats()
         {
+            // Clear old stuff.
             filterTextBox.Text = string.Empty;
             filterTextBox.IsEnabled = false;
+            stopLoading = false;
 
             modbuttons.Clear();
             cheatPanel.Children.Clear();
+
+            // Read toggle states from memory?
+            MessageBoxResult YesNo = MessageBox.Show("Would you like to read cheats toggle states from memory?\n\n(This may take a while on PS3MAPI)", "Noice", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            bool readFromMem = true;
+            if (YesNo.Equals(MessageBoxResult.No))
+                readFromMem = false;
 
             // Add all of the cheats.
             PropertyInfo[] cheats = typeof(Minecraft_Cheats).GetProperties();
             foreach(PropertyInfo cheat in cheats)
             {
-                string cheatName = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(cheat.Name.Replace("_", " ").ToLower());
-                dynamic cheatValue = cheat.GetValue(null);
+                if (stopLoading)
+                    return;
 
+                string cheatName = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(cheat.Name.Replace("_", " ").ToLower());
                 SolidColorBrush toggleStateColor = new SolidColorBrush(Colors.LightCoral);
 
-                if (cheatValue is bool && cheatValue)
-                    toggleStateColor = new SolidColorBrush(Colors.LightGreen);
+                if(readFromMem)
+                {
+                    dynamic cheatValue = cheat.GetValue(null);
+                    if (cheatValue is bool && cheatValue)
+                        toggleStateColor = new SolidColorBrush(Colors.LightGreen);
 
-                else if (cheatValue is int && !cheatValue.Equals(0))
-                    toggleStateColor = new SolidColorBrush(Colors.Cyan);
+                    else if (cheatValue is int && !cheatValue.Equals(0))
+                        toggleStateColor = new SolidColorBrush(Colors.Cyan);
+                }
 
                 Button button = new Button()
                 {
@@ -306,7 +305,8 @@ namespace Better_Craft
                     Foreground = toggleStateColor
                 };
 
-                if(cheatValue is int)
+
+                if(cheat.PropertyType.Equals(typeof(int)))
                 {
                     button.Click += (sender, e) =>
                     {
@@ -316,7 +316,7 @@ namespace Better_Craft
                     };
                 }
 
-                else if(cheatValue is bool)
+                else if(cheat.PropertyType.Equals(typeof(bool)))
                 {
                     button.Click += (sender, e) =>
                     {
@@ -326,10 +326,14 @@ namespace Better_Craft
                     };
                 }
 
+                if (modbuttons.ContainsKey(cheatName))
+                    modbuttons.Remove(cheatName);
+
                 modbuttons.Add(cheatName, button);
                 cheatPanel.Children.Add(button);
 
-                await Task.Delay(currentAPI.Equals(SelectAPI.PS3Manager) ? 500 : 1);
+                if(readFromMem)
+                    await Task.Delay(currentAPI.Equals(SelectAPI.PS3Manager) ? 500 : 1);
             }
 
             AddResetButton();
@@ -340,38 +344,44 @@ namespace Better_Craft
         /// <summary>
         /// Filters the mods in the cheat panel without needing to reading 100's of bytes.
         /// </summary>
+        private bool updatingToggles = false;
         private async void UpdateToggleStates()
         {
-            PropertyInfo[] cheats = typeof(Minecraft_Cheats).GetProperties();
-            foreach (PropertyInfo cheat in cheats)
+            if(!updatingToggles)
             {
-                string cheatName = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(cheat.Name.Replace("_", " ").ToLower());
-
-                // This part takes a bit for the api to respond bytes from the ps3 (Depending on the api being used.)
-                dynamic cheatValue = null;
-                await Task.Run(() =>
+                updatingToggles = true;
+                PropertyInfo[] cheats = typeof(Minecraft_Cheats).GetProperties();
+                foreach (PropertyInfo cheat in cheats)
                 {
-                    cheatValue = cheat.GetValue(null);
-                });
+                    string cheatName = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(cheat.Name.Replace("_", " ").ToLower());
 
-                SolidColorBrush toggleStateColor = new SolidColorBrush(Colors.LightCoral);
+                    // This part takes a bit for the api to respond bytes from the ps3 (Depending on the api being used.)
+                    dynamic cheatValue = null;
+                    await Task.Run(() =>
+                    {
+                        cheatValue = cheat.GetValue(null);
+                    });
 
-                if (cheatValue is bool && cheatValue)
-                    toggleStateColor = new SolidColorBrush(Colors.LightGreen);
+                    SolidColorBrush toggleStateColor = new SolidColorBrush(Colors.LightCoral);
 
-                else if (cheatValue is int && !cheatValue.Equals(0))
-                    toggleStateColor = new SolidColorBrush(Colors.Cyan);
+                    if (cheatValue is bool && cheatValue)
+                        toggleStateColor = new SolidColorBrush(Colors.LightGreen);
 
-                Button mod = modbuttons[cheatName];
-                mod.Foreground = toggleStateColor;
-            }
+                    else if (cheatValue is int && !cheatValue.Equals(0))
+                        toggleStateColor = new SolidColorBrush(Colors.Cyan);
 
-            cheatPanel.Children.Clear();
-            string filter = filterTextBox.Text;
-            foreach (KeyValuePair<string, Button> modOption in modbuttons)
-            {
-                if (filter.Equals(string.Empty) || modOption.Key.ToLower().Contains(filter.ToLower()))
-                    cheatPanel.Children.Add(modOption.Value);
+                    Button mod = modbuttons[cheatName];
+                    mod.Foreground = toggleStateColor;
+                }
+
+                cheatPanel.Children.Clear();
+                string filter = filterTextBox.Text;
+                foreach (KeyValuePair<string, Button> modOption in modbuttons)
+                {
+                    if (filter.Equals(string.Empty) || modOption.Key.ToLower().Contains(filter.ToLower()))
+                        cheatPanel.Children.Add(modOption.Value);
+                }
+                updatingToggles = false;
             }
         }
 
@@ -426,42 +436,17 @@ namespace Better_Craft
                 }
 
                 else
+                {
                     Minecraft_Cheats.HelperFunctions.Reset_All_Mods();
+                    UpdateToggleStates();
+                }
             };
+
+            if (modbuttons.ContainsKey(resetButtonName))
+                modbuttons.Remove(resetButtonName);
 
             modbuttons.Add(resetButtonName, resetButton);
             cheatPanel.Children.Add(resetButton);
-
-            if(currentAPI.Equals(SelectAPI.PS3Manager))
-            {
-                string updateToggleStatesButtonName = "Update Button Toggles";
-
-                // Add the reset button.
-                Button updateToggleStatesButton = new Button()
-                {
-                    Content = updateToggleStatesButtonName,
-                    Width = 180,
-                    Height = 40,
-                    FontSize = 9,
-                    Margin = new Thickness(10),
-                    Padding = new Thickness(300),
-                    Foreground = new SolidColorBrush(Colors.LightCoral)
-                };
-
-                updateToggleStatesButton.Click += (sender, e) =>
-                {
-                    clickSound.Play();
-                    MessageBoxResult YesNo = MessageBox.Show("This will take quite a while!\nDo you wish to continue?", "PS3MAPI is slow...", MessageBoxButton.YesNo, MessageBoxImage.Warning);
-
-                    if (YesNo.Equals(MessageBoxResult.Yes))
-                    {
-                        LoadCheats();
-                    }
-                };
-
-                modbuttons.Add(updateToggleStatesButtonName, updateToggleStatesButton);
-                cheatPanel.Children.Add(updateToggleStatesButton);
-            }
         }
 
         /// <summary>
@@ -507,8 +492,7 @@ namespace Better_Craft
                 toggleState.Content = ""; 
             });
 
-            if(!currentAPI.Equals(SelectAPI.PS3Manager))
-                UpdateToggleStates();
+            UpdateToggleStates();
         }
         #endregion
     }

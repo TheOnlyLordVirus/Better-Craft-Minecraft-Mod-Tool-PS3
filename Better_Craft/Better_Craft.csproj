@@ -44,6 +44,7 @@
   <PropertyGroup />
   <PropertyGroup />
   <PropertyGroup />
+  <PropertyGroup />
   <PropertyGroup>
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
@@ -209,15 +210,30 @@
     <Compile Include="Additional Classes\ScrollWrapPanel.cs" />
     <Compile Include="Minecraft Cheats\MinecraftCheats.cs" />
     <Compile Include="Minecraft Cheats\PS3Lib\api\CCAPI.cs" />
+    <Compile Include="Minecraft Cheats\PS3Lib\api\ConsoleList.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Minecraft Cheats\PS3Lib\api\ConsoleList.Designer.cs">
+      <DependentUpon>ConsoleList.cs</DependentUpon>
+    </Compile>
     <Compile Include="Minecraft Cheats\PS3Lib\api\PS3API.cs" />
     <Compile Include="Minecraft Cheats\PS3Lib\api\PS3MAPI\AttachDialog.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Minecraft Cheats\PS3Lib\api\PS3MAPI\AttachDialog.Designer.cs">
+      <DependentUpon>AttachDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="Minecraft Cheats\PS3Lib\api\PS3MAPI\ConnectDialog.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Minecraft Cheats\PS3Lib\api\PS3MAPI\ConnectDialog.Designer.cs">
+      <DependentUpon>ConnectDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="Minecraft Cheats\PS3Lib\api\PS3MAPI\LogDialog.cs">
       <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Minecraft Cheats\PS3Lib\api\PS3MAPI\LogDialog.Designer.cs">
+      <DependentUpon>LogDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="Minecraft Cheats\PS3Lib\api\PS3MAPI\PS3MAPI.cs" />
     <Compile Include="Minecraft Cheats\PS3Lib\api\TMAPI.cs" />
@@ -251,6 +267,18 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <EmbeddedResource Include="Minecraft Cheats\PS3Lib\api\ConsoleList.resx">
+      <DependentUpon>ConsoleList.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Minecraft Cheats\PS3Lib\api\PS3MAPI\AttachDialog.resx">
+      <DependentUpon>AttachDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Minecraft Cheats\PS3Lib\api\PS3MAPI\ConnectDialog.resx">
+      <DependentUpon>ConnectDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Minecraft Cheats\PS3Lib\api\PS3MAPI\LogDialog.resx">
+      <DependentUpon>LogDialog.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>

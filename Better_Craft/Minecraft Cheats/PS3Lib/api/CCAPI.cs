@@ -359,7 +359,9 @@ namespace PS3Lib
         /// <summary>Connect your console by console list.</summary>
         public bool ConnectTarget()
         {
-            return new PS3API.ConsoleList(new PS3API(SelectAPI.ControlConsole)).Show();
+            PS3API ps3 = new PS3API(SelectAPI.ControlConsole);
+
+            return ps3.ShowConsoles();
         }
 
         /// <summary>Connect your console by ip address.</summary>
