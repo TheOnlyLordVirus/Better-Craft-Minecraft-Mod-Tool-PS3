@@ -66,16 +66,22 @@ namespace PS3Lib
         /// </summary>
         private void listView_SelectedIndexChanged(object sender, EventArgs e)
         {
-            tNum = ((ListView)sender).TabIndex;
-            btnConnect.Enabled = true;
-            string Name, Ip = "?";
-            if (data[tNum].Name.Length > 18)
-                Name = data[tNum].Name.Substring(0, 17) + "...";
-            else Name = data[tNum].Name;
-            if (data[tNum].Ip.Length > 16)
-                Ip = data[tNum].Name.Substring(0, 16) + "...";
-            else Ip = data[tNum].Ip;
-            lblInfo.Text = strTraduction("selectedLbl") + " " + Name + " / " + Ip;
+            if(listView.FocusedItem != null)
+            {
+                tNum = listView.FocusedItem.Index;
+                btnConnect.Enabled = true;
+                string Name, Ip = "?";
+
+                if (data[tNum].Name.Length > 18)
+                    Name = data[tNum].Name.Substring(0, 17) + "...";
+                else Name = data[tNum].Name;
+
+                if (data[tNum].Ip.Length > 16)
+                    Ip = data[tNum].Name.Substring(0, 16) + "...";
+                else Ip = data[tNum].Ip;
+
+                lblInfo.Text = strTraduction("selectedLbl") + " " + Name + " / " + Ip;
+            }
         }
 
         /// <summary>
