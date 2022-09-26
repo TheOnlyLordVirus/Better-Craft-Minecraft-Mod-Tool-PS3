@@ -1,52 +1,52 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Windows.Forms;
+using System.Media;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
+using MessageBox = System.Windows.MessageBox;
 
 namespace PS3Lib
 {
-
     /// <summary>
-    /// CCAPI Console list converted to WinForms designer for easy UI editing.
-    /// - Lord Virus 9/23/2022
+    /// Interaction logic for ConsoleList.xaml
     /// </summary>
-    public partial class ConsoleList : Form
+    public partial class ConsoleList : Window
     {
         private PS3API Api;
         private List<CCAPI.ConsoleInfo> data;
         private bool? result = null;
         private int tNum = -1;
+        private SoundPlayer clickSound = new SoundPlayer(Better_Craft.Properties.Resources.minecraftClick);
 
         /// <summary>
-        /// Pass the current API object.
+        /// We wait for the result to return true or false, while its null we wait in PS3API / CCAPI.
         /// </summary>
-        /// <param name="f">Current PS3API instance</param>
-        public ConsoleList(PS3API f)
+        public bool? Result
+        {
+            get { return result; }
+        }
+
+        /// <summary>
+        /// Create a new Console list window using the PS3API.
+        /// </summary>
+        public ConsoleList(PS3API api)
         {
             InitializeComponent();
 
-            // Change the text to match the current computers language.
-            // This isn't really needed, just nice to have because alot of modders don't speak / read english.
-            // If you truely intend to use this, it should be implemented throughout the rest of your tool.
-            btnRefresh.Text = strTraduction("btnRefresh");
-            btnConnect.Text = strTraduction("btnConnect");
-            lblInfo.Text = strTraduction("selectGrid");
-            this.Text = strTraduction("formTitle");
+            refreshButton.Content = strTraduction("btnRefresh");
+            connectButton.Content = strTraduction("btnConnect");
+            windowTitle.Content = strTraduction("formTitle");
 
-            Api = f;
+            Api = api;
             data = Api.CCAPI.GetConsoleList();
 
-            ImageList imgL = new ImageList();
-            imgL.Images.Add(BytesToIcon(ps3icon));
-            listView.SmallImageList = imgL;
             int sizeData = data.Count();
 
             for (int i = 0; i < sizeData; i++)
             {
-                ListViewItem item = new ListViewItem(" " + data[i].Name + " - " + data[i].Ip);
-                item.ImageIndex = 0;
-                listView.Items.Add(item);
+                listView.Items.Add(data[i].Name + " - " + data[i].Ip);
             }
 
             // If there are more than 0 targets we show the form
@@ -57,19 +57,37 @@ namespace PS3Lib
             {
                 result = false;
                 this.Close();
-                MessageBox.Show(strTraduction("noConsole"), strTraduction("noConsoleTitle"), MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(strTraduction("noConsole"), strTraduction("noConsoleTitle"), MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
         /// <summary>
-        /// When we select a new console.
+        /// Move window.
         /// </summary>
-        private void listView_SelectedIndexChanged(object sender, EventArgs e)
+        private void Window_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            if(listView.FocusedItem != null)
+            if (e.ChangedButton == MouseButton.Left)
+                this.DragMove();
+        }
+
+        /// <summary>
+        /// Close window.
+        /// </summary>
+        private void CloseButton_Click(object sender, RoutedEventArgs e)
+        {
+            result = false;
+            this.Close();
+        }
+
+        /// <summary>
+        /// Change selected console.
+        /// </summary>
+        private void listView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            tNum = listView.SelectedIndex;
+            if(!tNum.Equals(-1))
             {
-                tNum = listView.FocusedItem.Index;
-                btnConnect.Enabled = true;
+                connectButton.IsEnabled = true;
                 string Name, Ip = "?";
 
                 if (data[tNum].Name.Length > 18)
@@ -79,16 +97,15 @@ namespace PS3Lib
                 if (data[tNum].Ip.Length > 16)
                     Ip = data[tNum].Name.Substring(0, 16) + "...";
                 else Ip = data[tNum].Ip;
-
-                lblInfo.Text = strTraduction("selectedLbl") + " " + Name + " / " + Ip;
             }
         }
 
         /// <summary>
-        /// Connect...
+        /// Attempt to connect
         /// </summary>
-        private void btnConnect_Click(object sender, EventArgs e)
+        private void ConnectButton_Click(object sender, RoutedEventArgs e)
         {
+            clickSound.Play();
             if (tNum > -1)
             {
                 if (Api.ConnectTarget(data[tNum].Ip))
@@ -102,26 +119,26 @@ namespace PS3Lib
                 this.Close();
             }
             else
-                MessageBox.Show(strTraduction("errorSelect"), strTraduction("errorSelectTitle"), MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(strTraduction("errorSelect"), strTraduction("errorSelectTitle"), MessageBoxButton.OK, MessageBoxImage.Error);
         }
 
         /// <summary>
-        /// Attach...
+        /// Refresh console list.
         /// </summary>
-        private void btnRefresh_Click(object sender, EventArgs e)
+        private void refreshButton_Click(object sender, RoutedEventArgs e)
         {
+            clickSound.Play();
             tNum = -1;
-            listView.Clear();
-            lblInfo.Text = strTraduction("selectGrid");
-            btnConnect.Enabled = false;
+            listView.Items.Clear();
+            connectButton.IsEnabled = false;
             data = Api.CCAPI.GetConsoleList();
             int sizeD = data.Count();
             for (int i = 0; i < sizeD; i++)
             {
-                ListViewItem item = new ListViewItem(" " + data[i].Name + " - " + data[i].Ip);
-                item.ImageIndex = 0;
-                listView.Items.Add(item);
+                listView.Items.Add(data[i].Name + " - " + data[i].Ip);
             }
+
+            connectButton.IsEnabled = true;
         }
 
         #region CCAPI Language
@@ -212,22 +229,5 @@ namespace PS3Lib
         }
 
         #endregion
-
-        /// <summary>
-        /// We wait for the result to return true or false, while its null we wait in PS3API / CCAPI.
-        /// </summary>
-        public bool? Result
-        {
-            get { return result; }
-        }
-
-        /// <summary>
-        /// Set the result to false when form closed.
-        /// </summary>
-        private void ConsoleList_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            if(result is null)
-                result = false;
-        }
     }
 }

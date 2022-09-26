@@ -61,7 +61,7 @@ namespace Better_Craft
         public MainWindow()
         {
             InitializeComponent();
-            
+
             // This is just here so the XAML view isn't so annoying to look at while coding...
             scrollImageOne.Visibility = Visibility.Visible;
             scrollImageTwo.Visibility = Visibility.Visible;

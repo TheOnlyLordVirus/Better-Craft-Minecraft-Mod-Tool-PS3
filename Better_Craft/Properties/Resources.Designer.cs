@@ -83,6 +83,16 @@ namespace Better_Craft.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap betterCraftStoneBrickBackground {
+            get {
+                object obj = ResourceManager.GetObject("betterCraftStoneBrickBackground", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap defaultButton {
             get {
                 object obj = ResourceManager.GetObject("defaultButton", resourceCulture);

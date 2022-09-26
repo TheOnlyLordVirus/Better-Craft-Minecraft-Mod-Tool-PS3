@@ -1,0 +1,113 @@
+﻿<Window x:Class="PS3Lib.ConsoleList"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:PS3Lib"
+        mc:Ignorable="d"
+        Title="ConsoleList" Height="348" Width="279"
+        WindowStyle="None" AllowsTransparency="True" ResizeMode="NoResize" WindowStartupLocation="CenterScreen">
+
+    <Grid>
+        <!-- Minecraft Theme -->
+        <Grid.Resources>
+            <ImageBrush x:Key="defaultButton" ImageSource="../../../Images/defaultButton.png" Stretch="Fill"/>
+            <ImageBrush x:Key="highlightButton" ImageSource="../../../Images/highlightButton.png" Stretch="Fill"/>
+            <ImageBrush x:Key="clickButton" ImageSource="../../../Images/pressButton.png" Stretch="Fill"/>
+
+            <Style TargetType="{x:Type Button}">
+                <Setter Property="Background" Value="{StaticResource defaultButton}" />
+                <Setter Property="FontFamily" Value="/Better_Craft;component/Fonts/#Minecraft" />
+                <Setter Property="BorderBrush" Value="{x:Null}" />
+
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type Button}">
+
+                            <!--- Border -->
+                            <Border x:Name="Border" Background="{TemplateBinding Background}">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+
+                            <!-- Triggers -->
+                            <ControlTemplate.Triggers>
+
+                                <!-- On Mouse Hover over -->
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Background" Value="{StaticResource highlightButton}" TargetName="Border"/>
+                                </Trigger>
+
+                                <!-- On Mouse Click -->
+                                <Trigger Property="IsPressed" Value="True">
+                                    <Setter Property="Background" Value="{StaticResource clickButton}" TargetName="Border"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <Style TargetType="{x:Type TextBox}">
+                <Setter Property="Background" Value="{StaticResource defaultButton}" />
+                <Setter Property="FontFamily" Value="/Better_Craft;component/Fonts/#Minecraft" />
+                <Setter Property="BorderBrush" Value="{x:Null}" />
+                <Setter Property="VerticalContentAlignment" Value="Center"/>
+                <Setter Property="Foreground" Value="White"/>
+            </Style>
+
+            <Style TargetType="{x:Type Label}">
+                <Setter Property="FontFamily" Value="/Better_Craft;component/Fonts/#Minecraft"/>
+                <Setter Property="VerticalContentAlignment" Value="Center"/>
+            </Style>
+
+            <Style TargetType="{x:Type ListBoxItem}">
+                <Setter Property="FontFamily" Value="/Better_Craft;component/Fonts/#Minecraft"/>
+
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                            <Border Name="Border" Padding="2" SnapsToDevicePixels="true">
+                                <ContentPresenter />
+                            </Border>
+                            
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsSelected" Value="true">
+                                    <Setter TargetName="Border" Property="Background"
+                                    Value="#4CFFFFFF"/>
+                                    
+                                    <Setter Property="Foreground" Value="Black"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+        </Grid.Resources>
+
+        <Grid MouseDown="Window_MouseDown">
+            <Grid.Background>
+                <ImageBrush ImageSource="../../../Images/betterCraftStoneBackground.png" Stretch="UniformToFill"/>
+            </Grid.Background>
+            <Image Margin="0,0,0,322" HorizontalAlignment="Left" Stretch="Fill" Source="../../../Images/TNT.ico" Width="25" Height="25"/>
+            <Label Name="windowTitle" Content="Console Control API" HorizontalContentAlignment="Left" Margin="26,2,27,322"/>
+            <Button Style="{x:Null}" Content="X" HorizontalAlignment="Right" Margin="0,2,2,0" VerticalAlignment="Top" Height="20" Width="20" FontSize="8" Click="CloseButton_Click"/>
+        </Grid>
+
+
+        <Grid Margin="0,25,0,0">
+            <Grid.Background>
+                <ImageBrush ImageSource="../../../Images/betterCraftStoneBrickBackground.png" Stretch="UniformToFill"/>
+            </Grid.Background>
+
+            <ListBox x:Name="listView" Margin="10,10,10,81" SelectionChanged="listView_SelectionChanged" Foreground="White">
+                <ListBox.Background>
+                    <ImageBrush ImageSource="../../../Images/betterCraftDirtBackground.png" Stretch="UniformToFill"/>
+                </ListBox.Background>
+            </ListBox>
+
+            <Button x:Name="connectButton" Margin="10,252,10,0" Content="Connect" Foreground="White" Click="ConnectButton_Click" Height="28" VerticalAlignment="Top"/>
+            <Button x:Name="refreshButton" Margin="10,285,10,0" Content="Refresh" Foreground="White" Click="refreshButton_Click" Height="28" VerticalAlignment="Top"/>
+        </Grid>
+    </Grid>
+</Window>

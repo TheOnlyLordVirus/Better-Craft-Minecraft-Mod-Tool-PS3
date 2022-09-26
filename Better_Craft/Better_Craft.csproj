@@ -210,11 +210,8 @@
     <Compile Include="Additional Classes\ScrollWrapPanel.cs" />
     <Compile Include="Minecraft Cheats\MinecraftCheats.cs" />
     <Compile Include="Minecraft Cheats\PS3Lib\api\CCAPI.cs" />
-    <Compile Include="Minecraft Cheats\PS3Lib\api\ConsoleList.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Minecraft Cheats\PS3Lib\api\ConsoleList.Designer.cs">
-      <DependentUpon>ConsoleList.cs</DependentUpon>
+    <Compile Include="Minecraft Cheats\PS3Lib\api\ConsoleList.xaml.cs">
+      <DependentUpon>ConsoleList.xaml</DependentUpon>
     </Compile>
     <Compile Include="Minecraft Cheats\PS3Lib\api\PS3API.cs" />
     <Compile Include="Minecraft Cheats\PS3Lib\api\PS3MAPI\AttachDialog.cs">
@@ -252,6 +249,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Minecraft Cheats\PS3Lib\api\ConsoleList.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -267,9 +268,6 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <EmbeddedResource Include="Minecraft Cheats\PS3Lib\api\ConsoleList.resx">
-      <DependentUpon>ConsoleList.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Minecraft Cheats\PS3Lib\api\PS3MAPI\AttachDialog.resx">
       <DependentUpon>AttachDialog.cs</DependentUpon>
     </EmbeddedResource>
