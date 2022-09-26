@@ -15,6 +15,7 @@ namespace Minecraft_Cheats
     using System.Linq;
     using System.Linq.Expressions;
     using System.Reflection;
+    using System.Threading;
     using System.Threading.Tasks;
     using System.Windows;
     using MessageBox = System.Windows.MessageBox;
@@ -146,21 +147,79 @@ namespace Minecraft_Cheats
             /// <summary>
             /// Disconnect.
             /// </summary>
-            public static void Disconnect()
+            public static async void Disconnect()
             {
                 if (Minecraft_Cheats.HelperFunctions.isConnected)
                 {
-                    if (CurrentPS3Api.GetCurrentAPI().Equals(SelectAPI.ControlConsole))
+                    MessageBoxResult YesNo = MessageBox.Show("Would you like to disable all cheats before disconnecting?", "Disconnection", MessageBoxButton.YesNo, MessageBoxImage.Question);
+
+                    if (YesNo.Equals(MessageBoxResult.Yes))
                     {
-                        Minecraft_Cheats.HelperFunctions.CurrentPS3Api.CCAPI.RingBuzzer(CCAPI.BuzzerMode.Single);
-                        Minecraft_Cheats.HelperFunctions.CurrentPS3Api.CCAPI.Notify(CCAPI.NotifyIcon.WRONGWAY, "Disconnected cheat tool from Minecraft!");
+                        Minecraft_Cheats.HelperFunctions.Reset_All_Mods();
+
+                        // Halt until call cheats are confirmed to be off.
+                        PropertyInfo[] cheats = typeof(Minecraft_Cheats).GetProperties();
+                        bool someModsOn = true;
+                        while (someModsOn)
+                        {
+                            foreach (PropertyInfo cheat in cheats)
+                            {
+                                someModsOn = false;
+
+                                dynamic cheatValue = cheat.GetValue(null);
+
+                                if (cheatValue is bool)
+                                {
+                                    if (cheatValue.Equals(true))
+                                    {
+                                        someModsOn = true;
+                                        break;
+                                    }
+                                }
+
+                                if (cheatValue is int)
+                                {
+                                    if (!cheatValue.Equals(0))
+                                    {
+                                        someModsOn = true;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
                     }
 
-                    MessageBox.Show("Disconnected from your Playstation 3", "Status", MessageBoxButton.OK, MessageBoxImage.Information);
+                    else
+                    {
+                        if(LSD_TRIP)
+                            LSD_TRIP = false;
+                        if (RAINBOW_HUD)
+                            RAINBOW_HUD = false;
+                        if(RAINBOW_SKY)
+                            RAINBOW_SKY = false;
+                        if(RAINBOW_VISION)
+                            RAINBOW_VISION = false;
+                        if(MOVE_WITH_INVENTORY_OPENED)
+                            MOVE_WITH_INVENTORY_OPENED = false;
+                    }
 
                     PS3.DisconnectTarget();
 
                     Connected = false;
+
+                    if (CurrentPS3Api.GetCurrentAPI().Equals(SelectAPI.ControlConsole))
+                    {
+                        PS3.CCAPI.RingBuzzer(CCAPI.BuzzerMode.Single);
+                        PS3.CCAPI.Notify(CCAPI.NotifyIcon.WRONGWAY, "Disconnected cheat tool from Minecraft!");
+                    }
+
+                    else if (CurrentPS3Api.GetCurrentAPI().Equals(SelectAPI.PS3Manager))
+                    {
+                        PS3.PS3MAPI.RingBuzzer(PS3MAPI.PS3_CMD.BuzzerMode.Single);
+                        PS3.PS3MAPI.Notify("Disconnected cheat tool from Minecraft!");
+                    }
+
+                    MessageBox.Show("Disconnected from your Playstation 3", "Status", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
 
                 else
@@ -1899,12 +1958,12 @@ namespace Minecraft_Cheats
 
             set
             {
-                uint offset = 0x00410734;
-
                 if (value)
                 {
                     async void LoopVision()
                     {
+                        uint offset = 0x00410734;
+
                         while (bRAINBOW_SKY_LOOP)
                         {
                             PS3.SetMemory(offset, new byte[] { 0x40, 0x50, 0x00, 0x00, 0x3F, 0x80 }); // Green
@@ -1947,7 +2006,7 @@ namespace Minecraft_Cheats
 
                     bRAINBOW_SKY = true;
                     bRAINBOW_SKY_LOOP = true;
-                    Task.Run(() => LoopVision());
+                    LoopVision();
                 }
 
                 else
@@ -1966,12 +2025,12 @@ namespace Minecraft_Cheats
 
             set
             {
-                uint offset = 0x3000AAF8;
-
                 if (value)
                 {
                     async void LoopVision()
                     {
+                        uint offset = 0x3000AAF8;
+
                         while (bRAINBOW_VISION_LOOP)
                         {
                             PS3.SetMemory(offset, new byte[] { 0x3F, 0xFF, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00, 0x3F, 0x80 });
@@ -2029,7 +2088,7 @@ namespace Minecraft_Cheats
 
                     bRAINBOW_VISION = true;
                     bRAINBOW_VISION_LOOP = true;
-                    Task.Run(() => LoopVision());
+                    LoopVision();
                 }
 
                 else
@@ -2048,12 +2107,12 @@ namespace Minecraft_Cheats
 
             set
             {
-                uint offset = 0x30DBAD64;
-
                 if (value)
                 {
                     async void LoopVision()
                     {
+                        uint offset = 0x30DBAD64;
+
                         while (bRAINBOW_HUD_LOOP)
                         {
                             PS3.SetMemory(offset, new byte[] { 0x3F, 0x80, 0x00, 0x00, 0x4F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00, 0x3F, 0x80, 0x00, 0x00 });
@@ -2090,7 +2149,7 @@ namespace Minecraft_Cheats
 
                     bRAINBOW_HUD = true;
                     bRAINBOW_HUD_LOOP = true;
-                    Task.Run(() => LoopVision());
+                    LoopVision();
                 }
 
                 else
@@ -2763,6 +2822,9 @@ namespace Minecraft_Cheats
                     bMOVE_WITH_INV = true;
                     async void Loop()
                     {
+                        if (PS3.GetCurrentAPI().Equals(SelectAPI.TargetManager))
+                            PS3.ConnectTarget();
+
                         while (bMOVE_WITH_INV)
                         {
                             PS3.SetMemory(0x3000CF68, new byte[] { 0x00 }); ////For inventory open anytime

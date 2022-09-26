@@ -19,6 +19,7 @@ namespace Better_Craft
 
     using PS3Lib;
     using Minecraft_Cheats;
+    using System.Threading;
 
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -205,6 +206,9 @@ namespace Better_Craft
         {
             openThisGrid.Visibility = Visibility.Visible;
 
+            if (openThisGrid.Equals(mainWindowGrid))
+                stopLoading = true;
+
             foreach(Grid grid in grids)
             {
                 if(!grid.Equals(openThisGrid))
@@ -219,15 +223,18 @@ namespace Better_Craft
         {
             if(apiMessage)
             {
-                MessageBoxResult YesNo = MessageBox.Show("This tool is best experienced using CCAPI with a CEX eboot.bin!\n\nUsing a debug eboot.bin will change the location of some memory addresses, therefore some mods may not work while using TMAPI.\n(Most work properly though)\n\nWhile using PS3MAPI adds HEN support, it is painfully slow when writing to memory.\n\nDo you wish to continue?", "Warning!", MessageBoxButton.YesNo, MessageBoxImage.Warning);
-
-                if (YesNo.Equals(MessageBoxResult.Yes))
+                if(myAPI.Equals(SelectAPI.PS3Manager))
                 {
-                    apiMessage = false;
-                }
+                    MessageBoxResult YesNo = MessageBox.Show("This tool is best experienced using CCAPI or TMAPI!\n\nWhile using PS3MAPI adds HEN support, it is painfully slow when writing to memory.\n\nDo you wish to continue?", "Warning!", MessageBoxButton.YesNo, MessageBoxImage.Warning);
 
-                else
-                    return;
+                    if (YesNo.Equals(MessageBoxResult.Yes))
+                    {
+                        apiMessage = false;
+                    }
+
+                    else
+                        return;
+                }
             }
 
             currentAPI = myAPI;
@@ -269,10 +276,13 @@ namespace Better_Craft
             cheatPanel.Children.Clear();
 
             // Read toggle states from memory?
-            MessageBoxResult YesNo = MessageBox.Show("Would you like to read cheats toggle states from memory?\n\n(This may take a while on PS3MAPI)", "Noice", MessageBoxButton.YesNo, MessageBoxImage.Question);
             bool readFromMem = true;
-            if (YesNo.Equals(MessageBoxResult.No))
-                readFromMem = false;
+            if (currentAPI.Equals(SelectAPI.PS3Manager))
+            {
+                MessageBoxResult YesNo = MessageBox.Show("Would you like to read cheats toggle states from memory?\n\n(This may take a while on PS3MAPI)", "Noice", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                if (YesNo.Equals(MessageBoxResult.No))
+                    readFromMem = false;
+            }
 
             // Add all of the cheats.
             PropertyInfo[] cheats = typeof(Minecraft_Cheats).GetProperties();
@@ -332,8 +342,10 @@ namespace Better_Craft
                 modbuttons.Add(cheatName, button);
                 cheatPanel.Children.Add(button);
 
-                if(readFromMem)
-                    await Task.Delay(currentAPI.Equals(SelectAPI.PS3Manager) ? 500 : 1);
+                if (!currentAPI.Equals(SelectAPI.PS3Manager))
+                    await Task.Delay(1);
+                else if (readFromMem && currentAPI.Equals(SelectAPI.PS3Manager))
+                    await Task.Delay(300);
             }
 
             AddResetButton();
@@ -357,10 +369,19 @@ namespace Better_Craft
 
                     // This part takes a bit for the api to respond bytes from the ps3 (Depending on the api being used.)
                     dynamic cheatValue = null;
-                    await Task.Run(() =>
+
+                    if(currentAPI.Equals(SelectAPI.TargetManager))
                     {
                         cheatValue = cheat.GetValue(null);
-                    });
+                    }
+
+                    else
+                    {
+                        await Task.Run(() =>
+                        {
+                            cheatValue = cheat.GetValue(null);
+                        });
+                    }
 
                     SolidColorBrush toggleStateColor = new SolidColorBrush(Colors.LightCoral);
 
@@ -381,6 +402,7 @@ namespace Better_Craft
                     if (filter.Equals(string.Empty) || modOption.Key.ToLower().Contains(filter.ToLower()))
                         cheatPanel.Children.Add(modOption.Value);
                 }
+
                 updatingToggles = false;
             }
         }
@@ -486,13 +508,14 @@ namespace Better_Craft
             ((Button)button).IsEnabled = false;
 
             // Clear toggle state notice.
-            Task.Delay(500).GetAwaiter().OnCompleted(() => 
+            Task.Delay(800).GetAwaiter().OnCompleted(() => 
             { 
                 ((Button)button).IsEnabled = true; 
-                toggleState.Content = ""; 
+                toggleState.Content = "";
             });
 
-            UpdateToggleStates();
+            if(!currentAPI.Equals(SelectAPI.PS3Manager))
+                UpdateToggleStates();
         }
         #endregion
     }
