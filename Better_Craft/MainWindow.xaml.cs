@@ -354,7 +354,9 @@ namespace Better_Craft
         }
 
         /// <summary>
-        /// Filters the mods in the cheat panel without needing to reading 100's of bytes.
+        /// Updates the toggle states in the UI aynsyncronosly so the UI doesn't freeze up when toggling a mod with ccapi, 
+        /// Tmapi isn't ran asyncronsly becuase it runs quite fast and doing memory read calls on secondary threads without reconnecting causes issues with tmapi's dll.
+        /// Lastly if the user toggles buttons too quickly this won't be triggered a second time if it is still currently updating toggle states from the last click.
         /// </summary>
         private bool updatingToggles = false;
         private async void UpdateToggleStates()
