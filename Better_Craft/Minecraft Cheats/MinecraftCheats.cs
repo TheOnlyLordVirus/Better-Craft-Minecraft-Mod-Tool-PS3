@@ -147,7 +147,7 @@ namespace Minecraft_Cheats
             /// <summary>
             /// Disconnect.
             /// </summary>
-            public static async void Disconnect()
+            public static void Disconnect()
             {
                 if (Minecraft_Cheats.HelperFunctions.isConnected)
                 {
