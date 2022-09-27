@@ -203,10 +203,6 @@ namespace Minecraft_Cheats
                             MOVE_WITH_INVENTORY_OPENED = false;
                     }
 
-                    PS3.DisconnectTarget();
-
-                    Connected = false;
-
                     if (CurrentPS3Api.GetCurrentAPI().Equals(SelectAPI.ControlConsole))
                     {
                         PS3.CCAPI.RingBuzzer(CCAPI.BuzzerMode.Single);
@@ -218,6 +214,10 @@ namespace Minecraft_Cheats
                         PS3.PS3MAPI.RingBuzzer(PS3MAPI.PS3_CMD.BuzzerMode.Single);
                         PS3.PS3MAPI.Notify("Disconnected cheat tool from Minecraft!");
                     }
+                    
+                    PS3.DisconnectTarget();
+
+                    Connected = false;
 
                     MessageBox.Show("Disconnected from your Playstation 3", "Status", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
