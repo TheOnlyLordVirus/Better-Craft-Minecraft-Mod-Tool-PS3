@@ -431,19 +431,19 @@ namespace Minecraft_Cheats
 
                 if (value.Equals(0))
                 {
-                    //Minecraft_Cheats.REMOVE_FALL_DAMAGE = false;
+                    Minecraft_Cheats.REMOVE_FALL_DAMAGE = false;
                     PS3.SetMemory(offset, new byte[] { 0x3E, 0xD7, 0x0A, 0x3D }); ////SET to default
                 }
 
                 else if(value.Equals(1))
                 {
-                    //Minecraft_Cheats.REMOVE_FALL_DAMAGE = true;
+                    Minecraft_Cheats.REMOVE_FALL_DAMAGE = true;
                     PS3.SetMemory(offset, new byte[] { 0x3F, 0x47, 0x7F, 0x42 });
                 }
 
                 else if(value.Equals(2))
                 {
-                    //Minecraft_Cheats.REMOVE_FALL_DAMAGE = true;
+                    Minecraft_Cheats.REMOVE_FALL_DAMAGE = true;
                     PS3.SetMemory(offset, new byte[] { 0x3F, 0xD7, 0x0A, 0x3D });
                 }
 
