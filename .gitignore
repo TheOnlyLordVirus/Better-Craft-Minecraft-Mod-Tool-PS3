@@ -2,7 +2,7 @@
 # This .gitignore file was automatically created by Microsoft(R) Visual Studio.
 ################################################################################
 
-/.vs/
+
 /Minecraft_Cheats_Lib/bin
 /Minecraft_Cheats_Lib/obj
 /PS3Lib/bin
