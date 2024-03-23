@@ -1,0 +1,13 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/Better_Craft/bin/Debug
+/Better_Craft/obj/Debug
+/Better_Craft/obj/Release
+/Minecraft_Cheats_Lib/bin
+/Minecraft_Cheats_Lib/obj/Debug
+/Minecraft_Cheats_Lib/obj/Release
+/PS3Lib/bin
+/PS3Lib/obj
+/PS3LibNew/obj/Debug
