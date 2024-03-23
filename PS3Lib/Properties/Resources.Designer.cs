@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Better_Craft.Properties {
+namespace PS3Lib.Properties {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace Better_Craft.Properties {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Better_Craft.Properties.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("PS3Lib.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -136,16 +136,6 @@ namespace Better_Craft.Properties {
         internal static System.IO.UnmanagedMemoryStream minecraftClick {
             get {
                 return ResourceManager.GetStream("minecraftClick", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
-        internal static byte[] minecraftFont {
-            get {
-                object obj = ResourceManager.GetObject("minecraftFont", resourceCulture);
-                return ((byte[])(obj));
             }
         }
         

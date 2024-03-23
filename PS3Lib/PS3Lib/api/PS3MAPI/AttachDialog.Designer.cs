@@ -52,7 +52,7 @@ namespace PS3Lib
             // 
             // btnOK
             // 
-            this.btnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
+            this.btnOK.DialogResult = DialogResult.OK;
             this.btnOK.Location = new System.Drawing.Point(163, 107);
             this.btnOK.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.btnOK.Name = "btnOK";
@@ -63,7 +63,7 @@ namespace PS3Lib
             // 
             // btnCancel
             // 
-            this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.btnCancel.DialogResult = DialogResult.Cancel;
             this.btnCancel.Location = new System.Drawing.Point(372, 107);
             this.btnCancel.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.btnCancel.Name = "btnCancel";
@@ -74,7 +74,7 @@ namespace PS3Lib
             // 
             // comboBox1
             // 
-            this.comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBox1.DropDownStyle = ComboBoxStyle.DropDownList;
             this.comboBox1.FormattingEnabled = true;
             this.comboBox1.Location = new System.Drawing.Point(163, 33);
             this.comboBox1.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
@@ -85,7 +85,7 @@ namespace PS3Lib
             // 
             // btnRefresh
             // 
-            this.btnRefresh.DialogResult = System.Windows.Forms.DialogResult.Retry;
+            this.btnRefresh.DialogResult = DialogResult.Retry;
             this.btnRefresh.Location = new System.Drawing.Point(22, 107);
             this.btnRefresh.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.btnRefresh.Name = "btnRefresh";
@@ -98,9 +98,9 @@ namespace PS3Lib
             // 
             this.AcceptButton = this.btnOK;
             this.AutoScaleDimensions = new System.Drawing.SizeF(11F, 24F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleMode = AutoScaleMode.Font;
             this.AutoSize = true;
-            this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.AutoSizeMode = AutoSizeMode.GrowAndShrink;
             this.CancelButton = this.btnCancel;
             this.ClientSize = new System.Drawing.Size(535, 157);
             this.ControlBox = false;
@@ -109,12 +109,12 @@ namespace PS3Lib
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnOK);
             this.Controls.Add(this.label1);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.FormBorderStyle = FormBorderStyle.FixedDialog;
             this.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "AttachDialog";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+            this.StartPosition = FormStartPosition.CenterParent;
             this.Text = "Attach process with PS3 Manager API";
             this.ResumeLayout(false);
             this.PerformLayout();

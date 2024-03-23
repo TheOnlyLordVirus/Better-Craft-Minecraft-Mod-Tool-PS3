@@ -20,12 +20,16 @@ namespace Better_Craft
     using PS3Lib;
     using Minecraft_Cheats;
     using System.Threading;
+    using Minecraft_Cheats_Lib.Interfaces;
 
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window
     {
+        private const int ToggleStateLabelDelayInMs = 800;
+
+
         #region variables
 
         /// <summary>
@@ -285,23 +289,34 @@ namespace Better_Craft
             }
 
             // Add all of the cheats.
-            PropertyInfo[] cheats = typeof(Minecraft_Cheats).GetProperties();
-            foreach(PropertyInfo cheat in cheats)
+            foreach(var cheat in Minecraft_Cheats.Cheats)
             {
-                if (stopLoading)
-                    return;
+                var cheatInstance = cheat.Value.Invoke(Minecraft_Cheats.HelperFunctions.CurrentPS3Api);
 
-                string cheatName = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(cheat.Name.Replace("_", " ").ToLower());
+                string cheatName = cheatInstance.Name;// CultureInfo.CurrentCulture.TextInfo.ToTitleCase(cheat.Name.Replace("_", " ").ToLower());
                 SolidColorBrush toggleStateColor = new SolidColorBrush(Colors.LightCoral);
 
-                if(readFromMem)
+                RoutedEventHandler routedEventHandler = null;
+                if (cheatInstance is IToggleCheat toggleCheat)
                 {
-                    dynamic cheatValue = cheat.GetValue(null);
-                    if (cheatValue is bool && cheatValue)
+                    if (toggleCheat.IsOn)
                         toggleStateColor = new SolidColorBrush(Colors.LightGreen);
+                    routedEventHandler = (sender, e) =>
+                    {
+                        Minecraft_Cheats.HelperFunctions.ToggleCheat(cheat.Key);
+                        DoUpdateCheat((Button)sender, cheatInstance);
+                    };
+                }
 
-                    else if (cheatValue is int && !cheatValue.Equals(0))
-                        toggleStateColor = new SolidColorBrush(Colors.Cyan);
+                if (cheatInstance is IMultiStateCheat multiStateCheat)
+                {
+                    toggleStateColor = new SolidColorBrush(Colors.Cyan);
+                    routedEventHandler = (sender, e) =>
+                    {
+                        //TODO: Handle next state system
+                        //Minecraft_Cheats.HelperFunctions.NextState(cheat.Key);
+                       // DoUpdateCheat((Button)sender, cheatInstance);
+                    };
                 }
 
                 Button button = new Button()
@@ -312,33 +327,15 @@ namespace Better_Craft
                     FontSize = 9,
                     Margin = new Thickness(10),
                     Padding = new Thickness(300),
-                    Foreground = toggleStateColor
+                    Foreground = toggleStateColor,
+                    Tag = cheatInstance
+                    
                 };
+                button.Click += routedEventHandler;
 
 
-                if(cheat.PropertyType.Equals(typeof(int)))
-                {
-                    button.Click += (sender, e) =>
-                    {
-                        clickSound.Play();
-                        Expression<Func<int>> cheatAsALambdaProperty = Expression.Lambda<Func<int>>(Expression.MakeMemberAccess(null, cheat));
-                        DoMod(button, cheatAsALambdaProperty);
-                    };
-                }
-
-                else if(cheat.PropertyType.Equals(typeof(bool)))
-                {
-                    button.Click += (sender, e) =>
-                    {
-                        clickSound.Play();
-                        Expression<Func<bool>> cheatAsALambdaProperty = Expression.Lambda<Func<bool>>(Expression.MakeMemberAccess(null, cheat));
-                        DoMod(button, cheatAsALambdaProperty);
-                    };
-                }
-
-                if (modbuttons.ContainsKey(cheatName))
-                    modbuttons.Remove(cheatName);
-
+                //if (modbuttons.ContainsKey(cheatName))
+                //    modbuttons.Remove(cheatName);
                 modbuttons.Add(cheatName, button);
                 cheatPanel.Children.Add(button);
 
@@ -347,6 +344,68 @@ namespace Better_Craft
                 else if (readFromMem && currentAPI.Equals(SelectAPI.PS3Manager))
                     await Task.Delay(300);
             }
+            //PropertyInfo[] cheats = typeof(Minecraft_Cheats).GetProperties();
+            //foreach(PropertyInfo cheat in cheats)
+            //{
+            //    if (stopLoading)
+            //        return;
+
+            //    string cheatName = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(cheat.Name.Replace("_", " ").ToLower());
+            //    SolidColorBrush toggleStateColor = new SolidColorBrush(Colors.LightCoral);
+
+            //    if(readFromMem)
+            //    {
+            //        dynamic cheatValue = cheat.GetValue(null);
+            //        if (cheatValue is bool && cheatValue)
+            //            toggleStateColor = new SolidColorBrush(Colors.LightGreen);
+
+            //        else if (cheatValue is int && !cheatValue.Equals(0))
+            //            toggleStateColor = new SolidColorBrush(Colors.Cyan);
+            //    }
+
+            //    Button button = new Button()
+            //    {
+            //        Content = cheatName,
+            //        Width = 180,
+            //        Height = 40,
+            //        FontSize = 9,
+            //        Margin = new Thickness(10),
+            //        Padding = new Thickness(300),
+            //        Foreground = toggleStateColor
+            //    };
+
+
+            //    if(cheat.PropertyType.Equals(typeof(int)))
+            //    {
+            //        button.Click += (sender, e) =>
+            //        {
+            //            clickSound.Play();
+            //            Expression<Func<int>> cheatAsALambdaProperty = Expression.Lambda<Func<int>>(Expression.MakeMemberAccess(null, cheat));
+            //            DoMod(button, cheatAsALambdaProperty);
+            //        };
+            //    }
+
+            //    else if(cheat.PropertyType.Equals(typeof(bool)))
+            //    {
+            //        button.Click += (sender, e) =>
+            //        {
+            //            clickSound.Play();
+            //            Expression<Func<bool>> cheatAsALambdaProperty = Expression.Lambda<Func<bool>>(Expression.MakeMemberAccess(null, cheat));
+            //            DoMod(button, cheatAsALambdaProperty);
+            //        };
+            //    }
+
+            //    if (modbuttons.ContainsKey(cheatName))
+            //        modbuttons.Remove(cheatName);
+
+            //    modbuttons.Add(cheatName, button);
+            //    cheatPanel.Children.Add(button);
+
+            //    if (!currentAPI.Equals(SelectAPI.PS3Manager))
+            //        await Task.Delay(1);
+            //    else if (readFromMem && currentAPI.Equals(SelectAPI.PS3Manager))
+            //        await Task.Delay(300);
+            //}
 
             AddResetButton();
 
@@ -364,38 +423,53 @@ namespace Better_Craft
             if(!updatingToggles)
             {
                 updatingToggles = true;
-                PropertyInfo[] cheats = typeof(Minecraft_Cheats).GetProperties();
-                foreach (PropertyInfo cheat in cheats)
+                foreach(var button in modbuttons)
                 {
-                    string cheatName = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(cheat.Name.Replace("_", " ").ToLower());
-
-                    // This part takes a bit for the api to respond bytes from the ps3 (Depending on the api being used.)
-                    dynamic cheatValue = null;
-
-                    if(currentAPI.Equals(SelectAPI.TargetManager))
-                    {
-                        cheatValue = cheat.GetValue(null);
-                    }
-
-                    else
-                    {
-                        await Task.Run(() =>
-                        {
-                            cheatValue = cheat.GetValue(null);
-                        });
-                    }
-
                     SolidColorBrush toggleStateColor = new SolidColorBrush(Colors.LightCoral);
-
-                    if (cheatValue is bool && cheatValue)
+                    var cheatInstance = (IMinecraftCheat)button.Value.Tag;
+                    if (cheatInstance is IToggleCheat toggleCheat && toggleCheat.IsOn)
+                    {
                         toggleStateColor = new SolidColorBrush(Colors.LightGreen);
-
-                    else if (cheatValue is int && !cheatValue.Equals(0))
+                    }
+                    if (cheatInstance is IMultiStateCheat)
+                    {
                         toggleStateColor = new SolidColorBrush(Colors.Cyan);
-
-                    Button mod = modbuttons[cheatName];
-                    mod.Foreground = toggleStateColor;
+                    }
+                    button.Value.Foreground = toggleStateColor;
                 }
+
+                //PropertyInfo[] cheats = typeof(Minecraft_Cheats).GetProperties();
+                //foreach (PropertyInfo cheat in cheats)
+                //{
+                //    string cheatName = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(cheat.Name.Replace("_", " ").ToLower());
+
+                //    // This part takes a bit for the api to respond bytes from the ps3 (Depending on the api being used.)
+                //    dynamic cheatValue = null;
+
+                //    if(currentAPI.Equals(SelectAPI.TargetManager))
+                //    {
+                //        cheatValue = cheat.GetValue(null);
+                //    }
+
+                //    else
+                //    {
+                //        await Task.Run(() =>
+                //        {
+                //            cheatValue = cheat.GetValue(null);
+                //        });
+                //    }
+
+                //    //SolidColorBrush toggleStateColor = new SolidColorBrush(Colors.LightCoral);
+
+                //    //if (cheatValue is bool && cheatValue)
+                //    //    toggleStateColor = new SolidColorBrush(Colors.LightGreen);
+
+                //    //else if (cheatValue is int && !cheatValue.Equals(0))
+                //    //    toggleStateColor = new SolidColorBrush(Colors.Cyan);
+
+                //    Button mod = modbuttons[cheatName];
+                //    mod.Foreground = toggleStateColor;
+                //}
 
                 cheatPanel.Children.Clear();
                 string filter = filterTextBox.Text;
@@ -473,52 +547,96 @@ namespace Better_Craft
             cheatPanel.Children.Add(resetButton);
         }
 
+        private async Task DoUpdateCheat(Button button, IMinecraftCheat minecraftCheat)
+        {
+            clickSound.Play();
+
+            SolidColorBrush toggleStateColor = new SolidColorBrush(Colors.LightCoral);
+            if (minecraftCheat is IToggleCheat toggleCheat)
+                toggleStateColor = GetToggleUpdate(toggleState, toggleCheat);
+            if (minecraftCheat is IMultiStateCheat multiStateCheat)
+                toggleStateColor = GetMultistateUpdate(toggleState, multiStateCheat);
+            
+            toggleState.Foreground = toggleStateColor;
+            button.Foreground = toggleStateColor;
+            button.IsEnabled = false;
+
+            if (!currentAPI.Equals(SelectAPI.PS3Manager))
+                UpdateToggleStates();
+
+            await Task
+                .Delay(ToggleStateLabelDelayInMs);
+
+            button.IsEnabled = true; 
+            toggleState.Content = "";
+        }
+
+        private SolidColorBrush GetToggleUpdate (Label label, IToggleCheat toggleCheat)
+        {
+            if (toggleCheat.IsOn)
+            {
+                label.Content = "On";
+                return new SolidColorBrush(Colors.LightGreen);
+            }
+            label.Content = "Off";
+            return new SolidColorBrush(Colors.LightCoral);
+
+        }
+        private SolidColorBrush GetMultistateUpdate(Label label, IMultiStateCheat toggleCheat)
+        {
+
+            //todo: multistate implementation
+            //toggleState.Content = toggleStateValue;
+            return new SolidColorBrush(Colors.LightCoral);
+        }
+
+
         /// <summary>
         /// Toggle Logic for mods.
         /// </summary>
-        private void DoMod<T>(object button, Expression<Func<T>> ModOption)
-        {
-            clickSound.Play();
-            dynamic toggleStateValue = Minecraft_Cheats.HelperFunctions.ToggleOption(ModOption);
+        //private void DoMod<T>(object button, Expression<Func<T>> ModOption)
+        //{
+        //    clickSound.Play();
+        //    dynamic toggleStateValue = Minecraft_Cheats.HelperFunctions.ToggleOption(ModOption);
 
-            SolidColorBrush toggleStateColor = new SolidColorBrush(Colors.LightCoral);
+        //    SolidColorBrush toggleStateColor = new SolidColorBrush(Colors.LightCoral);
 
-            if (toggleStateValue is bool)
-            {
-                if(toggleStateValue)
-                {
-                    toggleState.Content = "On";
-                    toggleStateColor = new SolidColorBrush(Colors.LightGreen);
-                }
+        //    if (toggleStateValue is bool)
+        //    {
+        //        if(toggleStateValue)
+        //        {
+        //            toggleState.Content = "On";
+        //            toggleStateColor = new SolidColorBrush(Colors.LightGreen);
+        //        }
 
-                else
-                    toggleState.Content = "Off";
-            }
+        //        else
+        //            toggleState.Content = "Off";
+        //    }
 
-            else if (toggleStateValue is int)
-            {
-                if(!toggleStateValue.Equals(0))
-                {
-                    toggleStateColor = new SolidColorBrush(Colors.Cyan);
-                }
+        //    else if (toggleStateValue is int)
+        //    {
+        //        if(!toggleStateValue.Equals(0))
+        //        {
+        //            toggleStateColor = new SolidColorBrush(Colors.Cyan);
+        //        }
 
-                toggleState.Content = toggleStateValue;
-            }
+        //        toggleState.Content = toggleStateValue;
+        //    }
             
-            toggleState.Foreground = toggleStateColor;
-            ((Button)button).Foreground = toggleStateColor;
-            ((Button)button).IsEnabled = false;
+        //    toggleState.Foreground = toggleStateColor;
+        //    ((Button)button).Foreground = toggleStateColor;
+        //    ((Button)button).IsEnabled = false;
 
-            // Clear toggle state notice.
-            Task.Delay(800).GetAwaiter().OnCompleted(() => 
-            { 
-                ((Button)button).IsEnabled = true; 
-                toggleState.Content = "";
-            });
+        //    // Clear toggle state notice.
+        //    Task.Delay(800).GetAwaiter().OnCompleted(() => 
+        //    { 
+        //        ((Button)button).IsEnabled = true; 
+        //        toggleState.Content = "";
+        //    });
 
-            if(!currentAPI.Equals(SelectAPI.PS3Manager))
-                UpdateToggleStates();
-        }
+        //    if(!currentAPI.Equals(SelectAPI.PS3Manager))
+        //        UpdateToggleStates();
+        //}
         #endregion
     }
 }

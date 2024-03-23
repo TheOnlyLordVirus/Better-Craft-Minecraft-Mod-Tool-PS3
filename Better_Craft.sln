@@ -5,6 +5,12 @@ VisualStudioVersion = 17.3.32819.101
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Better_Craft", "Better_Craft\Better_Craft.csproj", "{FF273D07-B409-4CF7-8A27-FADC02FB728F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Minecraft_Cheats_Lib", "Minecraft_Cheats_Lib\Minecraft_Cheats_Lib.csproj", "{B72B1B8B-1959-491A-9D79-5C7AE01B013B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PS3Lib", "PS3Lib\PS3Lib.csproj", "{C7EACF62-ADFE-4EF6-8624-7101015E2634}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PS3LibNew", "PS3LibNew\PS3LibNew.csproj", "{51EF6F3A-CF7D-42A5-B88A-AA8A4C98AF57}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +21,18 @@ Global
 		{FF273D07-B409-4CF7-8A27-FADC02FB728F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FF273D07-B409-4CF7-8A27-FADC02FB728F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FF273D07-B409-4CF7-8A27-FADC02FB728F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B72B1B8B-1959-491A-9D79-5C7AE01B013B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B72B1B8B-1959-491A-9D79-5C7AE01B013B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B72B1B8B-1959-491A-9D79-5C7AE01B013B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B72B1B8B-1959-491A-9D79-5C7AE01B013B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C7EACF62-ADFE-4EF6-8624-7101015E2634}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C7EACF62-ADFE-4EF6-8624-7101015E2634}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C7EACF62-ADFE-4EF6-8624-7101015E2634}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C7EACF62-ADFE-4EF6-8624-7101015E2634}.Release|Any CPU.Build.0 = Release|Any CPU
+		{51EF6F3A-CF7D-42A5-B88A-AA8A4C98AF57}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{51EF6F3A-CF7D-42A5-B88A-AA8A4C98AF57}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{51EF6F3A-CF7D-42A5-B88A-AA8A4C98AF57}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{51EF6F3A-CF7D-42A5-B88A-AA8A4C98AF57}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

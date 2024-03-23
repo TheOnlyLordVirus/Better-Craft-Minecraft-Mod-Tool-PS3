@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
+using System.Drawing;
 
 namespace PS3Lib
 {
@@ -40,14 +41,14 @@ namespace PS3Lib
             // 
             // tB_Log
             // 
-            this.tB_Log.BackColor = System.Drawing.Color.White;
+            this.tB_Log.BackColor = Color.White;
             this.tB_Log.Location = new System.Drawing.Point(22, 22);
             this.tB_Log.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.tB_Log.MaxLength = 16;
             this.tB_Log.Multiline = true;
             this.tB_Log.Name = "tB_Log";
             this.tB_Log.ReadOnly = true;
-            this.tB_Log.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+            this.tB_Log.ScrollBars = ScrollBars.Both;
             this.tB_Log.Size = new System.Drawing.Size(783, 600);
             this.tB_Log.TabIndex = 10;
             // 
@@ -74,20 +75,20 @@ namespace PS3Lib
             // LogDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(11F, 24F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleMode = AutoScaleMode.Font;
             this.AutoSize = true;
-            this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.AutoSizeMode = AutoSizeMode.GrowAndShrink;
             this.ClientSize = new System.Drawing.Size(830, 698);
             this.ControlBox = false;
             this.Controls.Add(this.button1);
             this.Controls.Add(this.btnRefresh);
             this.Controls.Add(this.tB_Log);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.FormBorderStyle = FormBorderStyle.FixedDialog;
             this.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "LogDialog";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+            this.StartPosition = FormStartPosition.CenterParent;
             this.Text = "PS3 Manager API Log";
             this.ResumeLayout(false);
             this.PerformLayout();

@@ -18,7 +18,7 @@ namespace PS3Lib
         private List<CCAPI.ConsoleInfo> data;
         private bool? result = null;
         private int tNum = -1;
-        private SoundPlayer clickSound = new SoundPlayer(Better_Craft.Properties.Resources.minecraftClick);
+        private SoundPlayer clickSound = new SoundPlayer(PS3Lib.Properties.Resources.minecraftClick);
 
         /// <summary>
         /// We wait for the result to return true or false, while its null we wait in PS3API / CCAPI.
@@ -85,7 +85,7 @@ namespace PS3Lib
         private void listView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             tNum = listView.SelectedIndex;
-            if(!tNum.Equals(-1))
+            if (!tNum.Equals(-1))
             {
                 connectButton.IsEnabled = true;
                 string Name, Ip = "?";

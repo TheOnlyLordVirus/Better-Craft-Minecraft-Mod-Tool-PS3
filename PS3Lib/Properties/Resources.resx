@@ -117,4 +117,41 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="betterCraftDirtBackground" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\images\bettercraftdirtbackground.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="betterCraftScrollingBackground" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\images\bettercraftscrollingbackground.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="betterCraftStoneBackground" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\images\bettercraftstonebackground.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="betterCraftStoneBrickBackground" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\images\bettercraftstonebrickbackground.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="betterCraftTitle" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\images\bettercrafttitle.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="defaultButton" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\images\defaultbutton.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="highlightButton" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\images\highlightbutton.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="minecraftClick" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\sounds\minecraftclick.wav;System.IO.MemoryStream, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="pressButton" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\images\pressbutton.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="redStoneTorchOff" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\images\redstonetorchoff.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="redstoneTorchOn" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\images\redstonetorchon.gif;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="TNT" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\images\tnt.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
 </root>

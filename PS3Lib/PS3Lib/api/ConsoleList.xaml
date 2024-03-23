@@ -11,13 +11,13 @@
     <Grid>
         <!-- Minecraft Theme -->
         <Grid.Resources>
-            <ImageBrush x:Key="defaultButton" ImageSource="../../../Images/defaultButton.png" Stretch="Fill"/>
-            <ImageBrush x:Key="highlightButton" ImageSource="../../../Images/highlightButton.png" Stretch="Fill"/>
-            <ImageBrush x:Key="clickButton" ImageSource="../../../Images/pressButton.png" Stretch="Fill"/>
+            <ImageBrush x:Key="defaultButton" ImageSource="../../Images/defaultButton.png" Stretch="Fill"/>
+            <ImageBrush x:Key="highlightButton" ImageSource="../../Images/highlightButton.png" Stretch="Fill"/>
+            <ImageBrush x:Key="clickButton" ImageSource="../../Images/pressButton.png" Stretch="Fill"/>
 
             <Style TargetType="{x:Type Button}">
                 <Setter Property="Background" Value="{StaticResource defaultButton}" />
-                <Setter Property="FontFamily" Value="/Better_Craft;component/Fonts/#Minecraft" />
+                <Setter Property="FontFamily" Value="/PS3Lib;component/Fonts/#Minecraft" />
                 <Setter Property="BorderBrush" Value="{x:Null}" />
 
                 <Setter Property="Template">
@@ -70,12 +70,12 @@
                             <Border Name="Border" Padding="2" SnapsToDevicePixels="true">
                                 <ContentPresenter />
                             </Border>
-                            
+
                             <ControlTemplate.Triggers>
                                 <Trigger Property="IsSelected" Value="true">
                                     <Setter TargetName="Border" Property="Background"
                                     Value="#4CFFFFFF"/>
-                                    
+
                                     <Setter Property="Foreground" Value="Black"/>
                                 </Trigger>
                             </ControlTemplate.Triggers>
@@ -87,9 +87,9 @@
 
         <Grid MouseDown="Window_MouseDown">
             <Grid.Background>
-                <ImageBrush ImageSource="../../../Images/betterCraftStoneBackground.png" Stretch="UniformToFill"/>
+                <ImageBrush ImageSource="../../Images/betterCraftStoneBackground.png" Stretch="UniformToFill"/>
             </Grid.Background>
-            <Image Margin="0,0,0,322" HorizontalAlignment="Left" Stretch="Fill" Source="../../../Images/TNT.ico" Width="25" Height="25"/>
+            <Image Margin="0,0,0,322" HorizontalAlignment="Left" Stretch="Fill" Source="../../Images/TNT.ico" Width="25" Height="25"/>
             <Label Name="windowTitle" Content="Console Control API" HorizontalContentAlignment="Left" Margin="26,2,27,322"/>
             <Button Style="{x:Null}" Content="X" HorizontalAlignment="Right" Margin="0,2,2,0" VerticalAlignment="Top" Height="20" Width="20" FontSize="8" Click="CloseButton_Click"/>
         </Grid>
@@ -97,12 +97,12 @@
 
         <Grid Margin="0,25,0,0">
             <Grid.Background>
-                <ImageBrush ImageSource="../../../Images/betterCraftStoneBrickBackground.png" Stretch="UniformToFill"/>
+                <ImageBrush ImageSource="../../Images/betterCraftStoneBrickBackground.png" Stretch="UniformToFill"/>
             </Grid.Background>
 
             <ListBox x:Name="listView" Margin="10,10,10,81" SelectionChanged="listView_SelectionChanged" Foreground="White">
                 <ListBox.Background>
-                    <ImageBrush ImageSource="../../../Images/betterCraftDirtBackground.png" Stretch="UniformToFill"/>
+                    <ImageBrush ImageSource="../../Images/betterCraftDirtBackground.png" Stretch="UniformToFill"/>
                 </ListBox.Background>
             </ListBox>
 
